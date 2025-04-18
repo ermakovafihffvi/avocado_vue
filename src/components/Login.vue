@@ -1,6 +1,6 @@
 <template>
     <div class="column">
-        <h3 class="text-center q-mb-md">Login hhh</h3>
+        <h3 class="text-center q-mb-md">Login</h3>
         <q-form class="column">
             <q-input outlined v-model="login" label="Label" class="q-mb-md"/>
             <q-input outlined v-model="password" :type="isPwd ? 'password' : 'text'" label="Password" class="q-mb-md">

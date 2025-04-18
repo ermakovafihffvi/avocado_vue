@@ -1,8 +1,6 @@
 <template>
-jjj
+    rates
 </template>
-
-<script setup>
-
+<script>
 
 </script>

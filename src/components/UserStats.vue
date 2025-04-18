@@ -1,8 +1,6 @@
 <template>
-jjj
+    sdfdsf
 </template>
 
 <script setup>
-
-
 </script>
