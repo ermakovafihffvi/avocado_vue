@@ -1,6 +1,6 @@
 <template>
-    rates
-</template>
-<script setup>
 
+</template>
+
+<script setup>
 </script>

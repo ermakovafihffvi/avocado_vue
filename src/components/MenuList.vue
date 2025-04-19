@@ -3,9 +3,22 @@
         <q-item
             clickable
             v-ripple
+            :active="link === 'home'"
+            @click="menuItemClickHandle('home')"
+            active-class="active-menu-link"
+        >
+            <q-item-section avatar>
+                <q-icon name="home" />
+            </q-item-section>
+            <q-item-section>Home</q-item-section>
+        </q-item>
+
+        <q-item
+            clickable
+            v-ripple
             :active="link === 'rates'"
-            @click="link = 'rates'"
-            active-class="my-menu-link"
+            @click="menuItemClickHandle('rates')"
+            active-class="active-menu-link"
         >
             <q-item-section avatar>
                 <q-icon name="price_change" />
@@ -18,17 +31,19 @@
             label="Money Users"
         >
             <q-item
+                v-for="user in users"
+                :key="user.id"
                 clickable
                 v-ripple
-                :active="link === 'user_stats'"
-                @click="link = 'user_stats'"
-                active-class="my-menu-link"
+                :active="link === 'user_stats' +JSON.stringify({id: user.id})"
+                @click="menuItemClickHandle('user_stats', {id: user.id})"
+                active-class="active-menu-link"
             >
                 <q-item-section avatar>
                     <q-icon name="person_outline" />
                 </q-item-section>
 
-                <q-item-section>Alex</q-item-section>
+                <q-item-section>{{ user.name }}</q-item-section>
             </q-item>
         </q-expansion-item>
 
@@ -41,8 +56,40 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import useClient from '@/api/useClient';
+import router from '@/router';
+import { useMainStore } from '@/store/main';
+import { onMounted, ref } from 'vue';
+
+const api = useClient();
+const mainStore = useMainStore();
 
 const expanded_users = ref(true);
-const link = ref('');
+const link = ref('home');
+const users = ref([]);
+
+const menuItemClickHandle = (routeName, params = null) => {
+    link.value = params ? routeName + JSON.stringify(params) : routeName;
+    router.push({name: routeName, params: params});
+};
+
+const loadUserList = async () => {
+    const { data, error } = await api('api/users-list').get().json();
+    if (error.value) {
+        //error
+        //console.log(error.value);
+        return;
+    }
+    mainStore.state.users = users.value = Array.from(data.value);
+};
+
+onMounted(() => {
+    loadUserList();
+});
 </script>
+
+<style lang="scss">
+.active-menu-link {
+    background-color: $secondary-light;
+}
+</style>

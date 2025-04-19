@@ -14,14 +14,15 @@
             <slot />
         </q-page-container>
 
-        <q-footer class="bg-white">
-            <q-toolbar>
+        <q-footer class="bg-white shadow-up-3">
+            <q-toolbar class="justify-between">
                 <q-btn color="primary" flat round icon="menu" @click="toggleLeftDrawer" />
-                <q-btn round class="absolute-center" color="primary" style="top: 0" @click="router.push('/')">
+                <q-btn round class="absolute-center shadow-2" style="top: 0" @click="router.push('/')">
                     <q-avatar size="60px">
                         <img src="@/assets/avocado70.png">
                     </q-avatar>
                 </q-btn>
+                <q-btn color="primary" flat round icon="home" @click="router.push('/')"/>
             </q-toolbar>
         </q-footer>
     </q-layout>
