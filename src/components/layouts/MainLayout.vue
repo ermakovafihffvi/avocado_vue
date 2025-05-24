@@ -1,5 +1,5 @@
 <template>
-        <q-layout view="lHr lpr lFr">
+    <q-layout view="lHr lpr lFr">
         <q-header class="bg-primary text-white" height-hint="98">
             <q-toolbar>
                 <q-toolbar-title>Avocado Money</q-toolbar-title>

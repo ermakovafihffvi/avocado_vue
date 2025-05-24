@@ -20,6 +20,7 @@ export default defineConfig({
       )
     })
   ],
+  base: '/',
   server: {
     //host: 'avocado.test', //prod
     host: true, //dev
