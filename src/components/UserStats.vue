@@ -8,13 +8,13 @@
 
     <q-separator />
 
-    <q-tab-panels v-model="tab" animated class="shadow-4 rounded-borders">
+    <q-tab-panels v-model="tab" animated class="shadow-4 rounded-borders tab-wrapper">
         <q-tab-panel name="expenses">
-            <UserExpenses :userId="userId" />
+            <UserExpenses :userId="route.params.id" :userNameTitle="userNameTitle"/>
         </q-tab-panel>
 
         <q-tab-panel name="incomes">
-            <UserIncomes :userId="userId" />
+            <UserIncomes :userId="route.params.id" :userNameTitle="userNameTitle"/>
         </q-tab-panel>
     </q-tab-panels>
 </div>
@@ -26,11 +26,34 @@
 import { useRoute } from 'vue-router';
 import UserIncomes from '@/components/tables/UserIncomes.vue';
 import UserExpenses from '@/components/tables/UserExpenses.vue';
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useMainStore } from '@/store/main';
 
 const route = useRoute();
-const userId = ref(route.params.id);
+const mainStore = useMainStore();
 
 const tab = ref('expenses');
 
+//title
+const currentUser = computed(() => {
+    return mainStore.state.currentUser;
+});
+const userNameTitle = computed(() => { 
+    return currentUser.value?.id == route.params.id ? 'My' 
+        : mainStore.state.users?.find(item => item.id == route.params.id).name;
+});
+//end title
+
+onMounted(() => {
+    if (!currentUser.value) mainStore.getCurrentUser();
+});
+
 </script>
+
+<style lang="scss" scoped>
+@media (min-width: 641px) {
+    .tab-wrapper {
+        width: 600px;
+    }
+}
+</style>

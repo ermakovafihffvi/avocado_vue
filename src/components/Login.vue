@@ -24,8 +24,10 @@
 import { ref } from 'vue';
 import useClient from '@/api/useClient';
 import router from '@/router';
+import { useMainStore } from '@/store/main';
 
 const api = useClient();
+const mainStore = useMainStore();
 
 const login = ref('');
 const password = ref('');
@@ -38,7 +40,10 @@ const handleLogin = async () => {
             password: password.value
         }
     ).json();
-    console.log(error);
+    console.error(error.value);
+    console.log(data); //TO DO CHECK
+    mainStore.state.currentUser = data.value['current-user'];
+
     if (!error.value) {
        router.push('/'); 
     }

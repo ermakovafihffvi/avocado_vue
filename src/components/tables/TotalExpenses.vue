@@ -3,10 +3,23 @@
     <LoadingSpinner v-if="loading || !mainStore.state.users || !mainStore.state.currencies" :size="'lg'"/>
     <div class="q-pa-md" v-else>
         <div class="row q-col-gutter-xs q-mb-xs">
-            <div class="col" v-for="(total, currency) in totalExpanses">
+            <div class="col" v-for="(total, currency) in totalExpenses">
                 <q-card dark bordered>
                     <q-card-section>
                         <div class="text-h5 text-primary text-center">{{ currency }}</div>   
+                    </q-card-section>
+                    <q-separator dark inset />
+                    <q-card-section>
+                        <div class="text-subtitle1 text-center">{{ total }}</div>
+                    </q-card-section>
+                </q-card>
+            </div>
+        </div>
+        <div class="row q-col-gutter-xs q-mb-xs">
+            <div class="col" v-for="(total, currency) in totalExpensesWOHouse">
+                <q-card dark bordered>
+                    <q-card-section>
+                        <div class="text-h5 text-primary text-center">{{ currency }},&nbsp;wo house</div>   
                     </q-card-section>
                     <q-separator dark inset />
                     <q-card-section>
@@ -103,6 +116,7 @@ const rows = computed(() => {
         const expense = expenses.value.find(item => item.category_id == category.id)?.total ?? 0;
         const currency = mainStore.state.currencies.find(item => item.id == category.currency_id).str_id;
         result.push({
+            category_str: category.str_id,
             category: category.title + ', ' + currency,
             currency: currency,
             expenses: expense,
@@ -112,10 +126,17 @@ const rows = computed(() => {
         return result;
     }, []);
 });
-const totalExpanses = computed(() => {
+const totalExpenses = computed(() => {
     return rows.value.reduce((result, item) => {
         if(!result[item.currency]) result[item.currency] = 0;
         result[item.currency] += Number(item.expenses);
+        return result;
+    }, {});
+});
+const totalExpensesWOHouse = computed(() => {
+    return rows.value.reduce((result, item) => {
+        if(!result[item.currency]) result[item.currency] = 0;
+        result[item.currency] += item.category_str == 'house' ? 0 :  Number(item.expenses);
         return result;
     }, {});
 });

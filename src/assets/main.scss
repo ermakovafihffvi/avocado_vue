@@ -43,3 +43,14 @@ a,
   gap: 10px;
   align-items: center;
 }
+
+.sub-table-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.text-title-wrapper {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
