@@ -15,7 +15,8 @@ export const useMainStore = defineStore('main', () => {
         userStatsTab: 'expenses',
         currentUser: null,
         usersExpenses: {},
-        usersIncomes: {}
+        usersIncomes: {},
+        savingCategories: null
     });
 
     const api = useClient();

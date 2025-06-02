@@ -7,7 +7,13 @@ import RatesSetting from '@/components/RatesSetting.vue';
 import UserStats from '@/components/UserStats.vue';
 import AddCurrency from '@/components/buttons/AddCurrency.vue';
 import UserStatsHeader from '@/components/headers/UserStats.vue';
-import Currencies from './components/headers/Currencies.vue';
+import Currencies from '@/components/headers/Currencies.vue';
+import ExpensesCategories from '@/components/ExpensesCategories.vue';
+import SavingsCategories from '@/components/SavingsCategories.vue';
+import ExpensesCategoriesHeader from '@/components/headers/ExpensesCategories.vue';
+import MainDashboards from '@/components/MainDashboards.vue';
+import ShowMainDashboard from '@/components/buttons/ShowMainDashboard.vue';
+import AddExpCategory from './components/buttons/AddExpCategory.vue';
 
 const routes = [
     { 
@@ -15,7 +21,8 @@ const routes = [
         name: 'home', 
         component: MainPage,
         meta: {
-            layout: MainLayout
+            layout: MainLayout,
+            rightBtn: ShowMainDashboard
         }
     },
     { 
@@ -30,7 +37,38 @@ const routes = [
         meta: {
             layout: MainLayout,
             leftBtn: AddCurrency,
-            title: Currencies
+            title: Currencies,
+            rightBtn: ShowMainDashboard
+        }
+    },
+    {
+        path: '/category_exp',
+        name: 'category_exp',
+        component: ExpensesCategories,
+        meta: {
+            title: ExpensesCategoriesHeader,
+            layout: MainLayout,
+            rightBtn: ShowMainDashboard,
+            leftBtn: AddExpCategory
+        }
+    },
+    {
+        path: '/category_savings',
+        name: 'category_savings',
+        component: SavingsCategories,
+        meta: {
+            layout: MainLayout,
+            rightBtn: ShowMainDashboard,
+            leftBtn: AddExpCategory
+        }
+    },
+    {
+        path: '/dashboards',
+        name: 'dashboards',
+        component: MainDashboards,
+        meta: {
+            layout: MainLayout,
+            rightBtn: ShowMainDashboard
         }
     },
     {
@@ -39,7 +77,8 @@ const routes = [
         component: UserStats,
         meta: {
             layout: MainLayout,
-            title: UserStatsHeader
+            title: UserStatsHeader,
+            rightBtn: ShowMainDashboard
         }
     }
 ];

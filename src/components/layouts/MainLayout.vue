@@ -19,7 +19,7 @@
             <slot />
         </q-page-container>
 
-        <q-footer class="bg-white shadow-up-3 footer-wrapper">
+        <q-footer class="shadow-up-3 footer-wrapper">
             <q-toolbar class="justify-between full-height">
                 <q-btn color="primary" flat round icon="menu" @click="toggleLeftDrawer" />
                 <div class="footer-sub-button-wrapper footer-sub-button-left">
@@ -82,6 +82,7 @@ const handleAddExpense = () => {
 }
 .footer-wrapper {
     height: 80px;
+    background-color: var(--color-background) !important;
 }
 .footer-sub-button-wrapper {
     width: 50%;

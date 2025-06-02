@@ -1,17 +1,20 @@
 <template>
     <div class="currencies-wrapper q-px-md">
         <div class="currencies-content row q-gutter-sm">
-            <q-card bordered v-for="currency in mainStore.state.currencies" :key="currency.id" class="rate-card">
+            <q-card bordered v-for="currency in currencies" :key="currency.id" class="rate-card">
                 <q-card-section class="rate-card-section">
                     <q-input outlined v-model="currency.title" label="Title" debounce="600"
                         readonly :dense="true" dark bg-color="dark"
-                        @update:model-value="(value) => handleInput(value, currency)"
+                        :rules="[val => /^[a-zA-Z]+$/gm.test(val) || 'Title should be string']"
+                        @update:model-value="(value) => handleInput(value, currency, 'title')"
                     />
                     <q-input outlined v-model="currency.str_id" label="String Code" dark bg-color="dark" debounce="600" 
-                        @update:model-value="(value) => handleInput(value, currency)"
+                        :rules="[val => /^[A-Z]+$/.test(val) || 'String code can contain only capital letters']"
+                        @update:model-value="(value) => handleInput(value, currency, 'str_id')"
                     />
                     <q-input outlined v-model="currency.rate" label="Rate" dark bg-color="dark" debounce="600"
-                        @update:model-value="(value) => handleInput(value, currency)"
+                        :rules="[val => /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(val) || 'Rate should be a number']"
+                        @update:model-value="(value) => handleInput(value, currency, 'rate')"
                     />
                 </q-card-section>
             </q-card>
@@ -21,23 +24,38 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const mainStore = useMainStore();
 const api = useClient();
+const currencies = ref(null);
 
-const handleInput = async (value, currency) => {
-    console.log(value, currency);
-    const { error } = await api('api/' + currency.id + '/set-rate').post(currency).json();
+const handleInput = async (value, currency, field) => {
+    console.log(currency[field]);
+    if (currency[field].hasError) {
+        return;
+    }
+    const requestCurrency = {
+        id: currency.id,
+        [field]: value
+    };
+    const { error } = await api('api/' + requestCurrency.id + '/set-rate').post(requestCurrency).json();
     if (error.value) {
         console.log(error);
         return;
+    } else {
+        mainStore.state.currencies.map((item) => {
+            if (item.id == requestCurrency.id) {
+                item[field] = value;
+            }
+        });
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
     if (typeof mainStore.state.currencies === 'undefined' || !mainStore.state.currencies) {
-        mainStore.loadCurrencies();
+        await mainStore.loadCurrencies();
+        currencies.value = mainStore.state.currencies;
     }
 });
 </script>
@@ -52,7 +70,7 @@ onMounted(() => {
 }
 .rate-card {
     max-width: 300px;
-    background-color: $secondary-light;
+    background-color: $secondary;
 }
 .rate-card-section {
     display: flex;

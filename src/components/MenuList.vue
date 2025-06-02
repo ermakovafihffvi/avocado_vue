@@ -26,6 +26,45 @@
             <q-item-section>Set Rates</q-item-section>
         </q-item>
 
+        <q-item
+            clickable
+            v-ripple
+            :active="link === 'category_exp'"
+            @click="menuItemClickHandle('category_exp')"
+            active-class="active-menu-link"
+        >
+            <q-item-section avatar>
+                <q-icon name="shopping_cart" />
+            </q-item-section>
+            <q-item-section>Expenses Categories</q-item-section>
+        </q-item>
+
+        <q-item
+            clickable
+            v-ripple
+            :active="link === 'category_savings'"
+            @click="menuItemClickHandle('category_savings')"
+            active-class="active-menu-link"
+        >
+            <q-item-section avatar>
+                <q-icon name="savings" />
+            </q-item-section>
+            <q-item-section>Savings Categories</q-item-section>
+        </q-item>
+
+        <q-item
+            clickable
+            v-ripple
+            :active="link === 'dashboards'"
+            @click="menuItemClickHandle('dashboards')"
+            active-class="active-menu-link"
+        >
+            <q-item-section avatar>
+                <q-icon name="account_balance" />
+            </q-item-section>
+            <q-item-section>Dashboards</q-item-section>
+        </q-item>
+
         <q-expansion-item
             v-model="expanded_users"
             label="Money Users"
@@ -59,14 +98,17 @@
 import useClient from '@/api/useClient';
 import router from '@/router';
 import { useMainStore } from '@/store/main';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const api = useClient();
 const mainStore = useMainStore();
+const route = useRoute();
 
 const expanded_users = ref(true);
 const link = ref('home');
 const users = ref([]);
+const routeName = computed(() => route.name);
 
 const menuItemClickHandle = (routeName, params = null) => {
     link.value = params ? routeName + JSON.stringify(params) : routeName;
@@ -85,6 +127,14 @@ const loadUserList = async () => {
 
 onMounted(() => {
     loadUserList();
+});
+
+watch(routeName, () => {
+    if (route.name == 'user_stats') {
+        link.value = 'user_stats' + JSON.stringify({id: route.params.id});
+    } else {
+        link.value = route.name;
+    }
 });
 </script>
 
