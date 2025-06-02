@@ -5,6 +5,9 @@ import Login from '@/components/Login.vue';
 import MainLayout from '@/components/layouts/MainLayout.vue';
 import RatesSetting from '@/components/RatesSetting.vue';
 import UserStats from '@/components/UserStats.vue';
+import AddCurrency from '@/components/buttons/AddCurrency.vue';
+import UserStatsHeader from '@/components/headers/UserStats.vue';
+import Currencies from './components/headers/Currencies.vue';
 
 const routes = [
     { 
@@ -25,7 +28,9 @@ const routes = [
         name: 'rates',
         component: RatesSetting,
         meta: {
-            layout: MainLayout
+            layout: MainLayout,
+            leftBtn: AddCurrency,
+            title: Currencies
         }
     },
     {
@@ -33,7 +38,8 @@ const routes = [
         name: 'user_stats',
         component: UserStats,
         meta: {
-            layout: MainLayout
+            layout: MainLayout,
+            title: UserStatsHeader
         }
     }
 ];

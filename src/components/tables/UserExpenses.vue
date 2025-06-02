@@ -7,15 +7,16 @@
         <q-btn push color="primary" label="Add expense" @click="handleAddExpense" />
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'" />
-    <div class="q-pa-md expenses-table-wrapper" v-else>
+    <div class="expenses-table-wrapper" v-else>
         <q-table flat bordered
             :rows="categories" 
             :columns="columns" 
-            row-key="name" 
+            row-key="str_id" 
             hide-pagination
             :pagination="{
                 rowsPerPage: 0
             }"
+            v-model:expanded="expanded"
         >
 
             <template v-slot:header="props">
@@ -59,6 +60,7 @@
                                 <template v-slot:item="subProps">
                                     <div
                                         class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+                                        @click="(e) => handleRowClick(e, subProps.row)"
                                     >
                                         <q-card bordered flat>
                                             <q-card-section>
@@ -91,7 +93,7 @@
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
 import { useQuasar } from 'quasar';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { useMainStore } from '@/store/main';
 import useOpenAddExpenses from '@/composables/openAddExpense';
 import { useDateFormat } from '@vueuse/core';
@@ -103,6 +105,7 @@ const props = defineProps({
     userNameTitle: String
 });
 
+const expanded = ref([]);
 const loadingExpenses = ref(true);
 const loadingCategories = ref(true);
 const loading = ref(true);
@@ -286,7 +289,6 @@ watch(
             nextTick(() => {
                 if (!initLoading.value) {
                     prepareData();
-                    //recalculate only neccessary part instad og rebuilding the whole array
                 }
             });
         }
@@ -309,5 +311,11 @@ watch(
 }
 .sub-table-wrapper table thead tr {
     background-color: $secondary-light;
-}
+}  
+</style>
+
+<style lang="sass" scoped>
+@media (min-width: $breakpoint-sm-min)
+    .expenses-table-wrapper
+        padding: 16px;  
 </style>

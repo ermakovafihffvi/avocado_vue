@@ -32,7 +32,7 @@
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" />
+                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
                 <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
@@ -77,6 +77,13 @@ const category = ref(props.categoryStr ?? null);
 const description = ref(props.description ?? '');
 const sum = ref(props.sum ?? null);
 const date = ref(null);
+
+const isOkDisabled = computed(() => {
+    return !category.value || category.value.hasError 
+        || !description.value || description.value.hasError 
+        || !sum.value || sum.value.hasError
+        || !date.value || date.value.hasError;
+});
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 // this is part of our example (so not required)

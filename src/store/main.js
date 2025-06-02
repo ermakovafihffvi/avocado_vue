@@ -12,6 +12,7 @@ export const useMainStore = defineStore('main', () => {
         users: null,
         currencies: null,
         expensesCategories: null,
+        userStatsTab: 'expenses',
         currentUser: null,
         usersExpenses: {},
         usersIncomes: {}

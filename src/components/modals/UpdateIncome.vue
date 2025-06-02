@@ -32,7 +32,7 @@
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" />
+                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
                 <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
@@ -64,6 +64,14 @@ const mainStore = useMainStore();
 const description = ref(props.description ?? '');
 const sum = ref(props.sum ?? null);
 const date = ref(null);
+const currencySelected = ref(props.currency ?? null);
+
+const isOkDisabled = computed(() => {
+    return !description.value || description.value.hasError 
+        || !sum.value || sum.value.hasError 
+        || !date.value || date.value.hasError
+        || !currencySelected.value || currencySelected.value.hasError;
+});
 
 const currencies = computed(() => {
     return mainStore.state.currencies?.reduce((result, currency) => {
@@ -74,8 +82,6 @@ const currencies = computed(() => {
         return result;
     }, []);
 });
-
-const currencySelected = ref(props.currency ?? null);
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 // this is part of our example (so not required)
