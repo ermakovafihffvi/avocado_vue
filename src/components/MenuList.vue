@@ -125,16 +125,21 @@ const loadUserList = async () => {
     mainStore.state.users = users.value = Array.from(data.value);
 };
 
-onMounted(() => {
-    loadUserList();
-});
-
-watch(routeName, () => {
+const setLinkValue = () => {
     if (route.name == 'user_stats') {
         link.value = 'user_stats' + JSON.stringify({id: route.params.id});
     } else {
         link.value = route.name;
     }
+};
+
+onMounted(() => {
+    loadUserList();
+    setLinkValue();
+});
+
+watch(routeName, () => {
+    setLinkValue();
 });
 </script>
 

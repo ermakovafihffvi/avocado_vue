@@ -34,7 +34,7 @@ export const useMainStore = defineStore('main', () => {
 
     const loadExpCategories = async () => {
         if (!state.expensesCategories) {
-            const { data, error } = await api('api/expenses-categories').get().json();
+            const { data, error } = await api('api/expense/categories').get().json();
             if (error.value) {
                 //error
                 //console.log(error.value);

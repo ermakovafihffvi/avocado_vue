@@ -142,7 +142,7 @@ const totalExpensesWOHouse = computed(() => {
 });
 const loadTotalExpenses = async () => {
     loading.value = true;
-    const { data, error } = await api('api/total-expenses').get().json();
+    const { data, error } = await api('api/expense/total').get().json();
     if (error.value) {
         //error
         //console.log(error.value);

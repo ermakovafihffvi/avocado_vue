@@ -56,7 +56,11 @@
                                 }"
                                 @row-click="handleRowClick"
                             >
-                            
+                                <template v-slot:body-cell-delete="props">
+                                    <q-td :props="props" @click.stop>
+                                        <DeleteButton @handle-delete="handleDelete(props.row.id)"/>
+                                    </q-td>
+                                </template>
                                 <template v-slot:item="subProps">
                                     <div
                                         class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
@@ -67,7 +71,12 @@
                                                 <q-list dense>
                                                     <q-item v-for="col in subProps.cols" :key="col.name">
                                                         <q-item-section>
-                                                            <q-item-label>{{ col.label }}</q-item-label>
+                                                            <div v-if="col.name == 'delete'" @click.stop class="card-delete-wrapper">
+                                                                <DeleteButton
+                                                                    @handle-delete="handleDelete(subProps.row.id)" 
+                                                                />
+                                                            </div>
+                                                            <q-item-label v-else>{{ col.label }}</q-item-label>
                                                         </q-item-section>
                                                         <q-item-section side>
                                                             <q-item-label caption>{{ subProps.row[col.name] }}</q-item-label>
@@ -97,6 +106,7 @@ import { nextTick, onMounted, ref, watch } from 'vue';
 import { useMainStore } from '@/store/main';
 import useOpenAddExpenses from '@/composables/openAddExpense';
 import { useDateFormat } from '@vueuse/core';
+import DeleteButton from '@/components/buttons/DeleteButton.vue';
 
 const api = useClient();
 const mainStore = useMainStore();
@@ -173,6 +183,12 @@ const subColumns = [
         field: row => row.date,
         format: val => `${val}`,
         sortable: false
+    },
+    {
+        name: 'delete',
+        required: true,
+        label: 'Delete',
+        align: 'left'
     }
 ];
 
@@ -207,7 +223,7 @@ const loadExpenses = async () => {
     loadingExpenses.value = true;
     expenses.value = {};
     if (typeof mainStore.state.usersExpenses[props.userId] === 'undefined' || mainStore.state.usersExpenses[props.userId] == 'null') {
-        const { data, error } = await api('api/' + props.userId + '/expenses?special=0').get().json();
+        const { data, error } = await api('api/expense/user/' + props.userId + '/?special=0').get().json();
         if (error.value) {
             //error
             //console.log(error.value);
@@ -222,7 +238,7 @@ const loadExpCategories = async () => {
     loadingCategories.value = true;
     categories.value = [];
     if (!mainStore.state.expensesCategories) {
-        const { data, error } = await api('api/expenses-categories?special=0').get().json();
+        const { data, error } = await api('api/expense/categories?special=0').get().json();
         if (error.value) {
             //error
             //console.log(error.value);
@@ -278,6 +294,20 @@ const handleRowClick = (e, row) => {
 };
 // end handle add expenses btn
 
+const handleDelete = async (id) => {
+    const { error } = await api(`/api/expense/${id}/delete`).delete().json();
+    if (error.value) {
+
+    } else {
+        mainStore.state.usersExpenses[props.userId] = mainStore.state.usersExpenses[props.userId].reduce(function (acc, item) {
+            if (item.id !== id) {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
+    }
+};
+
 onMounted(() => {
     prepareData();
 });
@@ -312,6 +342,10 @@ watch(
 .sub-table-wrapper table thead tr {
     background-color: $secondary-light;
 }  
+.card-delete-wrapper {
+    width: fit-content;
+    align-self: end;
+}
 </style>
 
 <style lang="sass" scoped>

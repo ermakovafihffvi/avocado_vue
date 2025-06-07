@@ -15,7 +15,7 @@ export default function useOpenAddExpenses (q) {
             componentProps: props
         }).onOk(async (expense) => {
             const userId = expense.user_id ?? mainStore.state.currentUser?.id;
-            const { data, error } = await api('api/update-expense').post({
+            const { data, error } = await api('api/expense/update').post({
                 id: expense.id,
                 date: expense.date,
                 description: expense.description,

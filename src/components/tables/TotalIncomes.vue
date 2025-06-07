@@ -70,7 +70,7 @@ const totalIncom = computed(() => {
 
 const loadingTotalIncomes = async () => {
     loading.value = true;
-    const { data, error } = await api('api/total-incomes').get().json();
+    const { data, error } = await api('api/income/total').get().json();
     if (error.value) {
         //error
         //console.log(error);

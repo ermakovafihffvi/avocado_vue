@@ -1,6 +1,6 @@
 <template>
     <div class="user-stats-wrapper">
-        <div class="q-gutter-y-md" style="max-width: 600px">
+        <div class="q-gutter-y-md q-mr-auto q-ml-auto" style="max-width: 600px">
             <q-tab-panels v-model="mainStore.state.userStatsTab" animated class="shadow-4 rounded-borders tab-wrapper">
                 <q-tab-panel name="expenses">
                     <UserExpenses :userId="route.params.id" :userNameTitle="userNameTitle"/>

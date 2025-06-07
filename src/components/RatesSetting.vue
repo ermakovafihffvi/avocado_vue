@@ -55,8 +55,8 @@ const handleInput = async (value, currency, field) => {
 onMounted(async () => {
     if (typeof mainStore.state.currencies === 'undefined' || !mainStore.state.currencies) {
         await mainStore.loadCurrencies();
-        currencies.value = mainStore.state.currencies;
     }
+    currencies.value = mainStore.state.currencies;
 });
 </script>
 

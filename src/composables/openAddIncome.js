@@ -15,7 +15,7 @@ export default function useOpenAddIncomes (q) {
             componentProps: props
         }).onOk(async (income) => {
             const userId = income.user_id ?? mainStore.state.currentUser?.id;
-            const { data, error } = await api('api/update-income').post({
+            const { data, error } = await api('api/income/update').post({
                 id: income.id,
                 date: income.date,
                 description: income.description,

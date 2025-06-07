@@ -22,6 +22,16 @@
             }"
             @row-click="handleRowClick"
         >
+            <template v-slot:body-cell-sum="props">
+                <q-td :props="props" @click.stop>
+                    {{ props.row.sum + ' ' + props.row.currency }}
+                </q-td>
+            </template>
+            <template v-slot:body-cell-delete="props">
+                <q-td :props="props" @click.stop>
+                    <DeleteButton @handle-delete="handleDelete(props.row.id)"/>
+                </q-td>
+            </template>
             <template v-slot:item="props">
                 <div
                     class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
@@ -31,10 +41,18 @@
                             <q-list dense>
                                 <q-item v-for="col in props.cols" :key="col.name">
                                     <q-item-section>
-                                        <q-item-label>{{ col.label }}</q-item-label>
+                                        <div v-if="col.name == 'delete'" @click.stop class="card-delete-wrapper">
+                                            <DeleteButton
+                                                @handle-delete="handleDelete(props.row.id)" 
+                                            />
+                                        </div>
+                                        <q-item-label v-else>{{ col.label }}</q-item-label>
                                     </q-item-section>
                                     <q-item-section side>
-                                        <q-item-label caption>{{ props.row[col.name] }}</q-item-label>
+                                        <q-item-label caption v-if="col.name == 'sum'">
+                                            {{ props.row[col.name] + ' ' + props.row.currency }}
+                                        </q-item-label>
+                                        <q-item-label caption v-else>{{ props.row[col.name] }}</q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -54,6 +72,7 @@ import { useDateFormat } from '@vueuse/core';
 import { useMainStore } from '@/store/main';
 import { useQuasar } from 'quasar';
 import useOpenAddIncomes from '@/composables/openAddIncome';
+import DeleteButton from '@/components/buttons/DeleteButton.vue';
 
 const api = useClient();
 const mainStore = useMainStore();
@@ -91,7 +110,7 @@ const columns = [
         sortable: true,
         sort: (a, b) => a - b
     },
-    {
+    /*{
         name: 'currency',
         required: true,
         label: 'Currency',
@@ -99,7 +118,7 @@ const columns = [
         field: row => row.currency,
         format: val => `${val}`,
         sortable: false,
-    },
+    },*/
     {
         name: 'date',
         required: true,
@@ -109,6 +128,12 @@ const columns = [
         format: val => `${val}`,
         sortable: true,
         sort: (a, b) => a - b
+    },
+    {
+        name: 'delete',
+        required: true,
+        label: 'Delete',
+        align: 'left'
     }
 ];
 
@@ -132,6 +157,20 @@ const handleRowClick = (e, row) => {
 };
 // end handle add expenses btn
 
+const handleDelete = async (id) => {
+    const { error } = await api(`/api/income/${id}/delete`).delete().json();
+    if (error.value) {
+
+    } else {
+        mainStore.state.usersIncomes[props.userId] = mainStore.state.usersIncomes[props.userId].reduce(function (acc, item) {
+            if (item.id !== id) {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
+    }
+};
+
 const loadCurrencies = async () => {
     if (mainStore.state.currencies) return;
     const { data, error } = await api('api/currencies').get().json();
@@ -154,7 +193,7 @@ const loadIncomes = async () => {
     incomes.value = [];
     userSum.value = 0;
     if (typeof mainStore.state.usersIncomes[props.userId] === 'undefined') {
-        const { data, error } = await api('api/' + props.userId + '/incomes').get().json();
+        const { data, error } = await api('api/income/user/' + props.userId).get().json();
         if (error.value) {
             return;
         } else {
