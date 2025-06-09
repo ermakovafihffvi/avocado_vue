@@ -1,19 +1,19 @@
 <template>
-    <q-btn flat rounded icon="o_add" color="primary" class="text-primary" @click="handleAddCurrency">
+    <q-btn flat rounded icon="o_add" color="primary" class="text-primary" @click="handleAdd">
         <span color="promary">category</span>
     </q-btn>
 </template>
 
 <script setup>
-import useOpenAddCurrency from '@/composables/openAddCurrency';
+import useOpenAddExpCategory from '@/composables/openAddExpCategory';
 import { useQuasar } from 'quasar';
 
 
 //handle add currency btn
 const $q = useQuasar();
-const openAddExpenses = useOpenAddCurrency($q);
-const handleAddCurrency = () => {
-    openAddExpenses.openModal();
+const openAdd = useOpenAddExpCategory($q);
+const handleAdd = () => {
+    openAdd.openModal();
 };
 // end handle add currency btn
 </script>

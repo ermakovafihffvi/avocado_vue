@@ -2,7 +2,14 @@
         <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
             <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' Income' : '' }}</h6>
-            <span class="text-h5 text-primary">{{ userSum }}</span>
+            <div class="column">
+                <span class="text-primary" :class="{ 'text-h5': !userSumsWOMax.length }">
+                    {{ userSum[maxUserSumKey] }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == maxUserSumKey)?.str_id }}
+                </span>
+                <span class="text-primary" v-for="value in userSumsWOMax">
+                    {{ value.value }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == value.key)?.str_id }}
+                </span>
+            </div>
         </div>
         <q-btn push color="primary" label="Add expense" @click="handleAddIncome" />
     </div>
@@ -65,7 +72,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
 import { useDateFormat } from '@vueuse/core';
@@ -85,9 +92,26 @@ const props = defineProps({
     userNameTitle: String
 });
 const loading = ref(true);
-const userSum = ref(0);
+const userSum = ref({});
 const incomes = ref(null);
 const initLoading = ref(true);
+
+const maxUserSumKey = computed(() => {
+    return Object.entries(userSum.value).reduce((max, [key, value]) => {
+        return value > userSum.value[max] ? key : max;
+    }, Object.keys(userSum.value)[0]);
+});
+const userSumsWOMax = computed(() => {
+    return Object.entries(userSum.value).reduce((acc, [key, value]) => {
+        if (key != maxUserSumKey.value) {
+            acc.push({
+                'key': key,
+                'value': value
+            });
+        }
+        return acc;
+    }, []);
+});
 
 const columns = [
     {
@@ -171,19 +195,9 @@ const handleDelete = async (id) => {
     }
 };
 
-const loadCurrencies = async () => {
-    if (mainStore.state.currencies) return;
-    const { data, error } = await api('api/currencies').get().json();
-    if (error.value) {
-
-    } else {
-        mainStore.state.currencies = data.value;
-    }
-};
-
 const prepareData = async () => {
     loading.value = true;
-    await loadCurrencies();
+    await mainStore.loadCurrencies();
     await loadIncomes();
     initLoading.value = false;
     loading.value = false;
@@ -191,7 +205,7 @@ const prepareData = async () => {
 
 const loadIncomes = async () => {
     incomes.value = [];
-    userSum.value = 0;
+    userSum.value = {};
     if (typeof mainStore.state.usersIncomes[props.userId] === 'undefined') {
         const { data, error } = await api('api/income/user/' + props.userId).get().json();
         if (error.value) {
@@ -201,7 +215,10 @@ const loadIncomes = async () => {
         }
     }
     mainStore.state.usersIncomes[props.userId].forEach((item) => {
-        userSum.value += Number(item.sum);
+        if (!userSum.value[item.currency_id]) {
+            userSum.value[item.currency_id] = 0;
+        }
+        userSum.value[item.currency_id] += Number(item.sum);
         incomes.value.push({
             id: item.id,
             desc: item.desc,

@@ -2,7 +2,14 @@
     <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
             <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' Expenses' : '' }}</h6>
-            <span class="text-h5 text-primary">{{ userSum }}</span>
+            <div class="column">
+                <span class="text-primary" :class="{ 'text-h5': !userSumsWOMax.length }">
+                    {{ userSum[maxUserSumKey] }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == maxUserSumKey)?.str_id }}
+                </span>
+                <span class="text-primary" v-for="value in userSumsWOMax">
+                    {{ value.value }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == value.key)?.str_id }}
+                </span>
+            </div>
         </div>
         <q-btn push color="primary" label="Add expense" @click="handleAddExpense" />
     </div>
@@ -36,7 +43,7 @@
                             :icon="props.expand ? 'remove' : 'add'" />
                     </q-td>
                     <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                        {{ col.value }}
+                        {{ col.name == 'name' ? col.value + ', ' + props.row.currency_str : col.value }}
                     </q-td>
                 </q-tr>
                 <q-tr v-show="props.expand" :props="props">
@@ -102,7 +109,7 @@
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
 import { useQuasar } from 'quasar';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useMainStore } from '@/store/main';
 import useOpenAddExpenses from '@/composables/openAddExpense';
 import { useDateFormat } from '@vueuse/core';
@@ -122,7 +129,25 @@ const loading = ref(true);
 const initLoading = ref(true);
 const expenses = ref({});
 const categories = ref([]);
-const userSum = ref(0);
+const userSum = ref({});
+
+const maxUserSumKey = computed(() => {
+    return Object.entries(userSum.value).reduce((max, [key, value]) => {
+        return value > userSum.value[max] ? key : max;
+    }, Object.keys(userSum.value)[0]);
+});
+const userSumsWOMax = computed(() => {
+    return Object.entries(userSum.value).reduce((acc, [key, value]) => {
+        if (key != maxUserSumKey.value) {
+            acc.push({
+                'key': key,
+                'value': value
+            });
+        }
+        return acc;
+    }, []);
+});
+
 const columns = [
   {
     name: 'name',
@@ -194,7 +219,7 @@ const subColumns = [
 
 const resetData = () => {
     expenses.value = {};
-    userSum.value = 0;
+    userSum.value = {};
     categories.value.forEach(item => item.sum = 0);
 };
 
@@ -204,7 +229,10 @@ const defineExpenses = () => {
         const category = categories.value.find(el => el.id == item.category_id);
         if (typeof category !== 'undefined') {
             category.sum += Number(item.sum);
-            userSum.value += Number(item.sum);
+            if (!userSum.value[category.currency_id]) {
+                userSum.value[category.currency_id] = 0;
+            }
+            userSum.value[category.currency_id] += Number(item.sum);
             if (!(item.category_id in expenses.value)) {
                 expenses.value[item.category_id] = [];
             }
@@ -252,7 +280,9 @@ const loadExpCategories = async () => {
                 str_id: element.str_id,
                 id: element.id,
                 sum: 0,
-                limit: element.limit
+                limit: element.limit,
+                currency_id: element.currency_id,
+                currency_str: mainStore.state.currencies.find(item => item.id == element.currency_id).str_id
             }
         );
     });
@@ -261,6 +291,7 @@ const loadExpCategories = async () => {
 
 const prepareData = async () => {
     loading.value = true;
+    await mainStore.loadCurrencies();
     await loadExpCategories();
     await loadExpenses();
     defineExpenses();
