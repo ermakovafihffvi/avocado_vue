@@ -13,11 +13,13 @@ export const useMainStore = defineStore('main', () => {
         currencies: null,
         expensesCategories: null,
         userStatsTab: 'expenses',
+        mainDashboardTab: 'savings',
         currentUser: null,
         usersExpenses: {},
         usersIncomes: {},
         savingCategories: null,
-        allExpensesCategoriesReloadable: null
+        allExpensesCategoriesReloadable: null,
+        xDate: 22
     });
 
     const api = useClient();

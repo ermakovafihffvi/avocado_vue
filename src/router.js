@@ -16,6 +16,7 @@ import ShowMainDashboard from '@/components/buttons/ShowMainDashboard.vue';
 import AddExpCategory from '@/components/buttons/AddExpCategory.vue';
 import SavingCategoriesHeader from '@/components/headers/SavingCategories.vue';
 import AddSavingCategory from '@/components/buttons/AddSavingCategory.vue';
+import MainDashboardHeader from '@/components/headers/MainDashboard.vue';
 
 const routes = [
     { 
@@ -70,6 +71,7 @@ const routes = [
         name: 'dashboards',
         component: MainDashboards,
         meta: {
+            title: MainDashboardHeader,
             layout: MainLayout,
             rightBtn: ShowMainDashboard
         }
