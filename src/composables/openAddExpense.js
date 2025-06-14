@@ -21,10 +21,10 @@ export default function useOpenAddExpenses (q) {
                 description: expense.description,
                 sum: expense.sum,
                 user_id: userId,
-                category_str: expense.category_str
+                category_id: expense.categoryId
             }).json();
             if (error.value) {
-
+                //TO DO
             } else {
                 if (expense.id) {
                     mainStore.state.usersExpenses[userId] = mainStore.state.usersExpenses[userId].reduce((acc, item) => {

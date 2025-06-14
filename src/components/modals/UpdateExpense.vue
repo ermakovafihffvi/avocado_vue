@@ -10,7 +10,7 @@
                 <q-card-section>
                     <q-select outlined v-model="category" :options="expCategories" label="Category" emit-value map-options/>
                     <q-input outlined v-model="description" label="Description" class="q-mt-lg"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || 'Description can contain only text']"
+                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
                     />
                     <q-input outlined v-model="sum" label="Sum" 
                         :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
@@ -47,7 +47,7 @@ import { computed, onMounted, ref } from 'vue';
 const props = defineProps({
     id: [Number, String],
     userId: [Number, String],
-    categoryStr: [Number, String],
+    categoryId: [Number, String],
     sum: [Number, String],
     description: String,
     date: String
@@ -66,14 +66,14 @@ const expCategories = computed(() => {
         if (!category.special) {
             result.push({
                 label: category.title,
-                value: category.str_id
+                value: category.id
             });
         }
         return result;
     }, []);
 });
 
-const category = ref(props.categoryStr ?? null);
+const category = ref(props.categoryId ?? null);
 const description = ref(props.description ?? '');
 const sum = ref(props.sum ?? null);
 const date = ref(null);
@@ -92,7 +92,7 @@ function onOKClick() {
     // call onDialogOK (with optional payload)
     onDialogOK({
         id: props.id,
-        category_str: category.value,
+        categoryId: category.value,
         description: description.value,
         sum: sum.value,
         date: date.value,

@@ -1,7 +1,7 @@
 <template>
     <LoadingSpinner v-if="loading" class="q-mt-lg"/>
     <div v-else>
-        <q-card bordered flat v-for="category in categories" class="category-card">
+        <q-card bordered flat v-for="category in categories" class="category-card" :key="category.id" :data-attr-key="category.id">
             <q-card-section>
                 <div class="row q-gutter-lg justify-between">
                     <q-input v-model="category.title" label="Title" style="flex: 1;" debounce="600"
@@ -12,16 +12,16 @@
                     </div>
                 </div>
                 <q-input v-model="category.str_id" readonly label="Str_id" debounce="600"
-                    :rules="[val => /^[a-zA-Z]+$/gm.test(val) && !categories.some(item => item.str_id === val.trim()) 
+                    :rules="[val => /^[a-zA-Z_]+$/gm.test(val) && !strIds.includes(val.trim()) 
                         || 'Str_id should be string and unique']"
                     @update:model-value="handleInput(category.id, 'str_id')"
                 />
                 <q-input v-model="category.limit" type="number" label="Limit" debounce="600"
-                    :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Limit must be a positive number']"
+                    :rules="[val => /^[0-9]+$/gm.test(val) || 'Limit must be a positive number']"
                     @update:model-value="handleInput(category.id, 'limit')"
                 />
                 <q-input v-model="category.desc" label="Description" debounce="600"
-                    :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || 'Description can contain only text']"
+                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || 'Description can contain only text']"
                     @update:model-value="handleInput(category.id, 'desc')"
                 />
                 <q-select v-model="category.currency_id" :options="currencies" label="Currency" emit-value map-options
@@ -79,6 +79,13 @@ const currencies = computed(() => {
     }, []);
 });
 
+const strIds = computed(() => {
+    return mainStore.state.allExpensesCategoriesReloadable?.reduce((acc, item) => {        
+        acc.push(item.str_id);
+        return acc;
+    }, []);
+});
+
 const handleInput = async (id, field) => {
     const category = categories.value.find(item => item.id == id);
     const { error } = await api(`api/expenses-category/${id}/update`).put({
@@ -89,6 +96,11 @@ const handleInput = async (id, field) => {
         //TO DO
     } else {
         mainStore.state.expensesCategories.forEach(item => {
+            if (item.id == id) {
+                item[field] = category[field];
+            }
+        });
+        mainStore.state.allExpensesCategoriesReloadable.forEach(item => {
             if (item.id == id) {
                 item[field] = category[field];
             }
@@ -113,7 +125,13 @@ const handleDelete = (id) => {
                 }
                 return acc;
             }, []);
-            mainStore.state.expensesCategories = mainStore.state.expensesCategories.reduce(function (acc, item) {
+            mainStore.state.expensesCategories = mainStore.state.expensesCategories?.reduce(function (acc, item) {
+                if (item.id != id) {
+                    acc.push(item);
+                }
+                return acc;
+            }, []);
+            mainStore.state.allExpensesCategoriesReloadable = mainStore.state.allExpensesCategoriesReloadable.reduce(function (acc, item) {
                 if (item.id != id) {
                     acc.push(item);
                 }
@@ -128,11 +146,18 @@ const handleDelete = (id) => {
 onMounted(async () => {
     loading.value = true;
     mainStore.loadCurrencies();
-    const { data, error } = await api('api/expense/categories?all=true').get().json();
-    if (error.value) {
-        console.log(error.value);
-    } else {
-        categories.value = data.value;
+    let loadedCategories = mainStore.state.allExpensesCategoriesReloadable;
+    if (!loadedCategories) {
+        const { data, error } = await api('api/expense/categories?all=true').get().json();
+        if (error.value) {
+            console.log(error.value);
+        } else {
+            loadedCategories = data.value;
+        }
+    } 
+    if (loadedCategories) {
+        categories.value = loadedCategories;
+        mainStore.state.allExpensesCategoriesReloadable = loadedCategories;
     }
     loading.value = false;
 });

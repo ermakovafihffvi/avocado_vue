@@ -241,7 +241,8 @@ const defineExpenses = () => {
                 id: item.id,
                 description: item.desc,
                 date: useDateFormat(item.created_at, 'YYYY-MM-DD'),
-                categoryStr: category.str_id
+                categoryStr: category.str_id,
+                categoryId: category.id
             });
         }
     });
@@ -282,7 +283,7 @@ const loadExpCategories = async () => {
                 sum: 0,
                 limit: element.limit,
                 currency_id: element.currency_id,
-                currency_str: mainStore.state.currencies.find(item => item.id == element.currency_id).str_id
+                currency_str: mainStore.state.currencies.find(item => item.id == element.currency_id)?.str_id
             }
         );
     });
@@ -320,7 +321,7 @@ const handleRowClick = (e, row) => {
         id: row.id,
         sum: row.sum,
         description: row.description,
-        categoryStr: row.categoryStr
+        categoryId: row.categoryId
     });
 };
 // end handle add expenses btn

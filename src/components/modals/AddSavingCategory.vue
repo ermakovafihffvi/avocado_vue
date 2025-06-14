@@ -3,7 +3,7 @@
         <q-card class="q-dialog-plugin">
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add expenses category</div>   
+                    <div class="text-h5 text-primary text-center">Add saving category</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
@@ -20,27 +20,6 @@
                     <q-input outlined v-model="desc" label="Description" debounce="600" class="q-mt-md"
                         :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
                     />
-
-                    <div class="q-mt-md">
-                        <q-toggle
-                            v-model="isActive"
-                            checked-icon="check"
-                            color="secondary"
-                            unchecked-icon="clear"
-                            label="Is Active"
-                            :true-value="1"
-                            :false-value="0"
-                        />
-                        <q-toggle
-                            v-model="special"
-                            checked-icon="check"
-                            color="accent"
-                            label="Is special"
-                            unchecked-icon="clear"
-                            :true-value="1"
-                            :false-value="0"
-                        />
-                    </div>
                 </q-card-section>
             </q-card>
 
@@ -73,8 +52,6 @@ const title = ref('');
 const strId = ref('');
 const currencySelected = ref(null);
 const desc = ref('');
-const isActive = ref(1);
-const special = ref(0);
 const limit = ref(0);
 //end new currency
 
@@ -85,7 +62,7 @@ const isOkDisabled = computed(() => {
 });
 
 const strIds = computed(() => {
-    return mainStore.state.allExpensesCategoriesReloadable?.reduce((acc, item) => {        
+    return mainStore.state.savingCategories?.reduce((acc, item) => {        
         acc.push(item.str_id);
         return acc;
     }, []);
@@ -111,8 +88,6 @@ function onOKClick() {
         str_id: strId.value,
         currency: currencySelected.value,
         desc: desc.value,
-        isActive: isActive.value,
-        special: special.value,
         limit: limit.value
     });
     // or with payload: onDialogOK({ ... })
@@ -120,12 +95,12 @@ function onOKClick() {
 };
 
 onMounted(async () => {
-    if (!mainStore.state.allExpensesCategoriesReloadable) {
-        const { data, error } = await api('api/expense/categories?all=true').get().json();
+    if (!mainStore.state.savingCategories) {
+        const { data, error } = await api('api/saving/categories').get().json();
         if (error.value) {
             console.log(error.value);
         } else {
-            mainStore.state.allExpensesCategoriesReloadable = data.value;
+            mainStore.state.savingCategories = data.value;
         }
     }
 });

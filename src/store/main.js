@@ -16,7 +16,8 @@ export const useMainStore = defineStore('main', () => {
         currentUser: null,
         usersExpenses: {},
         usersIncomes: {},
-        savingCategories: null
+        savingCategories: null,
+        allExpensesCategoriesReloadable: null
     });
 
     const api = useClient();

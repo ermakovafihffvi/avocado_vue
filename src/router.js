@@ -13,7 +13,9 @@ import SavingsCategories from '@/components/SavingsCategories.vue';
 import ExpensesCategoriesHeader from '@/components/headers/ExpensesCategories.vue';
 import MainDashboards from '@/components/MainDashboards.vue';
 import ShowMainDashboard from '@/components/buttons/ShowMainDashboard.vue';
-import AddExpCategory from './components/buttons/AddExpCategory.vue';
+import AddExpCategory from '@/components/buttons/AddExpCategory.vue';
+import SavingCategoriesHeader from '@/components/headers/SavingCategories.vue';
+import AddSavingCategory from '@/components/buttons/AddSavingCategory.vue';
 
 const routes = [
     { 
@@ -57,9 +59,10 @@ const routes = [
         name: 'category_savings',
         component: SavingsCategories,
         meta: {
+            title: SavingCategoriesHeader,
             layout: MainLayout,
             rightBtn: ShowMainDashboard,
-            leftBtn: AddExpCategory
+            leftBtn: AddSavingCategory
         }
     },
     {

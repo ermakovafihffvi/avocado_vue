@@ -9,7 +9,7 @@
                 <q-separator inset />
                 <q-card-section>
                     <q-input outlined v-model="description" label="Description" class="q-mt-lg"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || 'Description can contain only text']"
+                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
                     />
                     <q-input outlined v-model="sum" label="Sum" 
                         :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
