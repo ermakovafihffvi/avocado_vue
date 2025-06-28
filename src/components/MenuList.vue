@@ -42,14 +42,14 @@
         <q-item
             clickable
             v-ripple
-            :active="link === 'category_savings'"
-            @click="menuItemClickHandle('category_savings')"
+            :active="link === 'category_states'"
+            @click="menuItemClickHandle('category_states')"
             active-class="active-menu-link"
         >
             <q-item-section avatar>
-                <q-icon name="savings" />
+                <q-icon name="paid" />
             </q-item-section>
-            <q-item-section>Savings Categories</q-item-section>
+            <q-item-section>States Categories</q-item-section>
         </q-item>
 
         <q-item

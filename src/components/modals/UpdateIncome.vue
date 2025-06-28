@@ -19,10 +19,10 @@
                         <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                <q-date v-model="date" minimal>
-                                <div class="row items-center justify-end">
-                                    <q-btn v-close-popup label="Close" color="primary" flat />
-                                </div>
+                                <q-date v-model="date" minimal :options="dateOptions">
+                                    <div class="row items-center justify-end">
+                                        <q-btn v-close-popup label="Close" color="primary" flat />
+                                    </div>
                                 </q-date>
                             </q-popup-proxy>
                             </q-icon>
@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+import { getAvailableDates } from '@/composables/getAvailableDates';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
@@ -82,6 +83,12 @@ const currencies = computed(() => {
         return result;
     }, []);
 });
+
+const dateOptions = (date) => {
+    const { prevStr, nextStr } = getAvailableDates();
+        
+    return date <= nextStr && date >= prevStr;
+};
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 // this is part of our example (so not required)

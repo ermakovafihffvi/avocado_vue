@@ -18,6 +18,10 @@ import '@quasar/extras/animate/fadeOut.css'
 
 // Import Quasar css
 import 'quasar/src/css/index.sass'
+
+// Datepicker
+import '@vuepic/vue-datepicker/dist/main.css';
+
 import App from './App.vue'
 
 import router from './router';

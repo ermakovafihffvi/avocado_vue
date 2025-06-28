@@ -19,7 +19,8 @@ export const useMainStore = defineStore('main', () => {
         usersIncomes: {},
         savingCategories: null,
         allExpensesCategoriesReloadable: null,
-        xDate: 22
+        xDate: 22,
+        stateCategories: null
     });
 
     const api = useClient();
@@ -57,10 +58,21 @@ export const useMainStore = defineStore('main', () => {
         }
     };
 
+    const loadStateCategories = async () => {
+        if (!state.categories) {
+            const { data, error } = await api('api/state/categories').get().json();
+            if (error.value) {
+                //error
+            }
+            state.stateCategories = data.value;
+        }
+    };
+
     return {
         state,
         getCurrentUser,
         loadExpCategories,
-        loadCurrencies
+        loadCurrencies,
+        loadStateCategories
     };
 });

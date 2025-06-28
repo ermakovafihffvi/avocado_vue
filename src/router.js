@@ -17,6 +17,11 @@ import AddExpCategory from '@/components/buttons/AddExpCategory.vue';
 import SavingCategoriesHeader from '@/components/headers/SavingCategories.vue';
 import AddSavingCategory from '@/components/buttons/AddSavingCategory.vue';
 import MainDashboardHeader from '@/components/headers/MainDashboard.vue';
+import AddState from './components/buttons/AddState.vue';
+import SavingFix from './components/SavingFix.vue';
+import StateCategories from './components/StateCategories.vue';
+import AddStateCategory from './components/buttons/AddStateCategory.vue';
+import StateCategoriesHeader from './components/headers/StateCategories.vue';
 
 const routes = [
     { 
@@ -67,10 +72,22 @@ const routes = [
         }
     },
     {
+        path: '/category_states',
+        name: 'category_states',
+        component: StateCategories,
+        meta: {
+            title: StateCategoriesHeader,
+            layout: MainLayout,
+            rightBtn: ShowMainDashboard,
+            leftBtn: AddStateCategory
+        }
+    },
+    {
         path: '/dashboards',
         name: 'dashboards',
         component: MainDashboards,
         meta: {
+            leftBtn: AddState,
             title: MainDashboardHeader,
             layout: MainLayout,
             rightBtn: ShowMainDashboard
@@ -83,6 +100,15 @@ const routes = [
         meta: {
             layout: MainLayout,
             title: UserStatsHeader,
+            rightBtn: ShowMainDashboard
+        }
+    },
+    {
+        path: '/add_state',
+        name: 'add_state',
+        component: SavingFix,
+        meta: {
+            layout: MainLayout,
             rightBtn: ShowMainDashboard
         }
     }
