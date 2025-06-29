@@ -21,3 +21,21 @@ export const getAvailableDates = () => {
         };
     }
 };
+
+export const getDateRange = (monthPeriod) => {
+    const now = new Date();
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(now.getMonth() - monthPeriod);
+
+    const dateRange = [];
+    dateRange[1] = {
+        "month": now.getMonth(),
+        "year": now.getFullYear()
+    };
+    dateRange[0] = {
+        "month": sixMonthsAgo.getMonth(),
+        "year": sixMonthsAgo.getFullYear()
+    };
+
+    return dateRange;
+};

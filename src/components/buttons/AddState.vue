@@ -8,6 +8,6 @@
 import router from '@/router';
 
 const handleAdd = () => {
-    router.push('add_state');    
+    router.push({name: 'add_state'});    
 };
 </script>

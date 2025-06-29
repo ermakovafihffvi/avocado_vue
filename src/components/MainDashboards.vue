@@ -31,6 +31,7 @@ import Expenses from './dashboards/Expenses.vue';
 import Incomes from './dashboards/Incomes.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { onMounted, ref } from 'vue';
+import { getDateRange } from '@/composables/getAvailableDates';
 
 const mainStore = useMainStore();
 
@@ -38,30 +39,21 @@ const dateRange = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
-    const now = new Date();
-    const sixMonthsAgo = new Date(now);
-    sixMonthsAgo.setMonth(now.getMonth() - 5);
-
-    dateRange.value[1] = {
-        "month": now.getMonth(),
-        "year": now.getFullYear()
-    };
-    dateRange.value[0] = {
-        "month": sixMonthsAgo.getMonth(),
-        "year": sixMonthsAgo.getFullYear()
-    };
+    dateRange.value = getDateRange(5);
     await mainStore.loadCurrencies();
     loading.value = false;
 });
 </script>
 
 <style lang="scss" scoped>
-//TO DO 29.06:
+//TO DO 30.06:
 //styles for mobile dashboards
-//saving states
 //states dashboard
 //validation (optional)
+//requests validation all
 //currency setting for expenses dashboard and incomes!!!
+//periodic expenses !!!
+//add date limit for requests where neccessary
 .category-card {
     margin-bottom: 20px;
     margin-right: auto;

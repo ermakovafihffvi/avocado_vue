@@ -61,7 +61,7 @@ const strIds = computed(() => {
 
 const handleInput = async (id, field) => {
     const category = categories.value.find(item => item.id == id);
-    const { error } = await api(`api/state/${id}/update`).put({
+    const { error } = await api(`api/state/category/${id}/update`).put({
         field: field,
         value: category[field]
     }).json();
@@ -83,7 +83,7 @@ const handleDelete = (id) => {
         cancel: true,
         persistent: true
     }).onOk(async () => {
-        const { error } = await api(`api/state/${id}/delete`).delete().json();
+        const { error } = await api(`api/state/category/${id}/delete`).delete().json();
         if (error.value) {
             console.log(error.value)
         } else {

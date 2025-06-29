@@ -9,6 +9,6 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const handleRightBtn = () => {
-    router.push('dashboards');
+    router.push({name: 'dashboards'});
 };
 </script>

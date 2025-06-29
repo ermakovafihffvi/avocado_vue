@@ -3,22 +3,15 @@
 </template>
 
 <script setup>
-import useClient from '@/api/useClient';
-import { onMounted } from 'vue';
+import { useMainStore } from '@/store/main';
+import { computed, onMounted } from 'vue';
 
-const api = useClient();
+const mainStore = useMainStore();
 const props = defineProps(['dateRange']);
 
-onMounted(async () => {
-    const { data, error } = await api('api/dashboard/last_states').post({
-        date: props.dateRange
-    }).json();
-    if (error.value) {
-        console.error(error.value);
-        //TO DO
-    } else {
-        console.log(data.value);
-    }
+const states = computed(() => mainStore.state.states);
 
+onMounted(async () => {
+    await mainStore.loadCurrentStates(props.dateRange);
 });
 </script>

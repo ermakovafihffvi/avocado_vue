@@ -16,7 +16,7 @@ export default function useOpenAddStateCategory (q) {
             // props forwarded to your custom component
             componentProps: props
         }).onOk(async (category) => {
-            const { data, error } = await api('api/state/add').post({
+            const { data, error } = await api('api/state/category/add').post({
                 title: category.title,
                 str_id: category.str_id,
                 desc: category.desc,

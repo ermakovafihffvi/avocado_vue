@@ -20,7 +20,8 @@ export const useMainStore = defineStore('main', () => {
         savingCategories: null,
         allExpensesCategoriesReloadable: null,
         xDate: 22,
-        stateCategories: null
+        stateCategories: null,
+        states: null
     });
 
     const api = useClient();
@@ -68,11 +69,26 @@ export const useMainStore = defineStore('main', () => {
         }
     };
 
+    const loadCurrentStates = async (dateRange) => {
+        //TO DO check if there is data for this range
+        const { data, error } = await api('api/dashboard/last_states').post({
+            date: dateRange
+        }).json();
+        if (error.value) {
+            console.error(error.value);
+            //TO DO
+        } else {
+            console.log(data.value);
+            state.states = data.value;
+        }
+    };
+
     return {
         state,
         getCurrentUser,
         loadExpCategories,
         loadCurrencies,
-        loadStateCategories
+        loadStateCategories,
+        loadCurrentStates
     };
 });
