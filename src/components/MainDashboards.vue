@@ -51,7 +51,7 @@ onMounted(async () => {
 //states dashboard
 //validation (optional)
 //requests validation all
-//currency setting for expenses dashboard and incomes!!!
+//currency setting for expenses dashboard and incomes and savings!!!
 //periodic expenses !!!
 //add date limit for requests where neccessary
 .category-card {
