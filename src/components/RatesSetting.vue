@@ -31,7 +31,6 @@ const api = useClient();
 const currencies = ref(null);
 
 const handleInput = async (value, currency, field) => {
-    console.log(currency[field]);
     if (currency[field].hasError) {
         return;
     }

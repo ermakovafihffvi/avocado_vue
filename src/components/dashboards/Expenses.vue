@@ -5,13 +5,13 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
-import { useDateFormat } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';
 import ApexCharts from 'apexcharts';
+import { getPeriodsList } from '@/composables/getAvailableDates';
 
 
 const api = useClient();
-const props = defineProps(['dateRange']);
+const props = defineProps(['dateRange', 'selectedCurrency']);
 const mainStore = useMainStore();
 
 const loadedData = ref();
@@ -29,20 +29,7 @@ const loadData = async () => {
 };
 
 const buildGraph = () => {
-    const months = [];
-    let monthIndex = props.dateRange[0]['month'];
-    let yearIndex = props.dateRange[0]['year'];
-    while (yearIndex < props.dateRange[1]['year'] || (yearIndex === props.dateRange[1]['year'] && monthIndex <= props.dateRange[1]['month'])) {
-        const date = new Date(yearIndex, monthIndex, 1);
-        const formatted = useDateFormat(date, 'YYYY-MMM', { locale: 'en-US' });
-        months.push(formatted.value);
-
-        monthIndex++;
-        if (monthIndex > 11) {
-            monthIndex = 0;
-            yearIndex++;
-        }
-    }
+    const months = getPeriodsList(props.dateRange).map(el => Object.values(el));
 
     const series = [];
     loadedData.value.categories.forEach(category => {
@@ -56,7 +43,8 @@ const buildGraph = () => {
             });
 
             const value = _categoryData.reduce((acc, item) => {
-                acc = Number(acc) + (Number(item.sum_amount) / mainStore.state.currencies.find(c => c.id == category.currency_id).rate);
+                const rate = mainStore.state.currencies.find(c => c.id == category.currency_id).rate ?? 1;
+                acc = Number(acc) + (Number(item.sum_amount) / rate * props.selectedCurrency.rate);
                 return Number(acc).toFixed(2);
             }, 0);
             categoryData.push(Number(value).toFixed(2));
@@ -116,7 +104,7 @@ const buildGraph = () => {
         },
         xaxis: {
             type: 'category',
-            categories: months,
+            categories: months
         },
         legend: {
             position: 'right',
@@ -145,6 +133,14 @@ onMounted(() => {
 
 watch(
     () => props.dateRange,
+    () => {
+        prepareGraph();
+    },
+    { deep: true }
+);
+
+watch(
+    () => props.selectedCurrency,
     () => {
         prepareGraph();
     },

@@ -1,3 +1,5 @@
+import { useDateFormat } from '@vueuse/core';
+
 export const getAvailableDates = () => {
     const today = new Date();
 
@@ -38,4 +40,24 @@ export const getDateRange = (monthPeriod) => {
     };
 
     return dateRange;
+};
+
+export const getPeriodsList = (dateRange) => {
+    const months = [];
+    let monthIndex = dateRange[0]['month'];
+    let yearIndex = dateRange[0]['year'];
+    while (yearIndex < dateRange[1]['year'] || (yearIndex === dateRange[1]['year'] && monthIndex <= dateRange[1]['month'])) {
+        const date = new Date(yearIndex, monthIndex, 1);
+        const formatted = useDateFormat(date, 'YYYY-MMM', { locale: 'en-US' });
+        months.push({
+            [yearIndex + '-' + String(monthIndex + 1).padStart(2, '0')]: formatted.value
+        });
+
+        monthIndex++;
+        if (monthIndex > 11) {
+            monthIndex = 0;
+            yearIndex++;
+        }
+    }
+    return months;
 };

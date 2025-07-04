@@ -9,7 +9,7 @@ import { onMounted, ref, watch } from 'vue';
 import ApexCharts from 'apexcharts';
 import { useMainStore } from '@/store/main';
 
-const props = defineProps(['dateRange']);
+const props = defineProps(['dateRange', 'selectedCurrency']);
 const mainStore = useMainStore();
 const api = useClient();
 
@@ -56,7 +56,8 @@ const buildGraph = () => {
             });
 
             const value = _userData.reduce((acc, item) => {
-                acc = Number(acc) + (Number(item.total_income) / mainStore.state.currencies.find(c => c.id == item.currency_id).rate);
+                const rate = mainStore.state.currencies.find(c => c.id == item.currency_id).rate ?? 1;
+                acc = Number(acc) + (Number(item.total_income) / rate * props.selectedCurrency.rate);
                 return Number(acc).toFixed(2);
             }, 0);
             totalSerie[index] = totalSerie[index] ? Number(Number(totalSerie[index]) + Number(value)).toFixed(2) : Number(value).toFixed(2); 
@@ -112,7 +113,7 @@ const buildGraph = () => {
         },
         yaxis: {
           title: {
-            text: 'Incomes, $'
+            text: 'Incomes, ' + props.selectedCurrency.str_id
           }
         },
         fill: {
@@ -138,6 +139,14 @@ onMounted(() => {
 
 watch(
     () => props.dateRange, 
+    () => {
+        prepareData();
+    },
+    { deep: true }
+);
+
+watch(
+    () => props.selectedCurrency, 
     () => {
         prepareData();
     },
