@@ -8,8 +8,9 @@ import { useMainStore } from '@/store/main';
 import { onMounted, ref, watch } from 'vue';
 import ApexCharts from 'apexcharts';
 import { getPeriodsList } from '@/composables/getAvailableDates';
+import { useQuasar } from 'quasar';
 
-
+const $q = useQuasar();
 const api = useClient();
 const props = defineProps(['dateRange', 'selectedCurrency']);
 const mainStore = useMainStore();
@@ -22,8 +23,11 @@ const loadData = async () => {
         date: props.dateRange
     }).json();
     if (error.value) {
-        console.error(error.value);
-        //TO DO
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
     }
     loadedData.value = data.value;
 };
@@ -66,13 +70,13 @@ const buildGraph = () => {
         series: series,
         chart: {
             type: 'bar',
-            height: 350,
+            height: 650,
             stacked: true,
             toolbar: {
                 show: true
             },
             zoom: {
-                enabled: false
+                enabled: true
             }
         },
         responsive: [{
@@ -117,6 +121,7 @@ const buildGraph = () => {
 
     if (chart.value) {
         chart.value.destroy();
+        document.querySelector('#chart-expenses').innerHTML = '';
     }
     chart.value = new ApexCharts(document.querySelector('#chart-expenses'), options);
     chart.value.render();

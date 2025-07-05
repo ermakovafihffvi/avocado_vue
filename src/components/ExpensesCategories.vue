@@ -21,7 +21,7 @@
                     @update:model-value="handleInput(category.id, 'limit')"
                 />
                 <q-input v-model="category.desc" label="Description" debounce="600"
-                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || 'Description can contain only text']"
+                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027, ]+$/gm.test(val) || !val) || 'Description can contain only text']"
                     @update:model-value="handleInput(category.id, 'desc')"
                 />
                 <q-select v-model="category.currency_id" :options="currencies" label="Currency" emit-value map-options
@@ -93,8 +93,17 @@ const handleInput = async (id, field) => {
         value: category[field]
     }).json();
     if (error.value) {
-        //TO DO
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
     } else {
+        $q.notify({
+            type: 'positive',
+            message: 'Expenses category has been successfully updated',
+            color: 'positive'
+        });
         mainStore.state.expensesCategories.forEach(item => {
             if (item.id == id) {
                 item[field] = category[field];
@@ -117,8 +126,17 @@ const handleDelete = (id) => {
     }).onOk(async () => {
         const { error } = await api(`api/expenses-category/${id}/delete`).delete().json();
         if (error.value) {
-            console.log(error.value)
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
+            $q.notify({
+                type: 'positive',
+                message: 'Expenses category has been successfully updated',
+                color: 'positive'
+            });
             categories.value = categories.value.reduce(function (acc, item) {
                 if (item.id != id) {
                     acc.push(item);
@@ -150,7 +168,11 @@ onMounted(async () => {
     if (!loadedCategories) {
         const { data, error } = await api('api/expense/categories?all=true').get().json();
         if (error.value) {
-            console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
             loadedCategories = data.value;
         }

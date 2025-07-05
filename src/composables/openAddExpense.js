@@ -1,9 +1,11 @@
 import useClient from "@/api/useClient";
 import UpdateExpense from "@/components/modals/UpdateExpense.vue";
 import { useMainStore } from "@/store/main";
+import { useQuasar } from "quasar";
 
 export default function useOpenAddExpenses (q) {
 
+    const $q = useQuasar();
     const api = useClient();
     const mainStore = useMainStore();
 
@@ -21,11 +23,22 @@ export default function useOpenAddExpenses (q) {
                 description: expense.description,
                 sum: expense.sum,
                 user_id: userId,
-                category_id: expense.categoryId
+                category_id: expense.categoryId,
+                repeatable: expense.repeatable,
+                repeat_times: expense.repeatTimes
             }).json();
             if (error.value) {
-                //TO DO
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Expense has been successfully updated',
+                    color: 'positive'
+                });
                 if (expense.id) {
                     mainStore.state.usersExpenses[userId] = mainStore.state.usersExpenses[userId].reduce((acc, item) => {
                         if (item.id == data.value.id) {

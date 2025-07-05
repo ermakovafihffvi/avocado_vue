@@ -20,8 +20,8 @@
         </q-select>
     </div>
     <q-tab-panels v-model="mainStore.state.mainDashboardTab" animated class="shadow-4 rounded-borders tab-wrapper" v-if="!loading">
-        <q-tab-panel name="savings">
-            <Savings :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
+        <q-tab-panel name="states">
+            <States :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
         </q-tab-panel>
 
         <q-tab-panel name="expenses">
@@ -37,7 +37,7 @@
 
 <script setup>
 import { useMainStore } from '@/store/main';
-import Savings from './dashboards/Savings.vue';
+import States from './dashboards/States.vue';
 import Expenses from './dashboards/Expenses.vue';
 import Incomes from './dashboards/Incomes.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -62,11 +62,9 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-//TO DO 30.06:
-//styles for mobile dashboards !!!
+//TO DO 06.07:
 //validation centralize (optional)
 //requests validation all
-//currency setting for expenses dashboard and incomes and savings!!!
 //periodic expenses !!!
 //add date limit for requests where neccessary
 .category-card {

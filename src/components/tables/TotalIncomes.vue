@@ -44,9 +44,11 @@ import LoadingSpinner from '../base/LoadingSpinner.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 
 const api = useClient();
 const mainStore = useMainStore();
+const $q = useQuasar();
 
 const loading = ref(true);
 const incomes = ref(null);
@@ -72,8 +74,12 @@ const loadingTotalIncomes = async () => {
     loading.value = true;
     const { data, error } = await api('api/income/total').get().json();
     if (error.value) {
-        //error
-        //console.log(error);
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+        return;
     } 
     incomes.value = data.value;
     loading.value = false;

@@ -98,12 +98,14 @@
 import useClient from '@/api/useClient';
 import router from '@/router';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const api = useClient();
 const mainStore = useMainStore();
 const route = useRoute();
+const $q = useQuasar();
 
 const expanded_users = ref(true);
 const link = ref('home');
@@ -118,8 +120,11 @@ const menuItemClickHandle = (routeName, params = null) => {
 const loadUserList = async () => {
     const { data, error } = await api('api/users-list').get().json();
     if (error.value) {
-        //error
-        //console.log(error.value);
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
         return;
     }
     mainStore.state.users = users.value = Array.from(data.value);

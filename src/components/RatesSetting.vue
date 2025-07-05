@@ -24,8 +24,10 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
 
+const $q = useQuasar();
 const mainStore = useMainStore();
 const api = useClient();
 const currencies = ref(null);
@@ -40,9 +42,18 @@ const handleInput = async (value, currency, field) => {
     };
     const { error } = await api('api/' + requestCurrency.id + '/set-rate').post(requestCurrency).json();
     if (error.value) {
-        console.log(error);
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
         return;
     } else {
+        $q.notify({
+            type: 'positive',
+            message: 'Currency has been successfully set',
+            color: 'positive'
+        });
         mainStore.state.currencies.map((item) => {
             if (item.id == requestCurrency.id) {
                 item[field] = value;

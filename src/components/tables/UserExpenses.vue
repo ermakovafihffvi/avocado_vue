@@ -115,6 +115,7 @@ import useOpenAddExpenses from '@/composables/openAddExpense';
 import { useDateFormat } from '@vueuse/core';
 import DeleteButton from '@/components/buttons/DeleteButton.vue';
 
+const $q = useQuasar();
 const api = useClient();
 const mainStore = useMainStore();
 const props = defineProps({
@@ -254,8 +255,11 @@ const loadExpenses = async () => {
     if (typeof mainStore.state.usersExpenses[props.userId] === 'undefined' || mainStore.state.usersExpenses[props.userId] == 'null') {
         const { data, error } = await api('api/expense/user/' + props.userId + '/?special=0').get().json();
         if (error.value) {
-            //error
-            //console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
             mainStore.state.usersExpenses[props.userId] = data.value;
         }
@@ -269,8 +273,11 @@ const loadExpCategories = async () => {
     if (!mainStore.state.expensesCategories) {
         const { data, error } = await api('api/expense/categories?special=0').get().json();
         if (error.value) {
-            //error
-            //console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         }
         mainStore.state.expensesCategories = data.value;
     }
@@ -307,7 +314,6 @@ const prepareData = async () => {
 };
 
 //handle add expenses btn
-const $q = useQuasar();
 const openAddExpenses = useOpenAddExpenses($q);
 const handleAddExpense = () => {
     openAddExpenses.openModal({

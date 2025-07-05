@@ -104,7 +104,7 @@ const routes = [
         }
     },
     {
-        path: '/add_state',
+        path: '/add_state/:id?/:user_id?/:pseudo_month?',
         name: 'add_state',
         component: SavingFix,
         meta: {

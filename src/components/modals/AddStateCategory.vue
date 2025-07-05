@@ -31,12 +31,13 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
 
 const props = defineProps({});
 const mainStore = useMainStore();
 const api = useClient();
+const $q = useQuasar();
 
 defineEmits([
     // REQUIRED; need to specify some events that your
@@ -92,7 +93,11 @@ onMounted(async () => {
     if (!mainStore.state.stateCategories) {
         const { data, error } = await api('api/state/categories').get().json();
         if (error.value) {
-            console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
             mainStore.state.stateCategories = data.value;
         }

@@ -1,11 +1,14 @@
 import useClient from "@/api/useClient";
 import AddExpCategory from "@/components/modals/AddExpCategory.vue";
 import { useMainStore } from "@/store/main";
+import { scroll, useQuasar } from "quasar";
 
 export default function useOpenAddExpCategory (q) {
 
     const api = useClient();
     const mainStore = useMainStore();
+    const $q = useQuasar();
+    const { getScrollTarget, setVerticalScrollPosition } = scroll;
 
     const openModal = (props = {}) => {
         q.dialog({
@@ -24,9 +27,18 @@ export default function useOpenAddExpCategory (q) {
                 currency: category.currency
             }).json();
             if (error.value) {
-                console.log(error.value);
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
                 return;
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Expenses category has been successfully added',
+                    color: 'positive'
+                });
                 mainStore.state.allExpensesCategoriesReloadable.push(data.value);
                 if (category.isActive && !category.special) {
                     mainStore.state.expensesCategories?.push(data.value);

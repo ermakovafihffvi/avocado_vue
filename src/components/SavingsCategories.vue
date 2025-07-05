@@ -70,8 +70,17 @@ const handleInput = async (id, field) => {
         value: category[field]
     }).json();
     if (error.value) {
-        //TO DO
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
     } else {
+        $q.notify({
+            type: 'positive',
+            message: 'Saving category has been successfully updated',
+            color: 'positive'
+        });
         mainStore.state.savingCategories.forEach(item => {
             if (item.id == id) {
                 item[field] = category[field];
@@ -89,8 +98,17 @@ const handleDelete = (id) => {
     }).onOk(async () => {
         const { error } = await api(`api/savings-category/${id}/delete`).delete().json();
         if (error.value) {
-            console.log(error.value)
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
+            $q.notify({
+                type: 'positive',
+                message: 'Saving category has been successfully deleted',
+                color: 'positive'
+            });
             categories.value = categories.value.reduce(function (acc, item) {
                 if (item.id != id) {
                     acc.push(item);
@@ -116,7 +134,11 @@ onMounted(async () => {
     if (!loadedCategories) {
         const { data, error } = await api('api/saving/categories').get().json();
         if (error.value) {
-            console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
             loadedCategories = data.value;
         }

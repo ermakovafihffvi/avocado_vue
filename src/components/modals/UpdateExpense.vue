@@ -29,6 +29,13 @@
                         </template>
                     </q-input>
                 </q-card-section>
+                <q-separator inset />
+                <q-card-section>
+                    <q-select outlined v-model="repeatable" :options="repeatableOptions" emit-value map-options option-value="str" option-label="title"/>
+                    <q-input v-if="repeatable == 'x-times'" outlined v-model="repeatTimes" label="Repeat X times" class="q-mt-lg"
+                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
+                    />
+                </q-card-section>
             </q-card>
 
             <q-card-actions align="right">
@@ -85,11 +92,29 @@ const dateOptions = (date) => {
     return date <= nextStr && date >= prevStr;
 };
 
+const repeatableOptions = ref([
+    {
+        'str': 'no-repeat',
+        'title': 'no repeats'
+    },
+    {
+        'str': 'every-month',
+        'title': 'every month'
+    },
+    {
+        'str': 'x-times',
+        'title': 'repeat X times'
+    }
+]);
+const repeatable = ref('no-repeats');
+const repeatTimes = ref();
+
 const isOkDisabled = computed(() => {
     return !category.value || category.value.hasError 
         || !description.value || description.value.hasError 
         || !sum.value || sum.value.hasError
-        || !date.value || date.value.hasError;
+        || !date.value || date.value.hasError
+        || (repeatable.value == 'x-times' && (!repeatTimes.value || repeatTimes.value.hasError));
 });
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
@@ -103,7 +128,9 @@ function onOKClick() {
         description: description.value,
         sum: sum.value,
         date: date.value,
-        user_id: props.userId
+        user_id: props.userId,
+        repeatable: repeatable.value,
+        repeatTimes: repeatTimes.value
     });
     // or with payload: onDialogOK({ ... })
     // ...and it will also hide the dialog automatically

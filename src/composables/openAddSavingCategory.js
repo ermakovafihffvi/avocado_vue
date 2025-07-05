@@ -1,10 +1,11 @@
 import useClient from "@/api/useClient";
 import AddSavingCategory from "@/components/modals/AddSavingCategory.vue";
 import { useMainStore } from "@/store/main";
-import { scroll } from 'quasar';
+import { scroll, useQuasar } from 'quasar';
 
 export default function useOpenAddSavingCategory (q) {
 
+    const $q = useQuasar();
     const api = useClient();
     const mainStore = useMainStore();
     const { getScrollTarget, setVerticalScrollPosition } = scroll;
@@ -23,10 +24,19 @@ export default function useOpenAddSavingCategory (q) {
                 limit: category.limit,
                 currency: category.currency
             }).json();
-            if (error.value) {
-                console.log(error.value);
+            if (error.value) {                
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
                 return;
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Saving category has been successfully added',
+                    color: 'positive'
+                });
                 mainStore.state.savingCategories.push(data.value);
                 setTimeout(() => {
                     const scrollTargetElement = getScrollTarget(document.querySelector('div[data-attr-key="' + data.value.id + '"]'));

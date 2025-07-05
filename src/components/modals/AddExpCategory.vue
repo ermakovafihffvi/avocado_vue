@@ -55,12 +55,13 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
 
 const props = defineProps({});
 const mainStore = useMainStore();
 const api = useClient();
+const $q = useQuasar();
 
 defineEmits([
     // REQUIRED; need to specify some events that your
@@ -123,7 +124,11 @@ onMounted(async () => {
     if (!mainStore.state.allExpensesCategoriesReloadable) {
         const { data, error } = await api('api/expense/categories?all=true').get().json();
         if (error.value) {
-            console.log(error.value);
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
             mainStore.state.allExpensesCategoriesReloadable = data.value;
         }

@@ -7,7 +7,7 @@
         align="justify" 
         narrow-indicator
     >
-        <q-tab name="savings" label="Savings" />
+        <q-tab name="states" label="States" />
         <q-tab name="expenses" label="Expenses" />
         <q-tab name="incomes" label="Incomes" />
     </q-tabs>

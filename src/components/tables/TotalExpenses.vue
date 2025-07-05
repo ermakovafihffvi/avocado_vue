@@ -74,7 +74,9 @@ import useClient from '@/api/useClient';
 import { computed, onMounted, ref } from 'vue';
 import LoadingSpinner from '../base/LoadingSpinner.vue';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const api = useClient();
 const mainStore = useMainStore();
 const loading = ref(true);
@@ -144,8 +146,12 @@ const loadTotalExpenses = async () => {
     loading.value = true;
     const { data, error } = await api('api/expense/total').get().json();
     if (error.value) {
-        //error
-        //console.log(error.value);
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+        return;
     }
     expenses.value = data.value;
     loading.value = false;

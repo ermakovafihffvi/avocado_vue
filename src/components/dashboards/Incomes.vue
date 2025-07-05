@@ -8,7 +8,9 @@ import { useDateFormat } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';
 import ApexCharts from 'apexcharts';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const props = defineProps(['dateRange', 'selectedCurrency']);
 const mainStore = useMainStore();
 const api = useClient();
@@ -22,7 +24,11 @@ const loadData = async () => {
     }).json();
 
     if (error.value) {
-        //TO DO
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
     }
     loadedData.value = data.value;
 };

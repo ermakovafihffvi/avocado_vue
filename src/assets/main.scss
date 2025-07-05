@@ -8,12 +8,6 @@
   font-weight: normal;
 }
 
-div, input {
-  &:focus-visible {
-    outline: none;
-  }
-}
-
 a,
 .green {
   text-decoration: none;

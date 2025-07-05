@@ -1,9 +1,11 @@
 import useClient from "@/api/useClient";
 import UpdateIncome from "@/components/modals/UpdateIncome.vue";
 import { useMainStore } from "@/store/main";
+import { useQuasar } from "quasar";
 
 export default function useOpenAddIncomes (q) {
 
+    const $q = useQuasar();
     const api = useClient();
     const mainStore = useMainStore();
 
@@ -24,8 +26,17 @@ export default function useOpenAddIncomes (q) {
                 currency_id: income.currency
             }).json();
             if (error.value) {
-
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Expense has been successfully updated',
+                    color: 'positive'
+                });
                 if (income.id) {
                     mainStore.state.usersIncomes[userId] = mainStore.state.usersIncomes[userId].reduce((acc, item) => {
                         if (item.id == data.value.id) {

@@ -25,9 +25,11 @@ import { ref } from 'vue';
 import useClient from '@/api/useClient';
 import router from '@/router';
 import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
 
 const api = useClient();
 const mainStore = useMainStore();
+const $q = useQuasar();
 
 const login = ref('');
 const password = ref('');
@@ -40,7 +42,13 @@ const handleLogin = async () => {
             password: password.value
         }
     ).json();
-    console.error(error.value);
+    if (error.value) {
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+    }
     console.log(data); //TO DO CHECK
     mainStore.state.currentUser = data.value['current-user'];
 

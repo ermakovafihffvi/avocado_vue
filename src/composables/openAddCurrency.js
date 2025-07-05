@@ -1,11 +1,13 @@
 import useClient from "@/api/useClient";
 import AddCurrency from "@/components/modals/AddCurrency.vue";
 import { useMainStore } from "@/store/main";
+import { useQuasar } from "quasar";
 
 export default function useOpenAddCurrency (q) {
 
     const api = useClient();
     const mainStore = useMainStore();
+    const $q = useQuasar();
 
     const openModal = (props = {}) => {
         q.dialog({
@@ -20,9 +22,18 @@ export default function useOpenAddCurrency (q) {
                 rate: currency.rate
             }).json();
             if (error.value) {
-                console.log(error.value);
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
                 return;
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'Currency has been successfully added',
+                    color: 'positive'
+                });
                 mainStore.state.currencies.push(data.value);
             }
         }).onCancel(() => {

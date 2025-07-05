@@ -1,7 +1,7 @@
 import { useDateFormat } from '@vueuse/core';
 
-export const getAvailableDates = () => {
-    const today = new Date();
+export const getAvailableDates = (date = null) => {
+    const today = date ?? new Date();
 
     if (today.getDate() > 22) {
         return {
@@ -24,10 +24,21 @@ export const getAvailableDates = () => {
     }
 };
 
-export const getDateRange = (monthPeriod) => {
-    const now = new Date();
-    const sixMonthsAgo = new Date(now);
-    sixMonthsAgo.setMonth(now.getMonth() - monthPeriod);
+export const getDateRange = (monthPeriod, to = null) => {
+    if (monthPeriod >= 6 || !Number(monthPeriod)) {
+        console.error('month period shoul be less then 6');
+        return; //TO DO
+    }
+
+    let now = new Date();
+    let sixMonthsAgo = new Date();
+    if (to) {
+        sixMonthsAgo = new Date(to);
+        now = (new Date(to));
+        now.setMonth(sixMonthsAgo.getMonth() - monthPeriod);
+    } else {
+        sixMonthsAgo.setMonth(now.getMonth() - monthPeriod);
+    }
 
     const dateRange = [];
     dateRange[1] = {

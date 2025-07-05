@@ -1,10 +1,11 @@
 import useClient from "@/api/useClient";
 import AddStateCategory from "@/components/modals/AddStateCategory.vue";
 import { useMainStore } from "@/store/main";
-import { scroll } from 'quasar';
+import { scroll, useQuasar } from 'quasar';
 
 export default function useOpenAddStateCategory (q) {
 
+    const $q = useQuasar();
     const api = useClient();
     const mainStore = useMainStore();
     const { getScrollTarget, setVerticalScrollPosition } = scroll;
@@ -23,9 +24,18 @@ export default function useOpenAddStateCategory (q) {
                 currency: category.currency
             }).json();
             if (error.value) {
-                console.log(error.value);
+                $q.notify({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
                 return;
             } else {
+                $q.notify({
+                    type: 'positive',
+                    message: 'State category has been successfully added',
+                    color: 'positive'
+                });
                 mainStore.state.stateCategories.push(data.value);
                 setTimeout(() => {
                     const scrollTargetElement = getScrollTarget(document.querySelector('div[data-attr-key="' + data.value.id + '"]'));

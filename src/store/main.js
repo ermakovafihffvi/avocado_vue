@@ -1,6 +1,9 @@
 import useClient from '@/api/useClient';
+import { getAvailableDates } from '@/composables/getAvailableDates';
+import { useDateFormat } from '@vueuse/core';
 import { defineStore } from 'pinia'
 import { reactive } from 'vue';
+import { Notify } from 'quasar';
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -13,7 +16,7 @@ export const useMainStore = defineStore('main', () => {
         currencies: null,
         expensesCategories: null,
         userStatsTab: 'expenses',
-        mainDashboardTab: 'savings',
+        mainDashboardTab: 'states',
         currentUser: null,
         usersExpenses: {},
         usersIncomes: {},
@@ -21,7 +24,9 @@ export const useMainStore = defineStore('main', () => {
         allExpensesCategoriesReloadable: null,
         xDate: 22,
         stateCategories: null,
-        states: null
+        states: null,
+        lastState: null,
+        lastPeriod: useDateFormat(new Date(getAvailableDates().nextStr), 'YYYY-MM', { locale: 'en-US' })
     });
 
     const api = useClient();
@@ -30,7 +35,11 @@ export const useMainStore = defineStore('main', () => {
         if (state.currentUser && state.currentUser.id > 0) return state.currentUser;
         const { data, error } = await api('api/current-user').get().json();
         if (error.value) {
-            console.error(error.value);
+            Notify.create({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
             return null;
         }
         state.currentUser = data.value;
@@ -41,8 +50,12 @@ export const useMainStore = defineStore('main', () => {
         if (!state.expensesCategories) {
             const { data, error } = await api('api/expense/categories').get().json();
             if (error.value) {
-                //error
-                //console.log(error.value);
+                Notify.create({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
+                return null;
             }
             state.expensesCategories = data.value;
         }
@@ -52,8 +65,12 @@ export const useMainStore = defineStore('main', () => {
         if (!state.currencies) {
             const { data, error } = await api('api/currencies').get().json(); 
             if (error.value) {
-                //error
-                //console.log(error.value);
+                Notify.create({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
+                return null;
             }
             state.currencies = data.value;
         }
@@ -63,7 +80,12 @@ export const useMainStore = defineStore('main', () => {
         if (!state.categories) {
             const { data, error } = await api('api/state/categories').get().json();
             if (error.value) {
-                //error
+                Notify.create({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
+                return null;
             }
             state.stateCategories = data.value;
         }
@@ -75,11 +97,23 @@ export const useMainStore = defineStore('main', () => {
             date: dateRange
         }).json();
         if (error.value) {
-            console.error(error.value);
-            //TO DO
+            Notify.create({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
         } else {
-            console.log(data.value);
             state.states = data.value;
+            const isCurrentIncluded = (new Date(dateRange[1].year + '-' + (dateRange[1].month + 1))).setHours(20) >= (new Date(state.lastPeriod)).setHours(20);
+            if (isCurrentIncluded) {
+                state.lastState = state.states?.filter(el => 
+                        el.pseudo_month == state.lastPeriod
+                    )?.reduce((acc, el) => {
+                        const rate = state.currencies?.find(el => el.id == el.currency_id)?.rate ?? 1;
+                        acc += Number(el.sum) / rate;
+                        return acc;
+                    }, 0);
+            }
         }
     };
 
