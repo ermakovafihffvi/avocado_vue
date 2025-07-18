@@ -19,7 +19,7 @@
             </template>
         </q-select>
     </div>
-    <q-tab-panels v-model="mainStore.state.mainDashboardTab" animated class="shadow-4 rounded-borders tab-wrapper" v-if="!loading">
+    <q-tab-panels v-model="mainStore.state.mainDashboardTab" animated class="tab-wrapper" v-if="!loading" style="background-color: transparent;">
         <q-tab-panel name="states">
             <States :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
         </q-tab-panel>

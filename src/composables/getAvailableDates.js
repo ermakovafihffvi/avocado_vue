@@ -72,3 +72,36 @@ export const getPeriodsList = (dateRange) => {
     }
     return months;
 };
+
+export const monthsSinceCustomStart = (createdAtStr, customDay) => {
+    const now = new Date();
+    const createdAt = new Date(createdAtStr);
+
+    // Сдвигаем обе даты на customDay
+    const created = new Date(createdAt);
+    const current = new Date(now);
+
+    // Если день меньше X, значит ещё не наступил "новый месяц"
+    if (created.getDate() < customDay) {
+        created.setDate(customDay);
+    } else {
+        created.setMonth(created.getMonth() + 1);
+        created.setDate(customDay);
+    }
+
+    if (current.getDate() < customDay) {
+        current.setDate(customDay);
+    } else {
+        current.setMonth(current.getMonth() + 1);
+        current.setDate(customDay);
+    }
+
+    // Вычисляем разницу в месяцах
+    const yearsDiff = current.getFullYear() - created.getFullYear();
+    const monthsDiff = current.getMonth() - created.getMonth();
+
+    const totalMonths = yearsDiff * 12 + monthsDiff;
+
+    // Если получилось < 0, значит дата в будущем — возвращаем 0
+    return Math.max(totalMonths, 0);
+}

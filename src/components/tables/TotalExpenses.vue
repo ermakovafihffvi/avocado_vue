@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="loading || !mainStore.state.users || !mainStore.state.currencies" :size="'lg'"/>
     <div class="q-pa-md" v-else>
         <div class="row q-col-gutter-xs q-mb-xs">
-            <div class="col" v-for="(total, currency) in totalExpenses">
+            <div class="col total-card" v-for="(total, currency) in totalExpenses">
                 <q-card dark bordered>
                     <q-card-section>
                         <div class="text-h5 text-primary text-center">{{ currency }}</div>   
@@ -15,11 +15,11 @@
                 </q-card>
             </div>
         </div>
-        <div class="row q-col-gutter-xs q-mb-xs">
-            <div class="col" v-for="(total, currency) in totalExpensesWOHouse">
+        <div class="row q-col-gutter-xs q-mb-xss">
+            <div class="col total-card" v-for="(total, currency) in totalExpensesWOHouse">
                 <q-card dark bordered>
                     <q-card-section>
-                        <div class="text-h5 text-primary text-center">{{ currency }},&nbsp;wo house</div>   
+                        <div class="text-h5 text-primary text-center">{{ currency }}, wo house</div>   
                     </q-card-section>
                     <q-separator dark inset />
                     <q-card-section>
@@ -161,3 +161,9 @@ onMounted(() => {
     loadTotalExpenses();
 });
 </script>
+
+<style lang="scss" scoped>
+.total-card {
+    min-width: 150px;
+}
+</style>

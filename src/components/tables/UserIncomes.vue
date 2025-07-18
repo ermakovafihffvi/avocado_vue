@@ -11,7 +11,7 @@
                 </span>
             </div>
         </div>
-        <q-btn push color="primary" label="Add expense" @click="handleAddIncome" />
+        <q-btn push color="primary" label="Add income" @click="handleAddIncome" />
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'"/>
     <div class="q-pa-md expenses-table-wrapper" v-else>

@@ -32,8 +32,8 @@
                 <q-separator inset />
                 <q-card-section>
                     <q-select outlined v-model="repeatable" :options="repeatableOptions" emit-value map-options option-value="str" option-label="title"/>
-                    <q-input v-if="repeatable == 'x-times'" outlined v-model="repeatTimes" label="Repeat X times" class="q-mt-lg"
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
+                    <q-input v-if="repeatable == 'x-times'" outlined v-model="repeatTimes" label="How many months?" class="q-mt-lg"
+                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Numbers must be a positive number']"
                     />
                 </q-card-section>
             </q-card>

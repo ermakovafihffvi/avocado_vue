@@ -8,6 +8,7 @@
         narrow-indicator
     >
         <q-tab name="expenses" label="Expenses" />
+        <q-tab name="scheduled" label="Scheduled" />
         <q-tab name="incomes" label="Incomes" />
     </q-tabs>
 </template>

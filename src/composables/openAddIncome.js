@@ -34,7 +34,7 @@ export default function useOpenAddIncomes (q) {
             } else {
                 $q.notify({
                     type: 'positive',
-                    message: 'Expense has been successfully updated',
+                    message: 'Expenses have been successfully updated',
                     color: 'positive'
                 });
                 if (income.id) {

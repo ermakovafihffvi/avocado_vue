@@ -36,7 +36,7 @@ export default function useOpenAddExpenses (q) {
             } else {
                 $q.notify({
                     type: 'positive',
-                    message: 'Expense has been successfully updated',
+                    message: 'Expenses have been successfully updated',
                     color: 'positive'
                 });
                 if (expense.id) {

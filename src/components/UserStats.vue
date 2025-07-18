@@ -1,9 +1,13 @@
 <template>
     <div class="user-stats-wrapper">
         <div class="q-gutter-y-md q-mr-auto q-ml-auto" style="max-width: 600px">
-            <q-tab-panels v-model="mainStore.state.userStatsTab" animated class="shadow-4 rounded-borders tab-wrapper">
+            <q-tab-panels v-model="mainStore.state.userStatsTab" animated class="tab-wrapper" style="background-color: transparent;">
                 <q-tab-panel name="expenses">
                     <UserExpenses :userId="route.params.id" :userNameTitle="userNameTitle"/>
+                </q-tab-panel>
+
+                <q-tab-panel name="scheduled">
+                    <ScheduledList :userId="route.params.id" :userNameTitle="userNameTitle"/>
                 </q-tab-panel>
 
                 <q-tab-panel name="incomes">
@@ -18,6 +22,7 @@
 import { useRoute } from 'vue-router';
 import UserIncomes from '@/components/tables/UserIncomes.vue';
 import UserExpenses from '@/components/tables/UserExpenses.vue';
+import ScheduledList from '@/components/tables/ScheduledList.vue';
 import { computed, onMounted } from 'vue';
 import { useMainStore } from '@/store/main';
 
