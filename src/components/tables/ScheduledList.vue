@@ -81,14 +81,14 @@
         </div>
     </div>
     <div v-else>
-        no data
+        <p class="text-center">No data available</p>
     </div>
 </template>
 
 <script setup>
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import EditButton from '@/components/buttons/EditButton.vue';
 import SaveIconButton from '../buttons/SaveIconButton.vue';
 import { getAvailableDates, monthsSinceCustomStart } from '@/composables/getAvailableDates';
@@ -141,10 +141,10 @@ const updateExpense = async (id, args) => {
     }
 };
 
-onMounted(async () => {
+const prepareData = async () => {
     loading.value = true;
     availableDates.value = getAvailableDates();
-    const { data, error } = await api('/api/expense/scheduled').get().json();
+    const { data, error } = await api('/api/expense/scheduled?user_id=' + props.userId).get().json();
     if (error.value) {
         $q.notify({
             type: 'error',
@@ -167,7 +167,19 @@ onMounted(async () => {
         });
     }
     loading.value = false;
+};
+
+onMounted(() => {
+    prepareData();
 });
+
+watch(
+    () => props.userId,
+    () => {
+        loading.value = true;
+        prepareData();
+    }
+);
 
 </script>
 

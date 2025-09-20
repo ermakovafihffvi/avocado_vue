@@ -62,11 +62,12 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-//TO DO 06.07:
+//TO DO 19.07:
 //validation centralize (optional)
 //requests validation all
-//periodic expenses !!!
 //add date limit for requests where neccessary
+//единая заглушка дл яотсутсвующих данных
+
 .category-card {
     margin-bottom: 20px;
     margin-right: auto;
