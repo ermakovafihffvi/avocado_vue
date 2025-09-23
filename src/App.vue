@@ -13,8 +13,11 @@ import { onMounted } from 'vue';
 const mainStore = useMainStore();
 
 const loadData = async () => {
+	console.log('test');
+console.log(mainStore.auth);
+console.log(document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')));
     if(!mainStore.state.auth && !document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))) {
-        const response = await fetch('http://avocado.test/sanctum/csrf-cookie', {
+        const response = await fetch('http://89.223.69.93/sanctum/csrf-cookie', {
             method: 'GET',
             credentials: 'include',
             headers: {

@@ -22,11 +22,11 @@ export default defineConfig({
   ],
   base: '/',
   server: {
-    //host: 'avocado.test', //prod
-    host: true, //dev
+    host: '89.223.69.93', //prod
+    //host: true, //dev
     port: 3000,
     strictPort: true,
-    allowedHosts: ['avocado.test']
+    allowedHosts: ['89.223.69.93']
   },
   resolve: {
     alias: {

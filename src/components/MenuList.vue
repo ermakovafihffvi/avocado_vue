@@ -89,7 +89,7 @@
         <q-separator spaced />
 
         <q-item>
-            <q-btn class="absolute-center">Logout</q-btn>
+            <q-btn class="absolute-center" @click="router.push('/login')">Logout</q-btn>
         </q-item>
     </q-list>
 </template>

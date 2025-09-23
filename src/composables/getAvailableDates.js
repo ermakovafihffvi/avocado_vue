@@ -34,11 +34,9 @@ export const getDateRange = (monthPeriod, to = null) => {
     let sixMonthsAgo = new Date();
     if (to) {
         sixMonthsAgo = new Date(to);
-        now = (new Date(to));
-        now.setMonth(sixMonthsAgo.getMonth() - monthPeriod);
-    } else {
-        sixMonthsAgo.setMonth(now.getMonth() - monthPeriod);
-    }
+        now = new Date(to);
+    } 
+    sixMonthsAgo.setMonth(now.getMonth() - monthPeriod);
 
     const dateRange = [];
     dateRange[1] = {
