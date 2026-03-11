@@ -4,7 +4,8 @@ import router from '@/router';
 export default function useClient() {
   return createFetch({
     combination: 'overwrite',
-    baseUrl: 'http://avocado.test/',
+    //baseUrl: 'http://avocado.test/',
+    baseUrl: 'http://localhost/',
     options: {
       async beforeFetch({ options }) {
         //const myToken = await getMyToken()

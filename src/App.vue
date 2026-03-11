@@ -14,11 +14,11 @@ const mainStore = useMainStore();
 
 const loadData = async () => {
     if(!mainStore.state.auth && !document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))) {
-        const response = await fetch('http://avocado.test/sanctum/csrf-cookie', {
+        const response = await fetch('http://localhost/sanctum/csrf-cookie', {
             method: 'GET',
             credentials: 'include',
             headers: {
-            'Accept': 'application/json',
+                'Accept': 'application/json',
             }
         });
 

@@ -20,13 +20,23 @@ export default defineConfig({
       )
     })
   ],
-  base: '/',
+  root: './',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
   server: {
-    //host: 'avocado.test', //prod
-    host: true, //dev
-    port: 3000,
-    strictPort: true,
-    allowedHosts: ['avocado.test']
+    host: '0.0.0.0', // Required for Docker containers
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+    watch: {
+      usePolling: true
+    }
   },
   resolve: {
     alias: {
