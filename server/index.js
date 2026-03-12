@@ -7,9 +7,23 @@ import { resolve } from 'path';
 //import { db } from './database/index.js';
 //import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 //import todosRouter from './routes/todos.js';
+import authRouter from './routes/auth.js';
+
+import knex from 'knex';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+global.knex = knex({
+    client: 'mysql2',
+    connection: {
+        host: process.env.MYSQL_HOST,
+        port: process.env.MYSQL_PORT,
+        user: process.env.MYSQL_USER,
+        password: process.env.MYSQL_PASSWORD,
+        database: process.env.MYSQL_DATABASE,
+    },
+});
 
 // Security middleware
 //app.use(
@@ -47,12 +61,22 @@ app.get('/health', (req, res) => {
 
 // API routes
 //app.use('/api/todos', todosRouter);
+app.use('/api', authRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   const staticPath = resolve(process.cwd(), 'dist');
   app.use(express.static(staticPath));
 
+  // Catch-all route for SPA
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+      res.sendFile(resolve(staticPath, 'index.html'));
+    } else {
+      next();
+    }
+  });
+} else {
   // Catch-all route for SPA
   app.use((req, res, next) => {
     if (req.method === 'GET' && !req.path.startsWith('/api/')) {

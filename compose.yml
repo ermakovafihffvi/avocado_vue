@@ -43,6 +43,9 @@ services:
           ignore:
             - '**/*.test.*'
             - '**/__tests__/**'
+        - action: sync
+          path: ./server
+          target: /app/server
         - action: rebuild
           path: ./package.json
         - action: sync

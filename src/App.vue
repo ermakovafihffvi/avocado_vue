@@ -13,7 +13,7 @@ import { onMounted } from 'vue';
 const mainStore = useMainStore();
 
 const loadData = async () => {
-    if(!mainStore.state.auth && !document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))) {
+    /*if(!mainStore.state.auth && !document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))) {
         const response = await fetch('http://localhost/sanctum/csrf-cookie', {
             method: 'GET',
             credentials: 'include',
@@ -26,9 +26,10 @@ const loadData = async () => {
             console.warn('Failed to get CSRF cookie');
         } else {
             mainStore.state.auth = true;
+        */
             router.push('/login');
-        }
-    }
+        //}
+    //}
 };
 
 onMounted(() => {

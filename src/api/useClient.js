@@ -5,7 +5,7 @@ export default function useClient() {
   return createFetch({
     combination: 'overwrite',
     //baseUrl: 'http://avocado.test/',
-    baseUrl: 'http://localhost/',
+    baseUrl: 'http://localhost:3000/',
     options: {
       async beforeFetch({ options }) {
         //const myToken = await getMyToken()
