@@ -2,14 +2,20 @@ import compression from 'compression';
 import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
+import passport from 'passport';
+import mkdirp from 'mkdirp';
+import sqlite3 from 'sqlite3';
 //import helmet from 'helmet';
 import { resolve } from 'path';
-//import { db } from './database/index.js';
 //import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 //import todosRouter from './routes/todos.js';
 import authRouter from './routes/auth.js';
 
 import knex from 'knex';
+import session from 'express-session';
+import connectSqlite3 from 'connect-sqlite3';
+
+const SQLiteStore = connectSqlite3(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +31,9 @@ global.knex = knex({
     },
 });
 
+mkdirp.sync('var/db');
+global.sqlite = new sqlite3.Database('var/db/todos.db');
+
 // Security middleware
 //app.use(
 //  helmet({
@@ -34,13 +43,13 @@ global.knex = knex({
 
 // CORS configuration
 app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? process.env.ALLOWED_ORIGINS?.split(',') || []
-        : ['http://localhost:5173', 'http://localhost:3000'],
-    credentials: true,
-  })
+    cors({
+        origin:
+            process.env.NODE_ENV === 'production'
+            ? process.env.ALLOWED_ORIGINS?.split(',') || []
+            : ['http://localhost:5173', 'http://localhost:3000'],
+        credentials: true,
+    })
 );
 
 // Compression middleware
@@ -52,40 +61,48 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Server is healthy',
-    timestamp: new Date().toISOString(),
-  });
+    res.json({
+        success: true,
+        message: 'Server is healthy',
+        timestamp: new Date().toISOString(),
+    });
 });
-
-// API routes
-//app.use('/api/todos', todosRouter);
-app.use('/api', authRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-  const staticPath = resolve(process.cwd(), 'dist');
-  app.use(express.static(staticPath));
+    const staticPath = resolve(process.cwd(), 'dist');
+    app.use(express.static(staticPath));
 
-  // Catch-all route for SPA
-  app.use((req, res, next) => {
-    if (req.method === 'GET' && !req.path.startsWith('/api/')) {
-      res.sendFile(resolve(staticPath, 'index.html'));
-    } else {
-      next();
-    }
-  });
-} else {
-  // Catch-all route for SPA
-  app.use((req, res, next) => {
-    if (req.method === 'GET' && !req.path.startsWith('/api/')) {
-      res.sendFile(resolve(staticPath, 'index.html'));
-    } else {
-      next();
-    }
-  });
-}
+    // Catch-all route for SPA
+    app.use((req, res, next) => {
+        if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+            res.sendFile(resolve(staticPath, 'index.html'));
+        } else {
+            next();
+        }
+    });
+} 
+//redirect not api
+/*else {
+    const staticPath = resolve(process.cwd(), 'dist');
+    app.use(express.static(staticPath));
+    // Catch-all route for SPA
+    app.use((req, res, next) => {
+        if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+            res.sendFile(resolve(staticPath, 'index.html'));
+        } else {
+            next();
+        }
+    });
+}*/
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+    store: new SQLiteStore({ db: 'sessions.db', dir: './var/db' })
+}));
+app.use(passport.authenticate('session'));
 
 // Error handling middleware
 //app.use(notFoundHandler);
@@ -110,31 +127,33 @@ if (process.env.NODE_ENV === 'production') {
 //process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 //process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Sent by nodemon
 
+
+// API routes
+//app.use('/api/todos', todosRouter);
+app.use('/api', authRouter);
+
 // Initialize database and start server
 async function startServer() {
-  try {
-    //await db.init();
-    //console.log('Database initialized successfully');
+    try {
+        const server = app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 
-    const server = app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`API available at: http://localhost:${PORT}/api`);
+                console.log(`Health check: http://localhost:${PORT}/health`);
+            }
+        });
 
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`API available at: http://localhost:${PORT}/api`);
-        console.log(`Health check: http://localhost:${PORT}/health`);
-      }
-    });
-
-    // Handle server errors
-    server.on('error', (error) => {
-      console.error('Server error:', error);
-      process.exit(1);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
+        // Handle server errors
+        server.on('error', (error) => {
+            console.error('Server error:', error);
+            process.exit(1);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
 }
 
 startServer();

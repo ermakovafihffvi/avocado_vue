@@ -3,15 +3,18 @@
 # Node.js TypeScript Application
 # ========================================
 
-ARG NODE_VERSION=24.11.1-alpine
+ARG NODE_VERSION=24.14.0
 FROM node:${NODE_VERSION} AS base
 
 # Set working directory
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install -y sqlite3 libsqlite3-dev
+
 # Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 -G nodejs && \
+RUN groupadd -g 1001 nodejs && \
+    useradd -u 1001 -g nodejs -m nodejs && \
     chown -R nodejs:nodejs /app
 
 # ========================================
@@ -24,7 +27,7 @@ COPY package*.json ./
 
 # Install production dependencies
 RUN --mount=type=cache,target=/root/.npm,sharing=locked \
-    npm ci --omit=dev && \
+    npm install --omit=dev && \
     npm cache clean --force
 
 # Set proper ownership
@@ -40,7 +43,7 @@ COPY package*.json ./
 
 # Install all dependencies with build optimizations
 RUN --mount=type=cache,target=/root/.npm,sharing=locked \
-    npm ci --no-audit --no-fund && \
+    npm install --no-audit --no-fund && \
     npm cache clean --force
 
 # Create necessary directories and set permissions
@@ -90,15 +93,15 @@ CMD ["npm", "run", "dev:docker"]
 # ========================================
 # Production Stage
 # ========================================
-ARG NODE_VERSION=24.11.1-alpine
+ARG NODE_VERSION=24.14.0
 FROM node:${NODE_VERSION} AS production
 
 # Set working directory
 WORKDIR /app
 
 # Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 -G nodejs && \
+RUN groupadd -g 1001 nodejs && \
+    useradd -u 1001 -g nodejs -m nodejs && \
     chown -R nodejs:nodejs /app
 
 # Set optimized environment variables

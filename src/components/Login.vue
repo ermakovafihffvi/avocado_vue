@@ -13,10 +13,10 @@
                 </template>
             </q-input>
             
-            <q-btn color="primary" label="Submit" @click="handleLogin" />
-        </q-form>
+            <q-btn color="primary" label="Login" @click="handleLogin" />
 
-        <!--<a href="#" class="text-subtitle1">Register</a>-->
+            <q-btn color="accent" label="Registeration" @click="handleRegistration"/>
+        </q-form>
     </div>
 </template>
 
@@ -37,6 +37,28 @@ const isPwd = ref(true);
 
 const handleLogin = async () => {
     const { error, data } = await api('api/login').post(
+        {
+            name: login.value,
+            password: password.value
+        }
+    ).json();
+    if (error.value) {
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+    }
+    console.log(data); //TO DO CHECK
+    mainStore.state.currentUser = data.value['current-user'];
+
+    if (!error.value) {
+       router.push('/'); 
+    }
+};
+
+const handleRegistration = async () => {
+    const { error, data } = await api('api/signup').post(
         {
             name: login.value,
             password: password.value
