@@ -2,6 +2,10 @@ import express from 'express';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import bcrypt from 'bcrypt';
+import models from "../models/models.js";
+import { knex } from '../bd.js'
+
+const { User, Group } = models;
 
 passport.use(new LocalStrategy({
     usernameField: 'name',
@@ -47,24 +51,30 @@ authRouter.post('/signup', async function(req, res, next) {
     hash = hash.replace('$2b$', '$2y$');
 
     try {
-        await knex.insert({
-            name: req.body.name,
-            password: hash,
-            email: ''
-        }).into('user');
+        const userCreated = await User.create(
+            {
+                name: req.body.name,
+                password: hash,
+                email: '',
+                Group: {
+                    name: req.body.name
+                }
+            }, {
+                include: [Group]
+            }
+        );
+        //console.log(userCreated);
 
-        const userCreated = await knex('user').select('*').where({
-            name: req.body.name
-        }).limit(1);
         const user = {
-            id: userCreated[0].id,
-            username: userCreated[0].name
+            id: userCreated.id,
+            username: userCreated.name
         };
         req.login(user, function(err) {
             if (err) { return next(err); }
             res.send({'current-user': userCreated});
         });
     } catch (err) {
+        console.log(err);
         return next(err);
     }
 });

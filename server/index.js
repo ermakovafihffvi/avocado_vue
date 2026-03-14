@@ -3,36 +3,21 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
-import mkdirp from 'mkdirp';
-import sqlite3 from 'sqlite3';
 //import helmet from 'helmet';
 import { resolve } from 'path';
+import session from 'express-session';
+import connectSqlite3 from 'connect-sqlite3';
+import { sequelize } from './bd.js';
+
 //import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 //import todosRouter from './routes/todos.js';
 import authRouter from './routes/auth.js';
-
-import knex from 'knex';
-import session from 'express-session';
-import connectSqlite3 from 'connect-sqlite3';
 
 const SQLiteStore = connectSqlite3(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-global.knex = knex({
-    client: 'mysql2',
-    connection: {
-        host: process.env.MYSQL_HOST,
-        port: process.env.MYSQL_PORT,
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE,
-    },
-});
-
-mkdirp.sync('var/db');
-global.sqlite = new sqlite3.Database('var/db/todos.db');
 
 // Security middleware
 //app.use(
@@ -134,6 +119,12 @@ app.use('/api', authRouter);
 
 // Initialize database and start server
 async function startServer() {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
     try {
         const server = app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
