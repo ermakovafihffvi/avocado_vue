@@ -8,13 +8,13 @@
                 <q-separator inset />
                 <q-card-section>
                     <q-input outlined v-model="title" label="Title" 
-                        :rules="[val => /^[a-zA-Z]+$/gm.test(val) || 'Title should be string']"
+                        :rules="[val => stringTest(val) || 'Title should be string']"
                     />
                     <q-input outlined v-model="strId" label="String Code" class="q-mt-md"
-                        :rules="[val => /^[A-Z]+$/.test(val) || 'String code can contain only capital letters']"
+                        :rules="[val => capitalLetterTest(val) || 'String code can contain only capital letters']"
                     />
                     <q-input outlined v-model="rate" label="Rate" class="q-mt-md"
-                        :rules="[val => /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(val) || 'Rate should be a number']"
+                        :rules="[val => numberTest(val) || 'Rate should be a number']"
                     />
                 </q-card-section>
             </q-card>
@@ -30,6 +30,7 @@
 <script setup>
 import { useDialogPluginComponent } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
 
 const props = defineProps({});
 
@@ -64,6 +65,8 @@ function onOKClick() {
     // or with payload: onDialogOK({ ... })
     // ...and it will also hide the dialog automatically
 };
+
+const { stringTest, capitalLetterTest, numberTest } = validationRules();
 
 onMounted(() => {
 

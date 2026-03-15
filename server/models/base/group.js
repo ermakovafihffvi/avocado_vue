@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../bd.js';
+import { sequelize } from '#server/bd.js';
 
 class Group extends Model {}
 
@@ -20,13 +20,17 @@ Group.init(
         },
         admin_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
-        }
+            allowNull: false,
+            references: {
+                model: 'user',
+                key: 'id'
+            }
+        },
     },
     {
         // Other model options go here
         sequelize, // We need to pass the connection instance
-        modelName: 'Group', // We need to choose the model name
+        modelName: 'group', // We need to choose the model name
         tableName: 'user_group',
         timestamps: false,
     },

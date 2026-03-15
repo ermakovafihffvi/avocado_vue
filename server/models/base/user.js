@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../bd.js';
+import { sequelize } from '#server/bd.js';
+import addUserGroupScope from "#server/models/scopes/user_group.js";
 
 class User extends Model {}
 
@@ -24,16 +25,26 @@ User.init(
             allowNull: false,
             defaultValue: ''
         },
+        current_group_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'user_group',
+                key: 'id'
+            }
+        }
     },
     {
         // Other model options go here
         sequelize, // We need to pass the connection instance
-        modelName: 'User', // We need to choose the model name
+        modelName: 'user', // We need to choose the model name
         tableName: 'user',
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at'
     },
 );
+
+addUserGroupScope(User);
 
 export default User;

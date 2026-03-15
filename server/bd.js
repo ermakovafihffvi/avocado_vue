@@ -2,6 +2,8 @@ import mkdirp from 'mkdirp';
 import sqlite3 from 'sqlite3';
 import knexInit from 'knex';
 import Sequelize from 'sequelize';
+import connectSqlite3 from 'connect-sqlite3';
+import session from 'express-session';
 
 export const knex = knexInit({
     client: 'mysql2',
@@ -16,6 +18,8 @@ export const knex = knexInit({
 
 mkdirp.sync('var/db');
 export const sqlite = new sqlite3.Database('var/db/todos.db');
+const SQLiteStore = connectSqlite3(session);
+export const sessionStore = new SQLiteStore({ db: 'sessions.db', dir: './var/db' });
 
 export const sequelize = new Sequelize(
     process.env.MYSQL_DATABASE, 

@@ -6,14 +6,12 @@ import passport from 'passport';
 //import helmet from 'helmet';
 import { resolve } from 'path';
 import session from 'express-session';
-import connectSqlite3 from 'connect-sqlite3';
-import { sequelize } from './bd.js';
+import { sequelize, sessionStore } from '#server/bd.js';
 
 //import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
-//import todosRouter from './routes/todos.js';
-import authRouter from './routes/auth.js';
+import initRoutes from '#server/routes/index.js';
 
-const SQLiteStore = connectSqlite3(session);
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -85,7 +83,7 @@ app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: false,
-    store: new SQLiteStore({ db: 'sessions.db', dir: './var/db' })
+    store: sessionStore
 }));
 app.use(passport.authenticate('session'));
 
@@ -112,10 +110,7 @@ app.use(passport.authenticate('session'));
 //process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 //process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Sent by nodemon
 
-
-// API routes
-//app.use('/api/todos', todosRouter);
-app.use('/api', authRouter);
+initRoutes(app);
 
 // Initialize database and start server
 async function startServer() {
@@ -125,6 +120,11 @@ async function startServer() {
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
+
+    sessionStore.clear(() => {
+        console.log('sessions cleared');
+    });
+
     try {
         const server = app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
