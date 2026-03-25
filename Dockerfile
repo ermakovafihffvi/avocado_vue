@@ -115,7 +115,9 @@ COPY --from=deps --chown=nodejs:nodejs /app/package*.json ./
 # Copy built application from build stage
 COPY --from=build --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=build --chown=nodejs:nodejs /app/server ./server
+COPY --from=build --chown=nodejs:nodejs /app/shared ./shared
 
+RUN mkdir -p /app/var/db && chown -R nodejs:nodejs /app/var/db
 # Switch to non-root user for security
 USER nodejs
 
@@ -123,7 +125,7 @@ USER nodejs
 EXPOSE 3000
 
 # Start production server
-CMD ["node", "server/index.js"]
+CMD ["npm", "run", "server"]
 
 # ========================================
 # Test Stage
