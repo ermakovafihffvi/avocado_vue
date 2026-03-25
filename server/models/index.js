@@ -174,6 +174,15 @@ Expense.hasMany(RepeatableExpense, {
     foreignKey: 'expense_id'
 });
 
+Expense.belongsTo(CategoryExpense, {
+    as: 'category',
+    foreignKey: 'category_id'
+});
+CategoryExpense.hasMany(Expense, {
+    as: 'expenses',
+    foreignKey: 'category_id'
+});
+
 export default {
     User,
     Group,

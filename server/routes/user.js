@@ -1,14 +1,12 @@
 import express from 'express';
 import models from "#server/models/index.js";
 
-const { User, Group } = models;
+const { User } = models;
 
 const userRouter = express.Router();
 
 userRouter.get('/current-user', function (req, res) {
-    User.findOne({
-        where: { id: req.user.id },
-    })
+    User.findByPk(req.user.id)
     .then((user) => {
         if (user) {
             res.json(user);

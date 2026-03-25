@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
+import addUserGroupScope from "#server/models/scopes/user_group.js";
 
 class RepeatableExpense extends Model {}
 
@@ -32,5 +33,7 @@ RepeatableExpense.init(
         deletedAt: 'deleted_at'
     }
 );
+
+addUserGroupScope(RepeatableExpense);
 
 export default RepeatableExpense;

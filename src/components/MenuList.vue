@@ -89,7 +89,7 @@
         <q-separator spaced />
 
         <q-item>
-            <q-btn class="absolute-center">Logout</q-btn>
+            <q-btn class="absolute-center" @click="logoutHandle()">Logout</q-btn>
         </q-item>
     </q-list>
 </template>
@@ -136,6 +136,21 @@ const setLinkValue = () => {
     } else {
         link.value = route.name;
     }
+};
+
+const logoutHandle = async () => {
+    const { error } = await api('api/logout').post().json();
+    if (error.value) {
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+        return;
+    }
+    mainStore.state.auth = false;
+    mainStore.state.currentUser = null;
+    router.push('/login');
 };
 
 onMounted(() => {

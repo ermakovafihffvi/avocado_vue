@@ -3,17 +3,36 @@
         <div class="currencies-content row q-gutter-sm">
             <q-card bordered v-for="currency in currencies" :key="currency.id" class="rate-card">
                 <q-card-section class="rate-card-section">
-                    <q-input outlined v-model="currency.title" label="Title" debounce="600"
-                        readonly :dense="true" dark bg-color="dark"
-                        :rules="[val => /^[a-zA-Z]+$/gm.test(val) || 'Title should be string']"
+                    <q-input outlined 
+                        v-model="currency.title" 
+                        label="Title"
+                        readonly 
+                        :dense="true" 
+                        dark 
+                        bg-color="dark" 
+                        lazy-rules="ondemand"
+                        :ref="(el) => setRef(el, currency.id + '-title')"
+                        :rules="[val => stringTest(val) || 'Title should be a string']"
                         @update:model-value="(value) => handleInput(value, currency, 'title')"
                     />
-                    <q-input outlined v-model="currency.str_id" label="String Code" dark bg-color="dark" debounce="600" 
-                        :rules="[val => /^[A-Z]+$/.test(val) || 'String code can contain only capital letters']"
+                    <q-input outlined 
+                        v-model="currency.str_id" 
+                        label="String Code" 
+                        dark 
+                        bg-color="dark" 
+                        lazy-rules="ondemand"
+                        :ref="(el) => setRef(el, currency.id + '-str_id')"
+                        :rules="[val => capitalLetterTest(val) || 'String code can contain only capital letters']"
                         @update:model-value="(value) => handleInput(value, currency, 'str_id')"
                     />
-                    <q-input outlined v-model="currency.rate" label="Rate" dark bg-color="dark" debounce="600"
-                        :rules="[val => /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(val) || 'Rate should be a number']"
+                    <q-input outlined 
+                        v-model="currency.rate" 
+                        label="Rate" 
+                        dark 
+                        bg-color="dark" 
+                        lazy-rules="ondemand"
+                        :ref="(el) => setRef(el, currency.id + '-rate')"
+                        :rules="[val => numberTest(val) || 'Rate should be a number']"
                         @update:model-value="(value) => handleInput(value, currency, 'rate')"
                     />
                 </q-card-section>
@@ -26,40 +45,58 @@ import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
+import validationRules from '@shared/validation/rules.js';
 
 const $q = useQuasar();
 const mainStore = useMainStore();
 const api = useClient();
 const currencies = ref(null);
+const inputRefs = ref({});
+
+const { stringTest, capitalLetterTest, numberTest } = validationRules();
+
+const setRef = (el, key) => {
+    inputRefs.value[key] = el;
+};
 
 const handleInput = async (value, currency, field) => {
-    if (currency[field].hasError) {
-        return;
-    }
-    const requestCurrency = {
-        id: currency.id,
-        [field]: value
-    };
-    const { error } = await api('api/' + requestCurrency.id + '/set-rate').post(requestCurrency).json();
-    if (error.value) {
-        $q.notify({
-            type: 'error',
-            message: error.value,
-            color: 'negative'
-        });
-        return;
-    } else {
-        $q.notify({
-            type: 'positive',
-            message: 'Currency has been successfully set',
-            color: 'positive'
-        });
-        mainStore.state.currencies.map((item) => {
-            if (item.id == requestCurrency.id) {
-                item[field] = value;
+    useDebounceFn(async () => {
+        const refKey = currency.id + '-' + field;
+        const inputComponent = inputRefs.value[refKey];
+        if (inputComponent) {
+            const validationResult = await inputComponent.validate();
+            if (!validationResult) {
+                return;
             }
-        });
-    }
+        }
+
+        const requestCurrency = {
+            id: currency.id,
+            [field]: value
+        };
+
+        const { error } = await api('api/' + requestCurrency.id + '/set-rate').post(requestCurrency).json();
+        if (error.value) {
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
+            return;
+        } else {
+            $q.notify({
+                type: 'positive',
+                message: 'Currency has been successfully set',
+                color: 'positive'
+            });
+            mainStore.state.currencies.map((item) => {
+                if (item.id == requestCurrency.id) {
+                    item[field] = value;
+                }
+            });
+        }
+    }, 400)();
 };
 
 onMounted(async () => {

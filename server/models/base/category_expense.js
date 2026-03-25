@@ -43,7 +43,7 @@ CategoryExpense.init(
     },
     {
         sequelize, // We need to pass the connection instance
-        modelName: 'CategoryExpense', // We need to choose the model name
+        modelName: 'category_exp', // We need to choose the model name
         tableName: 'category_exp',
         timestamps: false,
         paranoid: true,

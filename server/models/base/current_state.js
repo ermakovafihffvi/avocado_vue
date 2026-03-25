@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
+import addUserGroupScope from "#server/models/scopes/user_group.js";
 
 class CurrentState extends Model {}
 
@@ -31,5 +32,7 @@ CurrentState.init(
         deletedAt: 'deleted_at'
     }
 );
+
+addUserGroupScope(CurrentState);
 
 export default CurrentState;

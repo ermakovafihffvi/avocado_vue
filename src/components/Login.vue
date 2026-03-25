@@ -49,7 +49,6 @@ const handleLogin = async () => {
             color: 'negative'
         });
     }
-    console.log(data); //TO DO CHECK
     mainStore.state.currentUser = data.value['current-user'];
 
     if (!error.value) {
@@ -71,7 +70,6 @@ const handleRegistration = async () => {
             color: 'negative'
         });
     }
-    console.log(data); //TO DO CHECK
     mainStore.state.currentUser = data.value['current-user'];
 
     if (!error.value) {

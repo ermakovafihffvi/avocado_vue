@@ -4,23 +4,35 @@
         <q-card bordered flat v-for="category in categories" class="category-card" :key="category.id" :data-attr-key="category.id">
             <q-card-section>
                 <div class="row q-gutter-lg justify-between">
-                    <q-input v-model="category.title" label="Title" style="flex: 1;" debounce="600"
+                    <q-input 
+                        v-model="category.title" 
+                        label="Title" 
+                        style="flex: 1;" 
                         @update:model-value="handleInput(category.id, 'title')"
                     />
                     <div>
                         <DeleteButton @handle-delete="handleDelete(category.id)"/>
                     </div>
                 </div>
-                <q-input v-model="category.str_id" readonly label="Str_id" debounce="600"
+                <q-input v-model="category.str_id" 
+                    readonly 
+                    label="Str_id" 
+                    debounce="600"
                     :rules="[val => (/^[a-zA-Z_]+$/gm.test(val) && !strIds.includes(val.trim())) 
                         || 'Str_id should be string and unique']"
                     @update:model-value="handleInput(category.id, 'str_id')"
                 />
-                <q-input v-model="category.desc" label="Description" debounce="600"
+                <q-input v-model="category.desc" 
+                    label="Description" 
+                    debounce="600"
                     :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || 'Description can contain only text']"
                     @update:model-value="handleInput(category.id, 'desc')"
                 />
-                <q-select v-model="category.currency_id" :options="currencies" label="Currency" emit-value map-options
+                <q-select v-model="category.currency_id" 
+                    :options="currencies" 
+                    label="Currency" 
+                    emit-value 
+                    map-options
                     @update:model-value="handleInput(category.id, 'currency_id')"
                 />
             </q-card-section>

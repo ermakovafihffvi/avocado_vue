@@ -56,6 +56,13 @@ authRouter.post('/login', function (req, res, next) {
     })(req, res, next);
 });
 
+authRouter.post('/logout', function (req, res, next) {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.json({ message: 'Logged out successfully' });
+    });
+});
+
 authRouter.post('/signup', async function(req, res, next) {
     let hash = await bcrypt.hash(req.body.password, 12);
     hash = hash.replace('$2b$', '$2y$');

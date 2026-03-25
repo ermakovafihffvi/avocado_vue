@@ -27,9 +27,19 @@ const loadData = async () => {
         } else {
             mainStore.state.auth = true;
         */
-            router.push('/login');
+            //router.push('/');
         //}
     //}
+    const { data, error } = await api('api/current-user').get().json();
+    if (error.value) {
+        mainStore.state.auth = false;
+        mainStore.state.currentUser = null;
+        router.push('/login');
+    } else {
+        mainStore.state.auth = true;
+        mainStore.state.currentUser = data.value;
+        router.push('/');
+    }
 };
 
 onMounted(() => {

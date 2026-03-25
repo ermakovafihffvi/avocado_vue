@@ -35,8 +35,6 @@
                         color="secondary"
                         unchecked-icon="clear"
                         label="Is Active"
-                        :true-value="1"
-                        :false-value="0"
                         @update:model-value="handleInput(category.id, 'isActive')"
                     />
                     <q-toggle
@@ -45,8 +43,6 @@
                         color="accent"
                         label="Is special"
                         unchecked-icon="clear"
-                        :true-value="1"
-                        :false-value="0"
                         @update:model-value="handleInput(category.id, 'special')"
                     />
                 </div>

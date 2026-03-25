@@ -1,14 +1,14 @@
 import express from 'express';
-import { fn, col } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import models from "#server/models/index.js";
 
-const { Expense, CategoryExpense } = models;
+const { Expense, CategoryExpense, RepeatableExpense, Currency } = models;
 
 const expenseRouter = express.Router();
 
 expenseRouter.get('/categories', function (req, res) {
     CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
-        paranoid: false
+        paranoid: true
     })
     .then((categories) => {
         res.json(categories);
@@ -34,13 +34,15 @@ expenseRouter.get('/user/:user_id', function (req, res) {
     Expense.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
         where: { 
             user_id: req.params.user_id,
-            special: isSpecial,
-            isActive: true 
         },
         include: [
             {
                 model: CategoryExpense,
-                as: 'category'
+                as: 'category',
+                where: { 
+                    special: isSpecial,
+                    isActive: true 
+                },
             }
         ]
     })
@@ -51,10 +53,7 @@ expenseRouter.get('/user/:user_id', function (req, res) {
 
 expenseRouter.post('/update', async function (req, res) {
     const expense = req.body.id ? 
-        Expense.scope({method: ['userGroup', req.user.current_group_id]})
-        .findOne({
-            where: { id: req.body.id }
-        }) :
+        Expense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
         Expense.build({
             group_id: req.user.current_group_id,
         });
@@ -90,8 +89,85 @@ expenseRouter.delete('/:expense_id/delete', function (req, res) {
     });
 });
 
-expenseRouter.get('/scheduled', function (req, res) {
-    
+expenseRouter.get('/scheduled', async function (req, res) {
+    const limit = 15;
+    const page = parseInt(req.query.page || 1);
+    const offset = (page - 1) * limit;
+
+    const where = {};
+    const expenseWhere = {};
+
+    // Filter is_every_month
+    if (req.query.is_every_month !== undefined) {
+        where.is_every_month = req.query.is_every_month === 'true';
+    }
+
+    // Filter user_id through relation
+    if (req.query.user_id) {
+        expenseWhere.user_id = req.query.user_id;
+    }
+
+    // Soft delete logic
+    let paranoid = false;
+
+    if (req.query.only_deleted) {
+        where.deletedAt = { [Op.ne]: null };
+    } else if (req.query.without_deleted) {
+        where.deletedAt = null;
+    }
+
+    const repeatables = await RepeatableExpense.findAndCountAll({
+        where,
+        include: [
+            {
+                model: Expense,
+                as: 'expense',
+                attributes: ['id', 'desc', 'user_id', 'category_id', 'sum'],
+                where: Object.keys(expenseWhere).length ? expenseWhere : undefined,
+                required: !!req.query.user_id,
+                include: [
+                    {
+                        model: CategoryExpense,
+                        as: 'category',
+                        attributes: ['id', 'title', 'currency_id'],
+                        include: [
+                            {
+                                model: Currency,
+                                as: 'currency',
+                                attributes: ['id', 'str_id']
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        order: [['id', 'DESC']],
+        limit,
+        offset,
+        paranoid
+    });
+
+    return res.json({
+        total: repeatables.count,
+        page,
+        pages: Math.ceil(repeatables.count / limit),
+        data: repeatables.rows
+    });
+});
+
+expenseRouter.post('/scheduled/update', async function (req, res) {
+    const repeatableExpense = await RepeatableExpense.findByPk(req.body.id, {
+        paranoid: true
+    });
+
+    if (repeatableExpense.is_every_month) {
+        repeatableExpense.deletedAt = req.body.deleted_at;
+    } else {
+        repeatableExpense.times = req.body.times;
+    }
+
+    await repeatableExpense.save();
+    return res.json(null);
 });
 
 export default expenseRouter;

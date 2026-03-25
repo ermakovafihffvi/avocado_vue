@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
+import addUserGroupScope from "#server/models/scopes/user_group.js";
 
 class CurrentStateCategory extends Model {}
 
@@ -27,7 +28,7 @@ CurrentStateCategory.init(
     },
     {
         sequelize, // We need to pass the connection instance
-        modelName: 'CurrentStateCategory', // We need to choose the model name
+        modelName: 'current_state_categories', // We need to choose the model name
         tableName: 'current_state_categories',
         timestamps: true,
         createdAt: 'created_at',
@@ -36,5 +37,7 @@ CurrentStateCategory.init(
         deletedAt: 'deleted_at'
     }
 );
+
+addUserGroupScope(CurrentStateCategory);
 
 export default CurrentStateCategory;

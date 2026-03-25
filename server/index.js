@@ -3,7 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import passport from 'passport';
-//import helmet from 'helmet';
+import helmet from 'helmet';
 import { resolve } from 'path';
 import session from 'express-session';
 import { sequelize, sessionStore } from '#server/bd.js';
@@ -12,17 +12,16 @@ import { sequelize, sessionStore } from '#server/bd.js';
 import initRoutes from '#server/routes/index.js';
 
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 
 // Security middleware
-//app.use(
-//  helmet({
-//    contentSecurityPolicy: false, // Disable CSP for development
-//  })
-//);
+app.use(
+    helmet({
+        contentSecurityPolicy: process.env.NODE_ENV === 'production', // Disable CSP for development
+    })
+);
 
 // CORS configuration
 app.use(
@@ -66,7 +65,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 } 
 //redirect not api
-/*else {
+/*
     const staticPath = resolve(process.cwd(), 'dist');
     app.use(express.static(staticPath));
     // Catch-all route for SPA
@@ -77,7 +76,7 @@ if (process.env.NODE_ENV === 'production') {
             next();
         }
     });
-}*/
+*/
 
 app.use(session({
     secret: 'keyboard cat',
@@ -86,6 +85,18 @@ app.use(session({
     store: sessionStore
 }));
 app.use(passport.authenticate('session'));
+
+app.use((req, res, next) => {
+    if (!req.user 
+        && !req.path.startsWith('/api/login') 
+        && !req.path.startsWith('/api/signup') 
+        && !req.path.startsWith('/api/logout')
+    ) {
+        res.status(401).json({ message: 'Unauthorized' });
+    } else {
+        next();
+    }
+});
 
 // Error handling middleware
 //app.use(notFoundHandler);

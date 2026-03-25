@@ -31,10 +31,7 @@ incomeRouter.get('/user/:user_id', function (req, res) {
 
 incomeRouter.post('/update', async function (req, res) {
     const income = req.body.id ? 
-        await Income.scope({method: ['userGroup', req.user.current_group_id]})
-        .findOne({
-            where: { id: req.body.id }
-        }) :
+        await Income.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
         Income.build({
             group_id: req.user.current_group_id,
         });
