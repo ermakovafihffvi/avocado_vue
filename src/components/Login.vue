@@ -15,7 +15,7 @@
             
             <q-btn color="primary" label="Login" @click="handleLogin" />
 
-            <q-btn color="accent" label="Registeration" @click="handleRegistration"/>
+            <q-btn color="accent" class="q-mt-md" label="Registeration" @click="handleRegistration"/>
         </q-form>
     </div>
 </template>

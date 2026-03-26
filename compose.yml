@@ -80,7 +80,7 @@ services:
       MYSQL_DATABASE: '${MYSQL_DATABASE}'
       MYSQL_USER: '${MYSQL_USER}'
       MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
-      ALLOWED_ORIGINS: '${ALLOWED_ORIGINS:-https://yourdomain.com}'
+      ALLOWED_ORIGINS: '${ALLOWED_ORIGINS}'
     #depends_on: db
       #db:
         #condition: service_healthy
