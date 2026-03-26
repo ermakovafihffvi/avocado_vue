@@ -7,10 +7,12 @@
 <script setup>
 import { RouterView } from 'vue-router';
 import router from '@/router';
+import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { onMounted } from 'vue';
 
 const mainStore = useMainStore();
+const api = useClient();
 
 const loadData = async () => {
     const { data, error } = await api('api/current-user').get().json();

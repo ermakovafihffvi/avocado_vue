@@ -5,7 +5,7 @@ export default function useClient() {
   return createFetch({
     combination: 'overwrite',
     //baseUrl: 'http://avocado.test/',
-    baseUrl: 'http://localhost:3000/',
+    baseUrl: import.meta.env.VITE_BASE_URL || 'http://localhost:3000/',
     options: {
       async beforeFetch({ options }) {
         //const myToken = await getMyToken()
@@ -34,7 +34,7 @@ export default function useClient() {
       },
     },
     fetchOptions: {
-      mode: 'cors',
+      //mode: 'cors',
       credentials: 'include',
       headers: {
         'Accept': 'application/json',

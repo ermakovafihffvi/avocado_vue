@@ -27,10 +27,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // Required for Docker containers
-    port: 5173,
+    //port: 5173,
     //proxy: {
     //  '/api': {
-    //    target: 'http://localhost:3001',
+    //    target: 'http://1132931-cq29653.tw1.ru:3000',
     //    changeOrigin: true,
     //  },
     //},

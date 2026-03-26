@@ -15,11 +15,13 @@ import initRoutes from '#server/routes/index.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+//Trust Nginx server proxy
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(
     helmet({
-        contentSecurityPolicy: process.env.NODE_ENV === 'production', // Disable CSP for development
+        contentSecurityPolicy: false, // Disable CSP for development
     })
 );
 
