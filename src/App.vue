@@ -14,9 +14,10 @@ const mainStore = useMainStore();
 
 const loadData = async () => {
 	console.log('test');
-console.log(mainStore.auth);
+console.log(mainStore.state.auth);
 console.log(document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')));
     if(!mainStore.state.auth && !document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))) {
+	console.log('before send');
         const response = await fetch('http://89.223.69.93/sanctum/csrf-cookie', {
             method: 'GET',
             credentials: 'include',
