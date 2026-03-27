@@ -58,7 +58,7 @@ expenseRouter.post('/update', async function (req, res) {
             group_id: req.user.current_group_id,
         });
 
-    expense.desc = req.body.desc;
+    expense.desc = req.body.description;
     expense.sum = req.body.sum;
     expense.user_id = req.body.user_id;
     expense.category_id = req.body.category_id;
