@@ -93,7 +93,8 @@ const buildGraph = () => {
             height: 350,
             zoom: {
                 enabled: false
-            }
+            },
+            background: 'transparent'
         },
         /*plotOptions: {
           bar: {
@@ -126,6 +127,13 @@ const buildGraph = () => {
           opacity: 1
         },
     };
+    
+    if ($q.dark.isActive) {
+        options.theme = {
+            mode: 'dark',
+            palette: 'palette1'
+        };
+    }
 
     if (chart.value) {
         chart.value.destroy();

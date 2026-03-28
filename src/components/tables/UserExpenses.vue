@@ -377,9 +377,16 @@ watch(
 .expenses-table-wrapper table thead tr {
     background-color: $primary-light;
 }
-.sub-table-wrapper table thead tr {
-    background-color: $secondary-light;
+.body--light {
+    .sub-table-wrapper table thead tr {
+        background-color: $secondary-light;
+    }
 }  
+.body--dark {
+    .sub-table-wrapper table thead tr {
+        background-color: $secondary-dark;
+    }
+}
 .card-delete-wrapper {
     width: fit-content;
     align-self: end;

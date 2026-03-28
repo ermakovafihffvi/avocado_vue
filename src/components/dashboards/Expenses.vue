@@ -77,7 +77,8 @@ const buildGraph = () => {
             },
             zoom: {
                 enabled: true
-            }
+            },
+            background: 'transparent'
         },
         responsive: [{
           breakpoint: 480,
@@ -118,6 +119,13 @@ const buildGraph = () => {
             opacity: 1
         }
     };
+
+    if ($q.dark.isActive) {
+        options.theme = {
+            mode: 'dark',
+            palette: 'palette1'
+        };
+    }
 
     if (chart.value) {
         chart.value.destroy();

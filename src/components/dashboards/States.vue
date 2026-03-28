@@ -21,7 +21,7 @@
     >
         <q-carousel-slide :name="state.pseudo_month" class="column no-wrap flex-center" v-for="(state) in states" :key="state.pseudo_month">
                 <q-scroll-area class="fit">
-                    <div class="bg-white item-date">
+                    <div class="item-date">
                         <p class="text-center text-primary">{{ state.date }}</p>
                     </div>
                     <div v-for="userData in state.users" :key="userData.user.id" class="q-py-md full-width">
@@ -40,7 +40,7 @@
                         <q-btn v-if="!userData.data.length || !allFixer.isAllFixed(state.pseudo_month)"
                             class="full-width sum-item-btn q-mb-xs add-state-btn" text-color="black"
                             @click="router.push({ name: 'add_state', params: { id: 0, user_id: userData.user.id, pseudo_month: state.pseudo_month } })"
-                            icon="o_add" label="add state"
+                            icon="sym_o_add" label="add state"
                         />
                     </div>
                 </q-scroll-area>

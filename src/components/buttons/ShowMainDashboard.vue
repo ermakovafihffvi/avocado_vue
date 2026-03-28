@@ -1,6 +1,6 @@
 <template>
     <q-btn flat rounded icon="account_balance" color="primary" class="text-primary" @click="handleRightBtn">
-        <span color="promary">Dashboards</span>
+        <span color="primary">Dashboards</span>
     </q-btn>
 </template>
 

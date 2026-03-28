@@ -17,11 +17,11 @@ import AddExpCategory from '@/components/buttons/AddExpCategory.vue';
 import SavingCategoriesHeader from '@/components/headers/SavingCategories.vue';
 import AddSavingCategory from '@/components/buttons/AddSavingCategory.vue';
 import MainDashboardHeader from '@/components/headers/MainDashboard.vue';
-import AddState from './components/buttons/AddState.vue';
-import SavingFix from './components/SavingFix.vue';
-import StateCategories from './components/StateCategories.vue';
-import AddStateCategory from './components/buttons/AddStateCategory.vue';
-import StateCategoriesHeader from './components/headers/StateCategories.vue';
+import AddState from '@/components/buttons/AddState.vue';
+import SavingFix from '@/components/SavingFix.vue';
+import StateCategories from '@/components/StateCategories.vue';
+import AddStateCategory from '@/components/buttons/AddStateCategory.vue';
+import StateCategoriesHeader from '@/components/headers/StateCategories.vue';
 
 const routes = [
     { 

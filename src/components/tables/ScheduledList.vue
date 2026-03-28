@@ -187,7 +187,17 @@ watch(
 .item-wrapper {
     border: 1px solid var(--q-secondary);
     border-radius: var(--dp-border-radius);
-    background-color: #fff;
+    overflow: hidden;
+}
+.body--light {
+    .item-wrapper {
+        background-color: #fff;
+    }
+}
+.body--dark {
+    .item-wrapper {
+        background-color: var(--q-secondary-dark);
+    }
 }
 
 @media (max-width: 475px) {

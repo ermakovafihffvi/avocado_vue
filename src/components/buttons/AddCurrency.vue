@@ -1,6 +1,6 @@
 <template>
-    <q-btn flat rounded icon="o_add" color="primary" class="text-primary" @click="handleAddCurrency">
-        <span color="promary">currency</span>
+    <q-btn flat rounded icon="sym_o_add" color="primary" class="text-primary" @click="handleAddCurrency">
+        <span color="primary">currency</span>
     </q-btn>
 </template>
 

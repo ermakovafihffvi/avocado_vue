@@ -12,7 +12,7 @@
         <q-select outlined bottom-slots 
             v-model="selectedCurrency" 
             :options="currencies" 
-            option-label="str_id" label="Currency" bg-color="white" class="full-width"
+            option-label="str_id" label="Currency" class="full-width select-currency"
         >
             <template v-slot:hint>
                 Select base currency for displaying totals

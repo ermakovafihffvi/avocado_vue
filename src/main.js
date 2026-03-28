@@ -22,9 +22,9 @@ import 'quasar/src/css/index.sass'
 // Datepicker
 import '@vuepic/vue-datepicker/dist/main.css';
 
-import App from './App.vue'
+import App from '@/App.vue';
 
-import router from './router';
+import router from '@/router';
 
 
 const pinia = createPinia()
@@ -37,6 +37,9 @@ app.use(Quasar, {
     Dialog,
     Notify
   }, // import Quasar plugins and add here
+  config: {
+    dark: 'auto',
+  }
 })
 
 

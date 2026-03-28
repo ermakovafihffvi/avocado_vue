@@ -1,6 +1,6 @@
 <template>
-    <q-btn flat rounded icon="o_add" color="primary" class="text-primary" @click="handleAdd">
-        <span color="promary">add state</span>
+    <q-btn flat rounded icon="sym_o_add" color="primary" class="text-primary" @click="handleAdd">
+        <span color="primary">add state</span>
     </q-btn>
 </template>
 

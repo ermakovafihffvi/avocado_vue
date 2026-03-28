@@ -1,5 +1,5 @@
 <template>
-    <q-list padding class="text-primary">
+    <q-list padding class="text-primary" :dark="true">
         <q-item
             clickable
             v-ripple
@@ -89,7 +89,7 @@
         <q-separator spaced />
 
         <q-item>
-            <q-btn class="absolute-center" @click="logoutHandle()">Logout</q-btn>
+            <q-btn color="secondary" text-color="dark" class="absolute-center" @click="logoutHandle()">Logout</q-btn>
         </q-item>
     </q-list>
 </template>
@@ -164,7 +164,14 @@ watch(routeName, () => {
 </script>
 
 <style lang="scss">
-.active-menu-link {
-    background-color: $secondary-light;
+.body--light {
+    .active-menu-link {
+        background-color: $secondary-light;
+    }
+}
+.body--dark {
+    .active-menu-link {
+        background-color: $secondary;
+    }
 }
 </style>
