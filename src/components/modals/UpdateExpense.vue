@@ -4,16 +4,26 @@
 
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add expense</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_expense') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-select outlined v-model="category" :options="expCategories" label="Category" emit-value map-options/>
-                    <q-input outlined v-model="description" label="Description" class="q-mt-lg"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
+                    <q-select outlined v-model="category" 
+                        :options="expCategories" 
+                        :label="$t('common.category')" 
+                        emit-value 
+                        map-options
                     />
-                    <q-input outlined v-model="sum" label="Sum" 
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
+                    <q-input outlined v-model="description" 
+                        :label="$t('common.description')" 
+                        class="q-mt-lg"
+                        :rules="[val => anyStringTest(val) || $t('validation.text', { field: $t('common.description') }). $t('validation.required')]"
+                        ref="descriptionRef"
+                    />
+                    <q-input outlined v-model="sum" 
+                        :label="$t('common.sum')" 
+                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: $t('common.sum') }). $t('validation.required')]"
+                        ref="sumRef"
                     />
                     <q-input outlined v-model="date" mask="date" :rules="['date']">
                         <template v-slot:append>
@@ -21,7 +31,7 @@
                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                                 <q-date v-model="date" minimal :options="dateOptions">
                                     <div class="row items-center justify-end">
-                                        <q-btn v-close-popup label="Close" color="primary" flat />
+                                        <q-btn v-close-popup :label="$t('common.close')" color="primary" flat />
                                     </div>
                                 </q-date>
                             </q-popup-proxy>
@@ -31,16 +41,25 @@
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-select outlined v-model="repeatable" :options="repeatableOptions" emit-value map-options option-value="str" option-label="title"/>
-                    <q-input v-if="repeatable == 'x-times'" outlined v-model="repeatTimes" label="How many months?" class="q-mt-lg"
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Numbers must be a positive number']"
+                    <q-select outlined v-model="repeatable" 
+                        :options="repeatableOptions" 
+                        emit-value 
+                        map-options 
+                        option-value="str" 
+                        option-label="title"
+                    />
+                    <q-input v-if="repeatable == 'x-times'" outlined v-model="repeatTimes" 
+                        :label="$t('common.how_many_months')" 
+                        class="q-mt-lg"
+                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: '' })]"
+                        ref="repeatTimesRef"
                     />
                 </q-card-section>
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -50,7 +69,12 @@
 import { getAvailableDates } from '@/composables/getAvailableDates';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
+
+const { t } = useI18n();
+const { positiveNumberTest, anyStringTest } = validationRules();
 
 const props = defineProps({
     id: [Number, String],
@@ -86,35 +110,40 @@ const description = ref(props.description ?? '');
 const sum = ref(props.sum ?? null);
 const date = ref(null);
 
+//refs
+const sumRef = ref(null);
+const descriptionRef = ref(null);
+const repeatTimesRef = ref(null);
+//end refs
+
 const dateOptions = (date) => {
-    const { prevStr, nextStr } = getAvailableDates();
-        
+    const { prevStr, nextStr } = getAvailableDates(); 
     return date <= nextStr && date >= prevStr;
 };
 
 const repeatableOptions = ref([
     {
         'str': 'no-repeat',
-        'title': 'no repeats'
+        'title': t('common.no_repeats')
     },
     {
         'str': 'every-month',
-        'title': 'every month'
+        'title': t('common.every_month')
     },
     {
         'str': 'x-times',
-        'title': 'repeat X times'
+        'title': t('common.repeat_x_times')
     }
 ]);
 const repeatable = ref('no-repeats');
 const repeatTimes = ref();
 
 const isOkDisabled = computed(() => {
-    return !category.value || category.value.hasError 
-        || !description.value || description.value.hasError 
-        || !sum.value || sum.value.hasError
-        || !date.value || date.value.hasError
-        || (repeatable.value == 'x-times' && (!repeatTimes.value || repeatTimes.value.hasError));
+    return !category.value
+        || !description.value || descriptionRef.value.hasError 
+        || !sum.value || sumRef.value.hasError
+        || !date.value
+        || (repeatable.value == 'x-times' && (!repeatTimes.value || repeatTimesRef.value.hasError));
 });
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();

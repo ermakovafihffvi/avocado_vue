@@ -1,6 +1,6 @@
 <template>
     <q-btn flat rounded icon="sym_o_add" color="primary" class="text-primary" @click="handleAddCurrency">
-        <span color="primary">currency</span>
+        <span color="primary">{{ $t('common.currency') }}</span>
     </q-btn>
 </template>
 

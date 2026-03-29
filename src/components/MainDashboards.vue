@@ -12,10 +12,10 @@
         <q-select outlined bottom-slots 
             v-model="selectedCurrency" 
             :options="currencies" 
-            option-label="str_id" label="Currency" class="full-width select-currency"
+            option-label="str_id" :label="$t('common.currency')" class="full-width select-currency"
         >
             <template v-slot:hint>
-                Select base currency for displaying totals
+                {{ $t('common.base_currency_hint') }}
             </template>
         </q-select>
     </div>

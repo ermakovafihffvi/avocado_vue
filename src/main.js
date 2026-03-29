@@ -3,6 +3,7 @@ import './assets/main.scss'
 import { createApp } from 'vue'
 import { Quasar, Dialog, Notify } from 'quasar'
 import { createPinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
@@ -19,6 +20,9 @@ import '@quasar/extras/animate/fadeOut.css'
 // Import Quasar css
 import 'quasar/src/css/index.sass'
 
+//lang files
+import loadMessages from '@/locales/index.js';
+
 // Datepicker
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -27,9 +31,15 @@ import App from '@/App.vue';
 import router from '@/router';
 
 
+const i18n = createI18n({
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: loadMessages()
+})
 const pinia = createPinia()
 const app = createApp(App)
 
+app.use(i18n)
 app.use(pinia)
 app.use(router)
 app.use(Quasar, {

@@ -1,31 +1,32 @@
+<!--Deprecated-->
 <template>
     <q-dialog ref="dialogRef" @hide="onDialogHide">
         <q-card class="q-dialog-plugin">
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add saving category</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_saving_category') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-input outlined v-model="title" label="Title" 
-                        :rules="[val => /^[a-zA-Z0-9\u0020]+$/gm.test(val) || 'Title should be string']"
+                    <q-input outlined v-model="title" :label="$t('common.title')" 
+                        :rules="[val => stringTest(val) || $t('validation.string', { field: $t('common.title') })]"
                     />
-                    <q-input outlined v-model="strId" label="String Code" class="q-mt-md"
-                        :rules="[val => (/^[a-z_]+$/.test(val) && !strIds.includes(val)) || 'String code can contain only lowercase letters and be uniques']"
+                    <q-input outlined v-model="strId" :label="$t('common.string_code')" class="q-mt-md"
+                        :rules="[val => (codeAnyCaseTest(val) && !strIds.includes(val)) || $t('validation.string_code')]"
                     />
-                    <q-select outlined v-model="currencySelected" :options="currencies" label="Currency" emit-value map-options/>
-                    <q-input outlined v-model="limit" type="number" label="Limit" debounce="600" class="q-mt-md"
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Limit must be a positive number']"
+                    <q-select outlined v-model="currencySelected" :options="currencies" :label="$t('common.currency')" emit-value map-options/>
+                    <q-input outlined v-model="limit" type="number" :label="$t('common.month_limit')" debounce="600" class="q-mt-md"
+                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || t('validation.positive_number', { field: t('common.month_limit') })]"
                     />
-                    <q-input outlined v-model="desc" label="Description" debounce="600" class="q-mt-md"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
+                    <q-input outlined v-model="desc" :label="$t('common.description')" debounce="600" class="q-mt-md"
+                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || t('validation.text', { field: t('common.description') })]"
                     />
                 </q-card-section>
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -35,12 +36,17 @@
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
 
 const props = defineProps({});
 const mainStore = useMainStore();
 const api = useClient();
 const $q = useQuasar();
+const { t } = useI18n();
+
+const { stringTest, capitalLetterTest, numberTest } = validationRules();
 
 defineEmits([
     // REQUIRED; need to specify some events that your

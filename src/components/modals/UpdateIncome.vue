@@ -4,24 +4,34 @@
 
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add income</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_income') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-input outlined v-model="description" label="Description" class="q-mt-lg"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
+                    <q-input outlined v-model="description" 
+                        :label="$t('common.description')" 
+                        class="q-mt-lg"
+                        :rules="[val => anyStringTest(val) || $t('validation.text', { field: $t('common.description') }). $t('validation.required')]"
+                        ref="descriptionRef"
                     />
-                    <q-input outlined v-model="sum" label="Sum" 
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
+                    <q-input outlined v-model="sum" 
+                        :label="$t('common.sum')" 
+                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: $t('common.sum') }). $t('validation.required')]"
+                        ref="sumRef"
                     />
-                    <q-select outlined v-model="currencySelected" :options="currencies" label="Currency" emit-value map-options/>
+                    <q-select outlined v-model="currencySelected" 
+                        :options="currencies" 
+                        :label="$t('common.currency')" 
+                        emit-value 
+                        map-options
+                    />
                     <q-input outlined v-model="date" mask="date" :rules="['date']" class="q-mt-lg">
                         <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                                 <q-date v-model="date" minimal :options="dateOptions">
                                     <div class="row items-center justify-end">
-                                        <q-btn v-close-popup label="Close" color="primary" flat />
+                                        <q-btn v-close-popup :label="$t('common.close')" color="primary" flat />
                                     </div>
                                 </q-date>
                             </q-popup-proxy>
@@ -32,8 +42,8 @@
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -44,6 +54,9 @@ import { getAvailableDates } from '@/composables/getAvailableDates';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
+
+const { positiveNumberTest, anyStringTest } = validationRules();
 
 const props = defineProps({
     id: [Number, String],
@@ -67,11 +80,16 @@ const sum = ref(props.sum ?? null);
 const date = ref(null);
 const currencySelected = ref(props.currency ?? null);
 
+//refs
+const sumRef = ref(null);
+const descriptionRef = ref(null);
+//end refs
+
 const isOkDisabled = computed(() => {
-    return !description.value || description.value.hasError 
-        || !sum.value || sum.value.hasError 
-        || !date.value || date.value.hasError
-        || !currencySelected.value || currencySelected.value.hasError;
+    return !description.value || descriptionRef.value.hasError 
+        || !sum.value || sumRef.value.hasError 
+        || !date.value
+        || !currencySelected.value;
 });
 
 const currencies = computed(() => {

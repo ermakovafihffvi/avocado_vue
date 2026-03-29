@@ -7,9 +7,9 @@
         align="justify" 
         narrow-indicator
     >
-        <q-tab name="expenses" label="Expenses" />
-        <q-tab name="scheduled" label="Scheduled" />
-        <q-tab name="incomes" label="Incomes" />
+        <q-tab name="expenses" :label="$t('common.expense', 2)" />
+        <q-tab name="scheduled" :label="$t('common.scheduled')" />
+        <q-tab name="incomes" :label="$t('common.income', 2)" />
     </q-tabs>
 </template>
 

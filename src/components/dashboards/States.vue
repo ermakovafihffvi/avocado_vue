@@ -1,10 +1,10 @@
 <template>
     <div v-if="fixingPeriod && lastSum">
         <h6> 
-            Last pediod: <span class="text-primary">{{ fixingPeriod.prevStr + ' - ' + fixingPeriod.nextStr }}</span>
+            {{ $t('common.last_period') }}: <span class="text-primary">{{ fixingPeriod.prevStr + ' - ' + fixingPeriod.nextStr }}</span>
         </h6> 
         <h6>
-            Last state: <span class="text-primary">{{ lastSum }}</span>
+            {{ $t('common.last_state') }}: <span class="text-primary">{{ lastSum }}</span>
         </h6>
     </div>
     <q-carousel
@@ -40,7 +40,8 @@
                         <q-btn v-if="!userData.data.length || !allFixer.isAllFixed(state.pseudo_month)"
                             class="full-width sum-item-btn q-mb-xs add-state-btn" text-color="black"
                             @click="router.push({ name: 'add_state', params: { id: 0, user_id: userData.user.id, pseudo_month: state.pseudo_month } })"
-                            icon="sym_o_add" label="add state"
+                            icon="sym_o_add" 
+                            :label="$t('common.add') + ' ' + $t('common.state')"
                         />
                     </div>
                 </q-scroll-area>

@@ -1,5 +1,5 @@
 <template>
-    <q-list padding class="text-primary" :dark="true">
+    <q-list padding class="text-primary">
         <q-item
             clickable
             v-ripple
@@ -10,20 +10,20 @@
             <q-item-section avatar>
                 <q-icon name="home" />
             </q-item-section>
-            <q-item-section>Home</q-item-section>
+            <q-item-section>{{ $t('common.home') }}</q-item-section>
         </q-item>
 
         <q-item
             clickable
             v-ripple
-            :active="link === 'rates'"
-            @click="menuItemClickHandle('rates')"
+            :active="link === 'currencies'"
+            @click="menuItemClickHandle('currencies')"
             active-class="active-menu-link"
         >
             <q-item-section avatar>
                 <q-icon name="price_change" />
             </q-item-section>
-            <q-item-section>Set Rates</q-item-section>
+            <q-item-section>{{ $t('common.set_currencies') }}</q-item-section>
         </q-item>
 
         <q-item
@@ -36,7 +36,7 @@
             <q-item-section avatar>
                 <q-icon name="shopping_cart" />
             </q-item-section>
-            <q-item-section>Expenses Categories</q-item-section>
+            <q-item-section>{{ $t('common.expense', 2) }} {{ $t('common.category', 2) }}</q-item-section>
         </q-item>
 
         <q-item
@@ -49,7 +49,7 @@
             <q-item-section avatar>
                 <q-icon name="paid" />
             </q-item-section>
-            <q-item-section>States Categories</q-item-section>
+            <q-item-section>{{ $t('common.state_category', 2) }}</q-item-section>
         </q-item>
 
         <q-item
@@ -62,12 +62,12 @@
             <q-item-section avatar>
                 <q-icon name="account_balance" />
             </q-item-section>
-            <q-item-section>Dashboards</q-item-section>
+            <q-item-section>{{ $t('common.dashboard', 2) }}</q-item-section>
         </q-item>
 
         <q-expansion-item
             v-model="expanded_users"
-            label="Money Users"
+            :label="$t('common.money_users')"
         >
             <q-item
                 v-for="user in users"
@@ -89,7 +89,7 @@
         <q-separator spaced />
 
         <q-item>
-            <q-btn color="secondary" text-color="dark" class="absolute-center" @click="logoutHandle()">Logout</q-btn>
+            <q-btn color="secondary" text-color="dark" class="absolute-center" @click="logoutHandle()">{{ $t('common.logout') }}</q-btn>
         </q-item>
     </q-list>
 </template>
@@ -164,14 +164,14 @@ watch(routeName, () => {
 </script>
 
 <style lang="scss">
-.body--light {
+//.body--light {
     .active-menu-link {
         background-color: $secondary-light;
     }
-}
-.body--dark {
-    .active-menu-link {
-        background-color: $secondary;
-    }
-}
+//}
+//.body--dark {
+//    .active-menu-link {
+//        background-color: $secondary;
+//    }
+//}
 </style>

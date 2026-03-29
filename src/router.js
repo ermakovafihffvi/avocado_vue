@@ -3,7 +3,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 import MainPage from '@/components/MainPage.vue';
 import Login from '@/components/Login.vue';
 import MainLayout from '@/components/layouts/MainLayout.vue';
-import RatesSetting from '@/components/RatesSetting.vue';
+import CurrencySettings from '@/components/CurrencySettings.vue';
 import UserStats from '@/components/UserStats.vue';
 import AddCurrency from '@/components/buttons/AddCurrency.vue';
 import UserStatsHeader from '@/components/headers/UserStats.vue';
@@ -39,9 +39,9 @@ const routes = [
         component: Login 
     },
     {
-        path: '/rates',
-        name: 'rates',
-        component: RatesSetting,
+        path: '/currencies',
+        name: 'currencies',
+        component: CurrencySettings,
         meta: {
             layout: MainLayout,
             leftBtn: AddCurrency,
@@ -60,7 +60,7 @@ const routes = [
             leftBtn: AddExpCategory
         }
     },
-    {
+    /*{
         path: '/category_savings',
         name: 'category_savings',
         component: SavingsCategories,
@@ -70,7 +70,7 @@ const routes = [
             rightBtn: ShowMainDashboard,
             leftBtn: AddSavingCategory
         }
-    },
+    },*/
     {
         path: '/category_states',
         name: 'category_states',

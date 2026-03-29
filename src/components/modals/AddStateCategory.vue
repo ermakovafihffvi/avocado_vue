@@ -3,26 +3,38 @@
         <q-card class="q-dialog-plugin">
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add state category</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_state_category') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-input outlined v-model="title" label="Title" 
-                        :rules="[val => /^[a-zA-Z0-9\u0020]+$/gm.test(val) || 'Title should be string']"
+                    <q-input outlined v-model="title" 
+                        :label="$t('common.title')" 
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        ref="titleRef"
                     />
-                    <q-input outlined v-model="strId" label="String Code" class="q-mt-md"
-                        :rules="[val => (/^[a-z_]+$/.test(val) && !strIds.includes(val)) || 'String code can contain only lowercase letters and be uniques']"
+                    <q-input outlined v-model="strId" 
+                        :label="$t('common.string_code')" class="q-mt-md"
+                        :rules="[val => (codeAnyCaseTest(val) && !strIds.includes(val)) || $t('validation.string_code'). $t('validation.required')]"
+                        ref="strIdRef"
                     />
-                    <q-select outlined v-model="currencySelected" :options="currencies" label="Currency" emit-value map-options/>
-                    <q-input outlined v-model="desc" label="Description" debounce="600" class="q-mt-md"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
+                    <q-select outlined v-model="currencySelected" 
+                        :options="currencies" 
+                        :label="$t('common.currency')" 
+                        emit-value 
+                        map-options
+                    />
+                    <q-input outlined v-model="desc" 
+                        :label="$t('common.description')" 
+                        class="q-mt-md"
+                        :rules="[val => (anyStringTest(val) || !val) || $t('validation.text', { field: $t('common.description') })]"
+                        ref="descriptionRef"
                     />
                 </q-card-section>
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -33,6 +45,9 @@ import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
+
+const { codeAnyCaseTest, anyStringTest } = validationRules();
 
 const props = defineProps({});
 const mainStore = useMainStore();
@@ -51,10 +66,17 @@ const strId = ref('');
 const currencySelected = ref(null);
 const desc = ref('');
 
+//refs
+const titleRef = ref(null);
+const strIdRef = ref(null);
+const descriptionRef = ref(null);
+//end refs
+
 const isOkDisabled = computed(() => {
-    return !title.value || title.value.hasError 
-        || !strId.value || strId.value.hasError 
-        || desc.value.hasError;
+    return !title.value || titleRef.value.hasError  
+        || !strId.value || strIdRef.value.hasError 
+        || descriptionRef.value.hasError
+        || !currencySelected.value;
 });
 
 const strIds = computed(() => {

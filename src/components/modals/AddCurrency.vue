@@ -3,25 +3,33 @@
         <q-card class="q-dialog-plugin">
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add currency</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_currency') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-input outlined v-model="title" label="Title" 
-                        :rules="[val => stringTest(val) || 'Title should be string']"
+                    <q-input outlined v-model="title" 
+                        :label="$t('common.title')" 
+                        :rules="[val => stringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        ref="titleRef"
                     />
-                    <q-input outlined v-model="strId" label="String Code" class="q-mt-md"
-                        :rules="[val => capitalLetterTest(val) || 'String code can contain only capital letters']"
+                    <q-input outlined v-model="strId" 
+                        :label="$t('common.string_code')" 
+                        class="q-mt-md"
+                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital'). $t('validation.required')]"
+                        ref="strIdRef"
                     />
-                    <q-input outlined v-model="rate" label="Rate" class="q-mt-md"
-                        :rules="[val => numberTest(val) || 'Rate should be a number']"
+                    <q-input outlined v-model="rate" 
+                        :label="$t('common.rate')" 
+                        class="q-mt-md"
+                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}). $t('validation.required')]"
+                        ref="rateRef"
                     />
                 </q-card-section>
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -46,10 +54,16 @@ const strId = ref('');
 const rate = ref('');
 //end new currency
 
+//refs
+const titleRef = ref(null);
+const strIdRef = ref(null);
+const rateRef = ref(null);
+//end refs
+
 const isOkDisabled = computed(() => {
-    return !title.value || title.value.hasError 
-        || !strId.value || strId.value.hasError 
-        || !rate.value || rate.value.hasError;
+    return !title.value || titleRef.value?.hasError
+        || !strId.value || strIdRef.value?.hasError 
+        || !rate.value || rateRef.value?.hasError;
 });
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();

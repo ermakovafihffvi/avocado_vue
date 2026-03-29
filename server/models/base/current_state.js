@@ -1,6 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
 import addUserGroupScope from "#server/models/scopes/user_group.js";
+import validationRules from '#shared/validation/rules.js';
+
+const { positiveNumberTest } = validationRules();
 
 class CurrentState extends Model {}
 
@@ -14,7 +17,14 @@ CurrentState.init(
         sum: {
             type: DataTypes.FLOAT,
             allowNull: false,
-            defaultValue: 0
+            defaultValue: 0,
+            validate: {
+                handleValidation(value) {
+                    if (!positiveNumberTest(value)) {
+                        throw new Error('Sum validation error');
+                    }
+                }
+            }
         },
         pseudo_month: {
             type: DataTypes.STRING,

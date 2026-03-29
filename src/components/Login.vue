@@ -1,9 +1,9 @@
 <template>
     <div class="column">
-        <h3 class="text-center q-mb-md">Login</h3>
+        <h3 class="text-center q-mb-md">{{ $t('common.login') }}</h3>
         <q-form class="column">
-            <q-input outlined v-model="login" label="Label" class="q-mb-md"/>
-            <q-input outlined v-model="password" :type="isPwd ? 'password' : 'text'" label="Password" class="q-mb-md">
+            <q-input outlined v-model="login" :label="$t('common.login')" class="q-mb-md"/>
+            <q-input outlined v-model="password" :type="isPwd ? 'password' : 'text'" :label="$t('common.password')" class="q-mb-md">
                 <template v-slot:append>
                 <q-icon
                     :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -13,9 +13,9 @@
                 </template>
             </q-input>
             
-            <q-btn color="primary" label="Login" @click="handleLogin" />
+            <q-btn color="primary" :label="$t('common.login')" @click="handleLogin" />
 
-            <q-btn color="accent" class="q-mt-md" label="Registeration" @click="handleRegistration"/>
+            <q-btn color="accent" class="q-mt-md" :label="$t('common.register')" @click="handleRegistration"/>
         </q-form>
     </div>
 </template>

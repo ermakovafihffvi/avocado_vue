@@ -2,7 +2,7 @@
     <q-layout view="lHr lpr lFr">
         <q-header class="header-wrapper" height-hint="98">
             <q-toolbar class="bg-primary text-white">
-                <q-toolbar-title>Avocado Money</q-toolbar-title>
+                <q-toolbar-title>{{ $t('common.app_name') }}</q-toolbar-title>
             </q-toolbar>
 
             <div v-if="$route.meta.title" class="title-wrapper">
@@ -11,7 +11,7 @@
             </div>
         </q-header>
 
-        <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+        <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered class="bg-background">
             <MenuList />
         </q-drawer>
 

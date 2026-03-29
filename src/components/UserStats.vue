@@ -25,16 +25,18 @@ import UserExpenses from '@/components/tables/UserExpenses.vue';
 import ScheduledList from '@/components/tables/ScheduledList.vue';
 import { computed, onMounted } from 'vue';
 import { useMainStore } from '@/store/main';
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
 const mainStore = useMainStore();
+const { t } = useI18n();
 
 //title
 const currentUser = computed(() => {
     return mainStore.state.currentUser;
 });
 const userNameTitle = computed(() => { 
-    return currentUser.value?.id == route.params.id ? 'My' 
+    return currentUser.value?.id == route.params.id ? t('common.my')
         : mainStore.state.users?.find(item => item.id == route.params.id).name;
 });
 //end title

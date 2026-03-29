@@ -1,6 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
 import addUserGroupScope from "#server/models/scopes/user_group.js";
+import validationRules from '#shared/validation/rules.js';
+
+const { anyStringTest, codeAnyCaseTest } = validationRules();
 
 class CurrentStateCategory extends Model {}
 
@@ -14,16 +17,37 @@ CurrentStateCategory.init(
         str_id: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: true,
+            validate: {
+                handleValidation(value) {
+                    if (!codeAnyCaseTest(value)) {
+                        throw new Error('Str_id validation error');
+                    }
+                }
+            }
         },
         title: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                handleValidation(value) {
+                    if (!anyStringTest(value)) {
+                        throw new Error('Title should be string');
+                    }
+                }
+            }
         },
         desc: {
             type: DataTypes.STRING,
             allowNull: true,
-            defaultValue: null
+            defaultValue: null,
+            validate: {
+                handleValidation(value) {
+                    if (value && !anyStringTest(value)) {
+                        throw new Error('Description validation error');
+                    }
+                }
+            }
         },
     },
     {

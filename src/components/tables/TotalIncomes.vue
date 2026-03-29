@@ -1,5 +1,5 @@
 <template>
-    <h4 class="text-center q-mb-md text-primary">Total Income</h4>
+    <h4 class="text-center q-mb-md text-primary">{{ $t('common.total_income') }}</h4>
     <LoadingSpinner v-if="loading || !mainStore.state.users || !mainStore.state.currencies" :size="'lg'"/>
     <div class="q-pa-md" v-else>
         <div class="row q-col-gutter-xs">
@@ -24,12 +24,12 @@
             <div class="col-12">
                 <q-card dark bordered>
                     <q-card-section>
-                        <div class="text-h6">Total: <span>{{ totalIncom }}&nbsp;USD</span></div>
+                        <div class="text-h6">{{ $t('common.total') }}: <span>{{ totalIncom }}&nbsp;USD</span></div>
                     </q-card-section>
                     <q-separator dark inset/>
                     <q-card-section>
                         <div class="text-subtitle3">
-                            Calculated according to the defined <a class="link" @click="router.push({name: 'rates'})">rates</a>.
+                            {{ $t('common.calculated_according_to_currencies') }} <a class="link" @click="router.push({name: 'currencies'})">{{ $t('common.currency', 2) }}</a>.
                         </div>
                     </q-card-section>
                 </q-card>
@@ -43,10 +43,12 @@ import router from '@/router';
 import LoadingSpinner from '../base/LoadingSpinner.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import useClient from '@/api/useClient';
+import { useI18n } from 'vue-i18n';
 import { useMainStore } from '@/store/main';
 import { useQuasar } from 'quasar';
 
 const api = useClient();
+const { t } = useI18n();
 const mainStore = useMainStore();
 const $q = useQuasar();
 

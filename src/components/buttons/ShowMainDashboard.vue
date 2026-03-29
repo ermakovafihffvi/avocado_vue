@@ -1,6 +1,6 @@
 <template>
     <q-btn flat rounded icon="account_balance" color="primary" class="text-primary" @click="handleRightBtn">
-        <span color="primary">Dashboards</span>
+        <span color="primary">{{ $t('common.dashboard', 2) }}</span>
     </q-btn>
 </template>
 

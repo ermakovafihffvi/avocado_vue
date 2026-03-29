@@ -6,9 +6,11 @@
                 <div class="row q-gutter-lg justify-between">
                     <q-input 
                         v-model="category.title" 
-                        label="Title" 
+                        :label="$t('common.title')"
                         style="flex: 1;" 
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
                         @update:model-value="handleInput(category.id, 'title')"
+                        :ref="(el) => setRef(el, category.id + '-title')"
                     />
                     <div>
                         <DeleteButton @handle-delete="handleDelete(category.id)"/>
@@ -16,21 +18,17 @@
                 </div>
                 <q-input v-model="category.str_id" 
                     readonly 
-                    label="Str_id" 
-                    debounce="600"
-                    :rules="[val => (/^[a-zA-Z_]+$/gm.test(val) && !strIds.includes(val.trim())) 
-                        || 'Str_id should be string and unique']"
-                    @update:model-value="handleInput(category.id, 'str_id')"
+                    :label="$t('common.string_code')" 
                 />
                 <q-input v-model="category.desc" 
-                    label="Description" 
-                    debounce="600"
-                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || 'Description can contain only text']"
+                    :label="$t('common.description')" 
+                    :rules="[val => (anyStringTest(val) || !val) || $t('validation.text', { field: $t('common.description') })]"
                     @update:model-value="handleInput(category.id, 'desc')"
+                    :ref="(el) => setRef(el, category.id + '-description')"
                 />
                 <q-select v-model="category.currency_id" 
                     :options="currencies" 
-                    label="Currency" 
+                    :label="$t('common.currency')" 
                     emit-value 
                     map-options
                     @update:model-value="handleInput(category.id, 'currency_id')"
@@ -43,16 +41,27 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import DeleteButton from '@/components/buttons/DeleteButton.vue';
 import { useQuasar } from 'quasar';
+import { useDebounceFn } from '@vueuse/core';
+import validationRules from '@shared/validation/rules.js';
+
+const { anyStringTest } = validationRules();
 
 const api = useClient();
 const mainStore = useMainStore();
+const { t } = useI18n();
 const categories = ref(null);
 const loading = ref(true);
 const $q = useQuasar();
+
+const inputRefs = ref({});
+const setRef = (el, key) => {
+    inputRefs.value[key] = el;
+};
 
 const currencies = computed(() => {
     return mainStore.state.currencies?.reduce((result, currency) => {
@@ -64,43 +73,43 @@ const currencies = computed(() => {
     }, []);
 });
 
-const strIds = computed(() => {
-    return mainStore.state.stateCategories?.reduce((acc, item) => {        
-        acc.push(item.str_id);
-        return acc;
-    }, []);
-});
-
 const handleInput = async (id, field) => {
-    const category = categories.value.find(item => item.id == id);
-    const { error } = await api(`api/state/category/${id}/update`).put({
-        field: field,
-        value: category[field]
-    }).json();
-    if (error.value) {
-        $q.notify({
-            type: 'error',
-            message: error.value,
-            color: 'negative'
-        });
-    } else {
-        $q.notify({
-            type: 'positive',
-            message: 'State category has been successfully updated',
-            color: 'positive'
-        });
-        mainStore.state.stateCategories.forEach(item => {
-            if (item.id == id) {
-                item[field] = category[field];
-            }
-        });
-    }
+    useDebounceFn(async () => {
+        const refField = inputRefs.value[id + '-' + field];
+        if (refField && refField.hasError) {
+            return;
+        }
+
+        const category = categories.value.find(item => item.id == id);
+        const { error } = await api(`api/state/category/${id}/update`).put({
+            field: field,
+            value: category[field]
+        }).json();
+        if (error.value) {
+            $q.notify({
+                type: 'error',
+                message: error.value,
+                color: 'negative'
+            });
+        } else {
+            $q.notify({
+                type: 'positive',
+                message: t('messages.success.state_category_updated'),
+                color: 'positive'
+            });
+            mainStore.state.stateCategories.forEach(item => {
+                if (item.id == id) {
+                    item[field] = category[field];
+                }
+            });
+        }
+    }, 400)();
 };
 
 const handleDelete = (id) => {
     $q.dialog({
-        title: 'Confirm',
-        message: 'Are you sure you want to delete state category?',
+        title: t('common.confirm'),
+        message: t('messages.confirm.delete_state_category'),
         cancel: true,
         persistent: true
     }).onOk(async () => {
@@ -114,7 +123,7 @@ const handleDelete = (id) => {
         } else {
             $q.notify({
                 type: 'positive',
-                message: 'State category has been successfully deleted',
+                message: t('messages.success.state_category_deleted'),
                 color: 'positive'
             });
             categories.value = categories.value.reduce(function (acc, item) {

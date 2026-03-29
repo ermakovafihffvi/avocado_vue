@@ -1,6 +1,6 @@
 <template>
     <q-btn flat rounded icon="sym_o_add" color="primary" class="text-primary" @click="handleAdd">
-        <span color="primary">state category</span>
+        <span color="primary">{{ $t('common.state') }} {{ $t('common.category') }}</span>
     </q-btn>
 </template>
 

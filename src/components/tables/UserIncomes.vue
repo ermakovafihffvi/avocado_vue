@@ -1,7 +1,7 @@
 <template>
         <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
-            <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' Income' : '' }}</h6>
+            <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' ' + t('common.income', 2) : '' }}</h6>
             <div class="column">
                 <span class="text-primary" :class="{ 'text-h5': !userSumsWOMax.length }">
                     {{ userSum[maxUserSumKey] }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == maxUserSumKey)?.str_id }}
@@ -11,7 +11,7 @@
                 </span>
             </div>
         </div>
-        <q-btn push color="primary" label="Add income" @click="handleAddIncome" />
+        <q-btn push color="primary" :label="t('common.add') + ' ' + t('common.income')" @click="handleAddIncome" />
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'"/>
     <div class="q-pa-md expenses-table-wrapper" v-else>
@@ -77,11 +77,13 @@ import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
 import { useDateFormat } from '@vueuse/core';
 import { useMainStore } from '@/store/main';
+import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import useOpenAddIncomes from '@/composables/openAddIncome';
 import DeleteButton from '@/components/buttons/DeleteButton.vue';
 
 const api = useClient();
+const { t } = useI18n();
 const mainStore = useMainStore();
 
 const props = defineProps({
@@ -117,7 +119,7 @@ const columns = [
     {
         name: 'desc',
         required: true,
-        label: 'Description',
+        label: t('common.description'),
         align: 'left',
         field: row => row.desc,
         format: val => `${val}`,
@@ -127,7 +129,7 @@ const columns = [
     {
         name: 'sum',
         required: true,
-        label: 'Sum',
+        label: t('common.sum'),
         align: 'left',
         field: row => row.sum,
         format: val => `${val}`,
@@ -146,7 +148,7 @@ const columns = [
     {
         name: 'date',
         required: true,
-        label: 'Date',
+        label: t('common.date'),
         align: 'left',
         field: row => row.date,
         format: val => `${val}`,
@@ -156,7 +158,7 @@ const columns = [
     {
         name: 'delete',
         required: true,
-        label: 'Delete',
+        label: t('common.delete'),
         align: 'left'
     }
 ];

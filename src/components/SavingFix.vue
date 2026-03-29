@@ -1,24 +1,24 @@
 <template>
     <q-card>
         <q-card-section>
-            <h5>Period: <span class="text-primary">{{ fixingPeriod.prevStr + ' - ' + fixingPeriod.nextStr }}</span></h5>
+            <h5>{{ $t('common.period') }}: <span class="text-primary">{{ fixingPeriod.prevStr + ' - ' + fixingPeriod.nextStr }}</span></h5>
         </q-card-section>
         <q-card-section v-if="!stateId">
             <q-chip color="positive" icon="done_all" v-if="allFixed">
-                All categories filled
+                {{ $t('common.all_categories_filled') }}
             </q-chip>
             <q-chip color="negative" icon="report_problem" v-else>
-                Not all categories filled
+                {{ $t('common.not_all_categories_filled') }}
             </q-chip>
         </q-card-section>
         <q-card-section>
-            <q-select outlined v-model="selectedUser" :options="users" option-value="id" option-label="name" label="User" />
-            <q-select class="q-mt-lg" outlined v-model="selectedStateCategory" :options="stateCategories" option-value="id" option-label="title" label="State category" />
-            <q-select class="q-mt-lg disabled" outlined readonly v-model="selectedCurrency" :options="currencies" option-value="id" option-label="str_id" label="Currency" />
-            <q-input class="q-mt-lg" outlined v-model="sum" label="Sum" 
-                :rules="[val => /^[1-9].{1,}\d{0,}$/gm.test(val) || 'Sum must be a positive number']"
+            <q-select outlined v-model="selectedUser" :options="users" option-value="id" option-label="name" :label="$t('common.user')" />
+            <q-select class="q-mt-lg" outlined v-model="selectedStateCategory" :options="stateCategories" option-value="id" option-label="title" :label="$t('common.state_category')" />
+            <q-select class="q-mt-lg disabled" outlined readonly v-model="selectedCurrency" :options="currencies" option-value="id" option-label="str_id" :label="$t('common.currency')" />
+            <q-input class="q-mt-lg" outlined v-model="sum" :label="$t('common.sum')" 
+                :rules="[val => /^[1-9].{1,}\d{0,}$/gm.test(val) || $t('validation.positive_number', { field: $t('common.sum') })]"
             />
-            <q-btn push color="primary" label="Fix" :disable="fixDisabled" @click="handleFix"/>
+            <q-btn push color="primary" :label="$t('common.fix')" :disable="fixDisabled" @click="handleFix"/>
         </q-card-section>
     </q-card>
 </template>
@@ -29,12 +29,14 @@ import { getAvailableDates, getDateRange } from '@/composables/getAvailableDates
 import useAllFixed from '@/composables/useAllFixed';
 import { useMainStore } from '@/store/main';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const mainStore = useMainStore();
 const $q = useQuasar();
-const api =useClient();
+const { t } = useI18n();
+const api = useClient();
 const route = useRoute();
 const allFixer = useAllFixed();
 
@@ -80,13 +82,12 @@ const fixDisabled = computed(() => {
     return !selectedStateCategory.value || !selectedUser.value || !sum.value || sum.value.error;
 });
 const handleFix = () => {
-    let message = 'Are you sure you want to add data? It is recommended to fix data once a month.';
-    if (hasPrevSumValue.value) {
-        message += ' You have already added sum for this user, period and category.'
-    }
+    const dialogMessage = hasPrevSumValue.value
+        ? `${t('messages.confirm.fix_state')} ${t('messages.confirm.fix_state_existing')}`
+        : t('messages.confirm.fix_state');
     $q.dialog({
-        title: 'Confirm',
-        message: message,
+        title: t('common.confirm'),
+        message: dialogMessage,
         cancel: true,
         persistent: true
     }).onOk(async () => {
@@ -106,7 +107,7 @@ const handleFix = () => {
         } else {
             $q.notify({
                 type: 'positive',
-                message: 'State has been successfully updated',
+                message: t('messages.success.state_updated'),
                 color: 'positive'
             });
             if (hasPrevSumValue.value) {

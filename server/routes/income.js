@@ -36,7 +36,7 @@ incomeRouter.post('/update', async function (req, res) {
             group_id: req.user.current_group_id,
         });
 
-    income.desc = req.body.desc;
+    income.desc = req.body.description;
     income.sum = req.body.sum;
     income.currency_id = req.body.currency_id;
     income.user_id = req.body.user_id;

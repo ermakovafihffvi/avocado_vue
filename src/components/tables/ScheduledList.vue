@@ -1,7 +1,9 @@
 <template>
     <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
-            <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' Scheduled Expenses' : '' }}</h6>
+            <h6 class="text-h6 text-primary">
+                {{ userNameTitle ? userNameTitle + ' ' + $t('common.scheduled') + $t('common.expense', 2) : '' }}
+            </h6>
         </div>
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'" />
@@ -24,7 +26,7 @@
 
                     <q-item-section class="flex flex-center" style="max-width: 94px;">
                         <q-badge color="secondary" v-if="expense.is_every_month">
-                            <q-icon name="sym_o_autorenew" /> monthly
+                            <q-icon name="sym_o_autorenew" /> {{ $t('common.monthly') }}
                         </q-badge>
                         <div v-else class="times-wrapper">
                             <q-btn v-show="editMode[expense.id]" flat round color="secondary" icon="sym_o_remove" size="md" 
@@ -51,7 +53,7 @@
                 <q-card>
                     <q-card-section>
                         <div v-if="expense.is_every_month">
-                            <span class="text-caption">This expense happens every month. If you want to disable it, press toggle. You can create another regular expense, but there is no opportunity to edit the existing one.</span>
+                            <span class="text-caption">{{ $t('common.monthly_expense_caption') }}</span>
                         </div>
                         <div v-if="expense.times">
                             <q-item v-for="i in expense.times" dense>
@@ -81,7 +83,7 @@
         </div>
     </div>
     <div v-else>
-        <p class="text-center">No data available</p>
+        <p class="text-center">{{ $t('common.no_data') }}</p>
     </div>
 </template>
 
@@ -135,7 +137,7 @@ const updateExpense = async (id, args) => {
     } else {
         $q.notify({
             type: 'positive',
-            message: 'Scheduled expense has been successfully updated',
+            message: $t('messages.success.expense_updated'),
             color: 'positive'
         });
     }

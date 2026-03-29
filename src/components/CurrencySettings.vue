@@ -5,34 +5,29 @@
                 <q-card-section class="rate-card-section">
                     <q-input outlined 
                         v-model="currency.title" 
-                        label="Title"
+                        :label="$t('common.title')"
                         readonly 
                         :dense="true" 
                         dark 
                         bg-color="dark" 
-                        lazy-rules="ondemand"
-                        :ref="(el) => setRef(el, currency.id + '-title')"
-                        :rules="[val => stringTest(val) || 'Title should be a string']"
                         @update:model-value="(value) => handleInput(value, currency, 'title')"
                     />
                     <q-input outlined 
                         v-model="currency.str_id" 
-                        label="String Code" 
+                        :label="$t('common.string_code')" 
                         dark 
                         bg-color="dark" 
-                        lazy-rules="ondemand"
                         :ref="(el) => setRef(el, currency.id + '-str_id')"
-                        :rules="[val => capitalLetterTest(val) || 'String code can contain only capital letters']"
+                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital'). $t('validation.required')]"
                         @update:model-value="(value) => handleInput(value, currency, 'str_id')"
                     />
                     <q-input outlined 
                         v-model="currency.rate" 
-                        label="Rate" 
+                        :label="$t('common.rate')" 
                         dark 
                         bg-color="dark" 
-                        lazy-rules="ondemand"
                         :ref="(el) => setRef(el, currency.id + '-rate')"
-                        :rules="[val => numberTest(val) || 'Rate should be a number']"
+                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}). $t('validation.required')]"
                         @update:model-value="(value) => handleInput(value, currency, 'rate')"
                     />
                 </q-card-section>
@@ -43,19 +38,21 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import validationRules from '@shared/validation/rules.js';
 
 const $q = useQuasar();
+const { t } = useI18n();
 const mainStore = useMainStore();
 const api = useClient();
 const currencies = ref(null);
+
+const { capitalLetterTest, numberTest } = validationRules();
+
 const inputRefs = ref({});
-
-const { stringTest, capitalLetterTest, numberTest } = validationRules();
-
 const setRef = (el, key) => {
     inputRefs.value[key] = el;
 };
@@ -64,11 +61,8 @@ const handleInput = async (value, currency, field) => {
     useDebounceFn(async () => {
         const refKey = currency.id + '-' + field;
         const inputComponent = inputRefs.value[refKey];
-        if (inputComponent) {
-            const validationResult = await inputComponent.validate();
-            if (!validationResult) {
-                return;
-            }
+        if (inputComponent && inputComponent.hasError) {
+            return;
         }
 
         const requestCurrency = {
@@ -87,7 +81,7 @@ const handleInput = async (value, currency, field) => {
         } else {
             $q.notify({
                 type: 'positive',
-                message: 'Currency has been successfully set',
+                message: t('messages.success.currency_set'),
                 color: 'positive'
             });
             mainStore.state.currencies.map((item) => {
@@ -116,7 +110,7 @@ onMounted(async () => {
     margin-top: 15px;
 }
 .rate-card {
-    max-width: 300px;
+    width: 300px;
     background-color: $secondary;
 }
 .rate-card-section {

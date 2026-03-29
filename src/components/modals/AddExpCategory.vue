@@ -3,22 +3,39 @@
         <q-card class="q-dialog-plugin">
             <q-card bordered>
                 <q-card-section>
-                    <div class="text-h5 text-primary text-center">Add expenses category</div>   
+                    <div class="text-h5 text-primary text-center">{{ $t('headers.add_expenses_category') }}</div>   
                 </q-card-section>
                 <q-separator inset />
                 <q-card-section>
-                    <q-input outlined v-model="title" label="Title" 
-                        :rules="[val => /^[a-zA-Z0-9\u0020]+$/gm.test(val) || 'Title should be string']"
+                    <q-input outlined v-model="title" 
+                        :label="$t('common.title')" 
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        ref="titleRef"
                     />
-                    <q-input outlined v-model="strId" label="String Code" class="q-mt-md"
-                        :rules="[val => (/^[a-z_]+$/.test(val) && !strIds.includes(val)) || 'String code can contain only lowercase letters and be uniques']"
+                    <q-input outlined v-model="strId" 
+                        :label="$t('common.string_code')"  
+                        class="q-mt-md"
+                        :rules="[val => (codeAnyCaseTest(val) && !strIds.includes(val)) || $t('validation.string_code'). $t('validation.required')]"
+                        ref="strIdRef"
                     />
-                    <q-select outlined v-model="currencySelected" :options="currencies" label="Currency" emit-value map-options/>
-                    <q-input outlined v-model="limit" type="number" label="Limit" debounce="600" class="q-mt-md"
-                        :rules="[val => /^[1-9]{1,}\d{0,}$/gm.test(val) || 'Limit must be a positive number']"
+                    <q-select outlined v-model="currencySelected" 
+                        :options="currencies" 
+                        :label="$t('common.currency')" 
+                        emit-value
+                        map-options
                     />
-                    <q-input outlined v-model="desc" label="Description" debounce="600" class="q-mt-md"
-                        :rules="[val => /^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027\u0020,]+$/gm.test(val) || 'Description can contain only text']"
+                    <q-input outlined v-model="limit" 
+                        type="number" 
+                        :label="$t('common.limit')" 
+                        class="q-mt-md"
+                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: $t('common.limit') })]"
+                        ref="limitRef"
+                    />
+                    <q-input outlined v-model="desc" 
+                        :label="$t('common.description')" 
+                        class="q-mt-md"
+                        :rules="[val => (anyStringTest(val) || !val) || $t('validation.text', { field: $t('common.description') })]"
+                        ref="descriptionRef"
                     />
 
                     <div class="q-mt-md">
@@ -27,7 +44,7 @@
                             checked-icon="check"
                             color="secondary"
                             unchecked-icon="clear"
-                            label="Is Active"
+                            :label="$t('common.is_active')"
                             :true-value="1"
                             :false-value="0"
                         />
@@ -35,7 +52,7 @@
                             v-model="special"
                             checked-icon="check"
                             color="accent"
-                            label="Is special"
+                            :label="$t('common.is_special')"
                             unchecked-icon="clear"
                             :true-value="1"
                             :false-value="0"
@@ -45,8 +62,8 @@
             </q-card>
 
             <q-card-actions align="right">
-                <q-btn color="primary" label="OK" @click="onOKClick" :disable="isOkDisabled" />
-                <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
+                <q-btn color="primary" :label="$t('common.ok')" @click="onOKClick" :disable="isOkDisabled" />
+                <q-btn color="primary" :label="$t('common.cancel')" @click="onDialogCancel" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -57,11 +74,14 @@ import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
+import validationRules from '@shared/validation/rules.js';
 
 const props = defineProps({});
 const mainStore = useMainStore();
 const api = useClient();
 const $q = useQuasar();
+
+const { positiveNumberTest, anyStringTest, codeAnyCaseTest } = validationRules();
 
 defineEmits([
     // REQUIRED; need to specify some events that your
@@ -79,10 +99,19 @@ const special = ref(0);
 const limit = ref(0);
 //end new currency
 
+//refs
+const titleRef = ref(null);
+const strIdRef = ref(null);
+const descriptionRef = ref(null);
+const limitRef = ref(null);
+//end refs
+
 const isOkDisabled = computed(() => {
-    return !title.value || title.value.hasError 
-        || !strId.value || strId.value.hasError 
-        || desc.value.hasError || limit.value.hasError;
+    return !title.value || titleRef.value.hasError 
+        || !strId.value || strIdRef.value.hasError 
+        || descriptionRef.value.hasError 
+        || limitRef.value.hasError
+        || !currencySelected.value;
 });
 
 const strIds = computed(() => {

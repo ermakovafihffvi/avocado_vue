@@ -1,5 +1,5 @@
 <template>
-    <h4 class="text-center q-mb-md text-primary">Total Expenses</h4>
+    <h4 class="text-center q-mb-md text-primary">{{ $t('common.total_expenses') }}</h4>
     <LoadingSpinner v-if="loading || !mainStore.state.users || !mainStore.state.currencies" :size="'lg'"/>
     <div class="q-pa-md" v-else>
         <div class="row q-col-gutter-xs q-mb-xs">
@@ -19,7 +19,7 @@
             <div class="col total-card" v-for="(total, currency) in totalExpensesWOHouse">
                 <q-card dark bordered>
                     <q-card-section>
-                        <div class="text-h5 text-primary text-center">{{ currency }}, wo house</div>   
+                        <div class="text-h5 text-primary text-center">{{ currency }}, {{ $t('common.without_house') }}</div>   
                     </q-card-section>
                     <q-separator dark inset />
                     <q-card-section>
@@ -71,12 +71,14 @@
 
 <script setup>
 import useClient from '@/api/useClient';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 import LoadingSpinner from '../base/LoadingSpinner.vue';
 import { useMainStore } from '@/store/main';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
+const { t } = useI18n();
 const api = useClient();
 const mainStore = useMainStore();
 const loading = ref(true);
@@ -84,25 +86,25 @@ const expenses = ref(null);
 const columns = ref([
     {
         name: 'category',
-        label: 'Category',
+        label: t('common.category'),
         field: 'category',
         align: 'left'
     },
     {
         name: 'expenses',
-        label: 'Expenses',
+        label: t('common.expense', 2),
         field: 'expenses',
         align: 'right'
     },
     {
         name: 'limit',
-        label: 'Limit',
+        label: t('common.limit'),
         field: 'limit',
         align: 'right'
     },
     {
         name: 'remain',
-        label: 'Remain',
+        label: t('common.remain'),
         field: 'remain',
         align: 'right'
     }

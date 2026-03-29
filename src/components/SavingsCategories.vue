@@ -1,30 +1,31 @@
+<!--Deprecated-->
 <template>
     <LoadingSpinner v-if="loading" class="q-mt-lg"/>
     <div v-else>
         <q-card bordered flat v-for="category in categories" class="category-card" :key="category.id" :data-attr-key="category.id">
             <q-card-section>
                 <div class="row q-gutter-lg justify-between">
-                    <q-input v-model="category.title" label="Title" style="flex: 1;" debounce="600"
+                    <q-input v-model="category.title" :label="$t('common.title')" style="flex: 1;" debounce="600"
                         @update:model-value="handleInput(category.id, 'title')"
                     />
                     <div>
                         <DeleteButton @handle-delete="handleDelete(category.id)"/>
                     </div>
                 </div>
-                <q-input v-model="category.str_id" readonly label="Str_id" debounce="600"
+                <q-input v-model="category.str_id" readonly :label="$t('common.string_code')" debounce="600"
                     :rules="[val => (/^[a-zA-Z_]+$/gm.test(val) && !strIds.includes(val.trim())) 
-                        || 'Str_id should be string and unique']"
+                        || $t('validation.string_code') + ' ' + $t('validation.required')]"
                     @update:model-value="handleInput(category.id, 'str_id')"
                 />
-                <q-input v-model="category.limit" type="number" label="Month limit" debounce="600"
-                    :rules="[val => /^[0-9]+$/gm.test(val) || 'Limit must be a positive number']"
+                <q-input v-model="category.limit" type="number" :label="$t('common.month_limit')" debounce="600"
+                    :rules="[val => /^[0-9]+$/gm.test(val) || $t('validation.positive_number', { field: $t('common.month_limit') })]"
                     @update:model-value="handleInput(category.id, 'limit')"
                 />
-                <q-input v-model="category.desc" label="Description" debounce="600"
-                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || 'Description can contain only text']"
+                <q-input v-model="category.desc" :label="$t('common.description')" debounce="600"
+                    :rules="[val => (/^[a-zA-Zа-яА-ЯёЁ0-9\u0022\u0027,]+$/gm.test(val) || !val) || $t('validation.text', { field: $t('common.description') })]"
                     @update:model-value="handleInput(category.id, 'desc')"
                 />
-                <q-select v-model="category.currency_id" :options="currencies" label="Currency" emit-value map-options
+                <q-select v-model="category.currency_id" :options="currencies" :label="$t('common.currency')" emit-value map-options
                     @update:model-value="handleInput(category.id, 'currency_id')"
                 />
             </q-card-section>
@@ -35,6 +36,7 @@
 <script setup>
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import { useI18n } from 'vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import DeleteButton from '@/components/buttons/DeleteButton.vue';
@@ -42,6 +44,7 @@ import { useQuasar } from 'quasar';
 
 const api = useClient();
 const mainStore = useMainStore();
+const { t } = useI18n();
 const categories = ref(null);
 const loading = ref(true);
 const $q = useQuasar();
@@ -78,7 +81,7 @@ const handleInput = async (id, field) => {
     } else {
         $q.notify({
             type: 'positive',
-            message: 'Saving category has been successfully updated',
+            message: t('messages.success.saving_category_updated'),
             color: 'positive'
         });
         mainStore.state.savingCategories.forEach(item => {
@@ -91,8 +94,8 @@ const handleInput = async (id, field) => {
 
 const handleDelete = (id) => {
     $q.dialog({
-        title: 'Confirm',
-        message: 'Are you sure you want to delete saving category? All savings will still be displayed anyway.',
+        title: t('common.confirm'),
+        message: t('messages.confirm.delete_saving_category'),
         cancel: true,
         persistent: true
     }).onOk(async () => {
@@ -106,7 +109,7 @@ const handleDelete = (id) => {
         } else {
             $q.notify({
                 type: 'positive',
-                message: 'Saving category has been successfully deleted',
+                message: t('messages.success.saving_category_deleted'),
                 color: 'positive'
             });
             categories.value = categories.value.reduce(function (acc, item) {

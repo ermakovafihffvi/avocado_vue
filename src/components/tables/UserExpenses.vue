@@ -1,7 +1,7 @@
 <template>
     <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
-            <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' Expenses' : '' }}</h6>
+            <h6 class="text-h6 text-primary">{{ userNameTitle ? userNameTitle + ' ' + t('common.expense', 2) : '' }}</h6>
             <div class="column">
                 <span class="text-primary" :class="{ 'text-h5': !userSumsWOMax.length }">
                     {{ userSum[maxUserSumKey] }}&nbsp;{{ mainStore.state.currencies?.find(el => el.id == maxUserSumKey)?.str_id }}
@@ -11,7 +11,7 @@
                 </span>
             </div>
         </div>
-        <q-btn push color="primary" label="Add expense" @click="handleAddExpense" />
+        <q-btn push color="primary" :label="t('common.add') + ' ' + t('common.expense')" @click="handleAddExpense" />
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'" />
     <div class="expenses-table-wrapper" v-else>
@@ -108,6 +108,7 @@
 <script setup>
 import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
 import useClient from '@/api/useClient';
+import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useMainStore } from '@/store/main';
@@ -116,6 +117,7 @@ import { useDateFormat } from '@vueuse/core';
 import DeleteButton from '@/components/buttons/DeleteButton.vue';
 
 const $q = useQuasar();
+const { t } = useI18n();
 const api = useClient();
 const mainStore = useMainStore();
 const props = defineProps({
@@ -153,7 +155,7 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'Category title',
+    label: t('common.category_title'),
     align: 'left',
     field: row => row.name,
     format: val => `${val}`,
@@ -163,7 +165,7 @@ const columns = [
   {
     name: 'sum',
     required: true,
-    label: 'Sum',
+    label: t('common.sum'),
     align: 'left',
     field: row => row.sum,
     format: val => `${val}`,
@@ -173,7 +175,7 @@ const columns = [
   {
     name: 'limit',
     required: true,
-    label: 'Limit',
+    label: t('common.limit'),
     align: 'left',
     field: row => row.limit,
     format: val => `${val}`,
@@ -185,7 +187,7 @@ const subColumns = [
     {
         name: 'sum',
         required: true,
-        label: 'Sum',
+        label: t('common.sum'),
         align: 'left',
         field: row => row.sum,
         format: val => `${val}`,
@@ -195,7 +197,7 @@ const subColumns = [
     {
         name: 'description',
         required: true,
-        label: 'Desc',
+        label: t('common.description_short'),
         align: 'left',
         field: row => row.description,
         format: val => `${val}`,
@@ -204,7 +206,7 @@ const subColumns = [
     {
         name: 'date',
         required: true,
-        label: 'Date',
+        label: t('common.date'),
         align: 'left',
         field: row => row.date,
         format: val => `${val}`,
@@ -213,7 +215,7 @@ const subColumns = [
     {
         name: 'delete',
         required: true,
-        label: 'Delete',
+        label: t('common.delete'),
         align: 'left'
     }
 ];

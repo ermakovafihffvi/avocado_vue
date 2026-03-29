@@ -1,6 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '#server/bd.js';
 import addUserGroupScope from "#server/models/scopes/user_group.js";
+import validationRules from '#shared/validation/rules.js';
+
+const { positiveNumberTest } = validationRules();
 
 class RepeatableExpense extends Model {}
 
@@ -19,7 +22,14 @@ RepeatableExpense.init(
         times: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 1,
+            validate: {
+                handleValidation(value) {
+                    if (!positiveNumberTest(value)) {
+                        throw new Error('Sum validation error');
+                    }
+                }
+            }
         },
     },
     {
