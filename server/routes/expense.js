@@ -6,16 +6,17 @@ const { Expense, CategoryExpense, RepeatableExpense, Currency } = models;
 
 const expenseRouter = express.Router();
 
-expenseRouter.get('/categories', function (req, res) {
+expenseRouter.get('/categories', function (req, res, next) {
     CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         paranoid: true
     })
     .then((categories) => {
         res.json(categories);
-    });
+    })
+    .catch(err => next(err));
 });
 
-expenseRouter.get('/total', function (req, res) {
+expenseRouter.get('/total', function (req, res, next) {
     Expense.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
         attributes: [
             'category_id',
@@ -25,10 +26,11 @@ expenseRouter.get('/total', function (req, res) {
     })
     .then((total) => {
         res.json(total);
-    });
+    })
+    .catch(err => next(err));
 });
 
-expenseRouter.get('/user/:user_id', function (req, res) {
+expenseRouter.get('/user/:user_id', function (req, res, next) {
     const isSpecial = req.query.special == 1;
 
     Expense.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
@@ -48,48 +50,54 @@ expenseRouter.get('/user/:user_id', function (req, res) {
     })
     .then((expenses) => {
         res.json(expenses);
-    });
+    })
+    .catch(err => next(err));
 });
 
-expenseRouter.post('/update', async function (req, res) {
-    const expense = req.body.id ? 
-        Expense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
-        Expense.build({
-            group_id: req.user.current_group_id,
-        });
+expenseRouter.post('/update', async function (req, res, next) {
+    try {
+        const expense = req.body.id ? 
+            Expense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
+            Expense.build({
+                group_id: req.user.current_group_id,
+            });
 
-    expense.desc = req.body.description;
-    expense.sum = req.body.sum;
-    expense.user_id = req.body.user_id;
-    expense.category_id = req.body.category_id;
-    expense.createdAt = new Date(req.body.date);
+        expense.desc = req.body.description;
+        expense.sum = req.body.sum;
+        expense.user_id = req.body.user_id;
+        expense.category_id = req.body.category_id;
+        expense.createdAt = new Date(req.body.date);
 
-    const savedExpense = await expense.save();
+        const savedExpense = await expense.save();
 
-    if (req.body.repeatable === 'every-month') {
-        savedExpense.createRepeatableExpense({
-            is_every_month: true,
-        });
-    } else if (req.body.repeatable === 'x-times' && req.body.repeat_times > 0) {
-        savedExpense.createRepeatableExpense({
-            times: req.body.repeat_times,
-        });
+        if (req.body.repeatable === 'every-month') {
+            savedExpense.createRepeatableExpense({
+                is_every_month: true,
+            });
+        } else if (req.body.repeatable === 'x-times' && req.body.repeat_times > 0) {
+            savedExpense.createRepeatableExpense({
+                times: req.body.repeat_times,
+            });
+        }
+
+        res.json(savedExpense);
+    } catch (err) {
+        next(err);
     }
-
-    res.json(savedExpense);
 });
 
-expenseRouter.delete('/:expense_id/delete', function (req, res) {
+expenseRouter.delete('/:expense_id/delete', function (req, res, next) {
     const { expense_id } = req.params;
 
     Expense.scope({method: ['userGroup', req.user.current_group_id]})
     .destroy({ where: { id: expense_id } })
     .then(() => {
         res.json({ message: 'Expense deleted successfully' });
-    });
+    })
+    .catch(err => next(err));
 });
 
-expenseRouter.get('/scheduled', async function (req, res) {
+expenseRouter.get('/scheduled', async function (req, res, next) {
     const limit = 15;
     const page = parseInt(req.query.page || 1);
     const offset = (page - 1) * limit;
@@ -145,7 +153,8 @@ expenseRouter.get('/scheduled', async function (req, res) {
         limit,
         offset,
         paranoid
-    });
+    })
+    .catch(err => next(err));
 
     return res.json({
         total: repeatables.count,
@@ -155,7 +164,7 @@ expenseRouter.get('/scheduled', async function (req, res) {
     });
 });
 
-expenseRouter.post('/scheduled/update', async function (req, res) {
+expenseRouter.post('/scheduled/update', async function (req, res, next) {
     const repeatableExpense = await RepeatableExpense.findByPk(req.body.id, {
         paranoid: true
     });
@@ -166,7 +175,7 @@ expenseRouter.post('/scheduled/update', async function (req, res) {
         repeatableExpense.times = req.body.times;
     }
 
-    await repeatableExpense.save();
+    await repeatableExpense.save().catch(err => next(err));
     return res.json(null);
 });
 

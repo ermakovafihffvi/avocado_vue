@@ -36,10 +36,6 @@ export default function useOpenAddCurrency (q) {
                 });
                 mainStore.state.currencies.push(data.value);
             }
-        }).onCancel(() => {
-            console.log('Cancel')
-        }).onDismiss(() => {
-            console.log('Called on OK or Cancel')
         });
     };
 

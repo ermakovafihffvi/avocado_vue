@@ -26,10 +26,11 @@ export default function useClient() {
 
         return { options };
       },
-      onFetchError({ error, data, response, context, execute }) {
-        if (!response || response.status == 401) {
+      onFetchError({ error, data, response }) {
+        if (response?.status === 401) {
           router.push('/login');
         }
+        error.message = data?.error || data?.message;
         return { error, data, response };
       },
     },

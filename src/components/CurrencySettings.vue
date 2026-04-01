@@ -18,7 +18,7 @@
                         dark 
                         bg-color="dark" 
                         :ref="(el) => setRef(el, currency.id + '-str_id')"
-                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital'). $t('validation.required')]"
+                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital') + '. ' + $t('validation.required')]"
                         @update:model-value="(value) => handleInput(value, currency, 'str_id')"
                     />
                     <q-input outlined 
@@ -27,7 +27,7 @@
                         dark 
                         bg-color="dark" 
                         :ref="(el) => setRef(el, currency.id + '-rate')"
-                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}). $t('validation.required')]"
+                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}) + '. ' + $t('validation.required')]"
                         @update:model-value="(value) => handleInput(value, currency, 'rate')"
                     />
                 </q-card-section>

@@ -50,10 +50,6 @@ export default function useOpenAddIncomes (q) {
                     mainStore.state.usersIncomes[userId].push(data.value);
                 }
             }
-        }).onCancel(() => {
-            console.log('Cancel')
-        }).onDismiss(() => {
-            console.log('Called on OK or Cancel')
         });
     };
 

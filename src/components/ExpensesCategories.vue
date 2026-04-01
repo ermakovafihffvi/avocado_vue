@@ -6,7 +6,7 @@
                 <div class="row q-gutter-lg justify-between">
                     <q-input v-model="category.title" :label="$t('common.title')" style="flex: 1;"
                         @update:model-value="handleInput(category.id, 'title')"
-                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }) + '. ' + $t('validation.required')]"
                         :ref="(el) => setRef(el, category.id + '-title')"
                     />
                     <div>

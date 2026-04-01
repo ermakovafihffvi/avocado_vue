@@ -118,7 +118,15 @@ const rows = computed(() => {
             return result;
         }
         const expense = expenses.value.find(item => item.category_id == category.id)?.total ?? 0;
-        const currency = mainStore.state.currencies.find(item => item.id == category.currency_id).str_id;
+        const currency = mainStore.state.currencies.find(item => item.id == category.currency_id)?.str_id;
+        if (!currency) {
+            $q.notify({
+                type: 'error',
+                message: 'No currency found for ' + category.str_id,
+                color: 'negative'
+            });
+            return result;
+        }
         result.push({
             category_str: category.str_id,
             category: category.title + ', ' + currency,

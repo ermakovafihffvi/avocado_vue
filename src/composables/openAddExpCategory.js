@@ -48,10 +48,6 @@ export default function useOpenAddExpCategory (q) {
                     setVerticalScrollPosition(scrollTargetElement, document.querySelector('div[data-attr-key="' + data.value.id + '"]').offsetTop, 500);
                 }, 100);
             }
-        }).onCancel(() => {
-            console.log('Cancel')
-        }).onDismiss(() => {
-            console.log('Called on OK or Cancel')
         });
     };
 

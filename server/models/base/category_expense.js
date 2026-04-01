@@ -31,7 +31,7 @@ CategoryExpense.init(
             defaultValue: 0,
             validate: {
                 handleValidation(value) {
-                    if (!positiveNumberTest(value)) {
+                    if (value && !positiveNumberTest(value)) {
                         throw new Error('Limit validation error');
                     }
                 }

@@ -9,7 +9,8 @@ currencyRouter.get('/currencies', function (req, res, next) {
     Currency.scope({method: ['userGroup', req.user.current_group_id]}).findAll()
     .then((currencies) => {
         res.json(currencies);
-    });
+    })
+    .catch(err => next(err));
 });
 
 currencyRouter.post('/add-currency', function (req, res, next) {
@@ -22,7 +23,8 @@ currencyRouter.post('/add-currency', function (req, res, next) {
     })
     .then((currency) => {
         res.json(currency);
-    });
+    })
+    .catch(err => next(err));
 });
 
 currencyRouter.post('/:currency_id/set-rate', function (req, res, next) {
@@ -33,7 +35,8 @@ currencyRouter.post('/:currency_id/set-rate', function (req, res, next) {
     .update({ rate }, { where: { id: currency_id } })
     .then(() => {
         res.json({ message: 'Rate updated successfully' });
-    });
+    })
+    .catch(err => next(err));
 });
 
 export default currencyRouter;

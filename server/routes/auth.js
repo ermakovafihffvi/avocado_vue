@@ -45,12 +45,14 @@ passport.deserializeUser(function(user, cb) {
 const authRouter = express.Router();
 
 authRouter.post('/login', function (req, res, next) {
-    console.log('Attempting login...');
-    console.log('Request body:', req.body);
     passport.authenticate('local', function (err, user, info, status) {
-        console.log('Authentication result:', { err, user, info, status });
+        if (err || !user) {
+            return res.status(406).json({error: info?.message});
+        }
         req.login(user, function(err) {  // Establish session
-            if (err) { return next(err); }
+            if (err) {
+                return res.status(406).json({error: 'Authorization failed'}); 
+            }
             res.send({'current-user': user});
         });
     })(req, res, next);
@@ -89,7 +91,6 @@ authRouter.post('/signup', async function(req, res, next) {
             res.send({'current-user': user});
         });
     } catch (err) {
-        console.log(err);
         return next(err);
     }
 });

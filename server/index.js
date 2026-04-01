@@ -8,7 +8,7 @@ import { resolve } from 'path';
 import session from 'express-session';
 import { sequelize, sessionStore } from '#server/bd.js';
 
-//import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { errorHandler } from '#server/middleware/errorHandler.js';
 import initRoutes from '#server/routes/index.js';
 
 
@@ -100,10 +100,6 @@ app.use((req, res, next) => {
     }
 });
 
-// Error handling middleware
-//app.use(notFoundHandler);
-//app.use(errorHandler);
-
 // Graceful shutdown handler
 /*const gracefulShutdown = async (signal: string) => {
   console.log(`Received ${signal}. Starting graceful shutdown...`);
@@ -124,6 +120,10 @@ app.use((req, res, next) => {
 //process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Sent by nodemon
 
 initRoutes(app);
+
+// Error handling middleware
+//app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Initialize database and start server
 async function startServer() {

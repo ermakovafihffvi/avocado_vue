@@ -9,12 +9,12 @@
                 <q-card-section>
                     <q-input outlined v-model="title" 
                         :label="$t('common.title')" 
-                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }) + '. ' + $t('validation.required')]"
                         ref="titleRef"
                     />
                     <q-input outlined v-model="strId" 
                         :label="$t('common.string_code')" class="q-mt-md"
-                        :rules="[val => (codeAnyCaseTest(val) && !strIds.includes(val)) || $t('validation.string_code'). $t('validation.required')]"
+                        :rules="[val => (codeAnyCaseTest(val) && !strIds.includes(val)) || $t('validation.string_code') + '. ' + $t('validation.required')]"
                         ref="strIdRef"
                     />
                     <q-select outlined v-model="currencySelected" 
@@ -22,6 +22,8 @@
                         :label="$t('common.currency')" 
                         emit-value 
                         map-options
+                        :rules="[val => val || $t('validation.required')]"
+                        class="q-mt-md"
                     />
                     <q-input outlined v-model="desc" 
                         :label="$t('common.description')" 

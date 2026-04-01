@@ -8,7 +8,7 @@
                         v-model="category.title" 
                         :label="$t('common.title')"
                         style="flex: 1;" 
-                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        :rules="[val => anyStringTest(val) || $t('validation.string', { field: $t('common.title') }) + '. ' + $t('validation.required')]"
                         @update:model-value="handleInput(category.id, 'title')"
                         :ref="(el) => setRef(el, category.id + '-title')"
                     />

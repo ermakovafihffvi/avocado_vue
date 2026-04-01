@@ -9,19 +9,19 @@
                 <q-card-section>
                     <q-input outlined v-model="title" 
                         :label="$t('common.title')" 
-                        :rules="[val => stringTest(val) || $t('validation.string', { field: $t('common.title') }). $t('validation.required')]"
+                        :rules="[val => stringTest(val) || $t('validation.string', { field: $t('common.title') }) + '. ' + $t('validation.required')]"
                         ref="titleRef"
                     />
                     <q-input outlined v-model="strId" 
                         :label="$t('common.string_code')" 
                         class="q-mt-md"
-                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital'). $t('validation.required')]"
+                        :rules="[val => capitalLetterTest(val) || $t('validation.string_code_capital') + '. ' + $t('validation.required')]"
                         ref="strIdRef"
                     />
                     <q-input outlined v-model="rate" 
                         :label="$t('common.rate')" 
                         class="q-mt-md"
-                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}). $t('validation.required')]"
+                        :rules="[val => numberTest(val) || $t('validation.number', {field: $t('common.rate')}) + '. ' + $t('validation.required')]"
                         ref="rateRef"
                     />
                 </q-card-section>

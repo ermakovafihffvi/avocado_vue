@@ -4,7 +4,6 @@ import { common } from '@/locales/en/common.js';
 import { messages } from '@/locales/en/messages.js';
 
 export default function loadMessages () {
-    console.log('load locales');
     return {
         en: {
             validation: validation,

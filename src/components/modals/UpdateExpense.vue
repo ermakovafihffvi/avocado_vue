@@ -13,19 +13,21 @@
                         :label="$t('common.category')" 
                         emit-value 
                         map-options
+                        :rules="[val => val || $t('validation.required')]"
                     />
                     <q-input outlined v-model="description" 
                         :label="$t('common.description')" 
-                        class="q-mt-lg"
-                        :rules="[val => anyStringTest(val) || $t('validation.text', { field: $t('common.description') }). $t('validation.required')]"
+                        class="q-mt-md"
+                        :rules="[val => anyStringTest(val) || $t('validation.text', { field: $t('common.description') }) + '. ' + $t('validation.required')]"
                         ref="descriptionRef"
                     />
                     <q-input outlined v-model="sum" 
                         :label="$t('common.sum')" 
-                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: $t('common.sum') }). $t('validation.required')]"
+                        class="q-mt-md"
+                        :rules="[val => positiveNumberTest(val) || $t('validation.positive_number', { field: $t('common.sum') }) + '. ' + $t('validation.required')]"
                         ref="sumRef"
                     />
-                    <q-input outlined v-model="date" mask="date" :rules="['date']">
+                    <q-input outlined v-model="date" mask="date" :rules="['date']" class="q-mt-md">
                         <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer">
                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">

@@ -10,7 +10,7 @@ const XDATE = constants.XDATE;
 const dashboardRouter = express.Router();
 
 
-dashboardRouter.post('/last_incomes', async function (req, res) {
+dashboardRouter.post('/last_incomes', async function (req, res, next) {
     const dateRange = req.body.date;
     const { start, end } = getDateRange(dateRange);
 
@@ -43,12 +43,13 @@ dashboardRouter.post('/last_incomes', async function (req, res) {
             literal('pseudo_month')
         ],
         raw: true
-    });
+    })
+    .catch(err => next(err));
 
     return res.json(totals);
 });
 
-dashboardRouter.post('/last_expenses', async function (req, res) {
+dashboardRouter.post('/last_expenses', async function (req, res, next) {
     const dateRange = req.body.date;
     const { start, end } = getDateRange(dateRange);
 
@@ -59,7 +60,8 @@ dashboardRouter.post('/last_expenses', async function (req, res) {
         },
         attributes: ['id', 'title', 'str_id', 'currency_id'],
         raw: true
-    });
+    })
+    .catch(err => next(err));
 
     const categoryIds = categories.map(c => c.id);
 
@@ -93,7 +95,8 @@ dashboardRouter.post('/last_expenses', async function (req, res) {
             literal('pseudo_month')
         ],
         raw: true
-    });
+    })
+    .catch(err => next(err));
 
     return res.json({
         categories,
@@ -101,7 +104,7 @@ dashboardRouter.post('/last_expenses', async function (req, res) {
     });
 });
 
-dashboardRouter.post('/last_states', async function (req, res) {
+dashboardRouter.post('/last_states', async function (req, res, next) {
     const dateRange = req.body.date;
     const { start, end } = getDateRange(dateRange);
 
@@ -123,7 +126,8 @@ dashboardRouter.post('/last_states', async function (req, res) {
         ],
         order: [['pseudo_month', 'ASC']],
         raw: true
-    });
+    })
+    .catch(err => next(err));
 
     return res.json(result);
 });

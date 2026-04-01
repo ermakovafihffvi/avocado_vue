@@ -6,7 +6,7 @@ const { Income } = models;
 
 const incomeRouter = express.Router();
 
-incomeRouter.get('/total', function (req, res) {
+incomeRouter.get('/total', function (req, res, next) {
     Income.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
         attributes: [
             'user_id',
@@ -17,19 +17,21 @@ incomeRouter.get('/total', function (req, res) {
     })
     .then((total) => {
         res.json(total);
-    });
+    })
+    .catch(err => next(err));
 });
 
-incomeRouter.get('/user/:user_id', function (req, res) {
+incomeRouter.get('/user/:user_id', function (req, res, next) {
     Income.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
         where: { user_id: req.params.user_id }
     })
     .then((incomes) => {
         res.json(incomes);
-    });
+    })
+    .catch(err => next(err));
 });
 
-incomeRouter.post('/update', async function (req, res) {
+incomeRouter.post('/update', async function (req, res, next) {
     const income = req.body.id ? 
         await Income.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
         Income.build({
@@ -44,17 +46,19 @@ incomeRouter.post('/update', async function (req, res) {
 
     income.save().then((savedIncome) => {
         res.json(savedIncome);
-    });
+    })
+    .catch(err => next(err));
 });
 
-incomeRouter.delete('/:income_id/delete', function (req, res) {
+incomeRouter.delete('/:income_id/delete', function (req, res, next) {
     const { income_id } = req.params;
 
     Income.scope({method: ['userGroup', req.user.current_group_id]})
     .destroy({ where: { id: income_id } })
     .then(() => {
         res.json({ message: 'Income deleted successfully' });
-    });
+    })
+    .catch(err => next(err));
 });
 
 export default incomeRouter;

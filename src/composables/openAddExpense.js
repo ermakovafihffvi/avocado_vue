@@ -52,10 +52,6 @@ export default function useOpenAddExpenses (q) {
                     mainStore.state.usersExpenses[userId].push(data.value);
                 }
             }
-        }).onCancel(() => {
-            console.log('Cancel')
-        }).onDismiss(() => {
-            console.log('Called on OK or Cancel')
         });
     };
 
