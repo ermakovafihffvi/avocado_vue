@@ -142,10 +142,10 @@ const repeatTimes = ref();
 
 const isOkDisabled = computed(() => {
     return !category.value
-        || !description.value || descriptionRef.value.hasError 
-        || !sum.value || sumRef.value.hasError
+        || !description.value || descriptionRef.value?.hasError 
+        || !sum.value || sumRef.value?.hasError
         || !date.value
-        || (repeatable.value == 'x-times' && (!repeatTimes.value || repeatTimesRef.value.hasError));
+        || (repeatable.value == 'x-times' && (!repeatTimes.value || repeatTimesRef.value?.hasError));
 });
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();

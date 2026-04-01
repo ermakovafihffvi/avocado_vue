@@ -7,10 +7,11 @@ import helmet from 'helmet';
 import { resolve } from 'path';
 import session from 'express-session';
 import { sequelize, sessionStore } from '#server/bd.js';
-
+import cron from 'node-cron';
+import { setScheduledExpenses } from '#server/cron-tasks/setScheduledExpenses.js';
 import { errorHandler } from '#server/middleware/errorHandler.js';
 import initRoutes from '#server/routes/index.js';
-
+import constants from "#shared/contants.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -157,6 +158,16 @@ async function startServer() {
     } catch (error) {
         console.error('Failed to start server:', error);
         process.exit(1);
+    }
+
+    //run cron tasks
+    if (process.env.NODE_ENV === 'production') {
+        //GMT + 0 11:00
+        const minutes = process.env.NODE_ENV === 'production' ? '0' : (new Date()).getMinutes() + 1;
+        const hours = process.env.NODE_ENV === 'production' ? '11' : (new Date()).getHours();
+        cron.schedule('0 ' + minutes + ' ' + hours + ' ' + (constants.XDATE - 21) + ' * *', () => {
+            setScheduledExpenses();
+        });
     }
 }
 

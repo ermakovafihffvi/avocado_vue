@@ -29,7 +29,7 @@
                     <q-separator dark inset/>
                     <q-card-section>
                         <div class="text-subtitle3">
-                            {{ $t('common.calculated_according_to_currencies') }} <a class="link" @click="router.push({name: 'currencies'})">{{ $t('common.currency', 2) }}</a>.
+                            {{ $t('messages.info.calculated_according_to_currencies') }} <a class="link" @click="router.push({name: 'currencies'})">{{ $t('common.currency', 2) }}</a>.
                         </div>
                     </q-card-section>
                 </q-card>

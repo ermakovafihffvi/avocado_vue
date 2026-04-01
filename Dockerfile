@@ -10,7 +10,7 @@ FROM node:${NODE_VERSION} AS base
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y sqlite3 libsqlite3-dev
+    apt-get install -y sqlite3 libsqlite3-dev cron nano
 
 # Create non-root user for security
 RUN groupadd -g 1001 nodejs && \

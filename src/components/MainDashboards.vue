@@ -15,7 +15,7 @@
             option-label="str_id" :label="$t('common.currency')" class="full-width select-currency"
         >
             <template v-slot:hint>
-                {{ $t('common.base_currency_hint') }}
+                {{ $t('messages.info.base_currency_hint') }}
             </template>
         </q-select>
     </div>

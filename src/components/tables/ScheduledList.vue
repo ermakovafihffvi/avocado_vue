@@ -2,12 +2,18 @@
     <div class="card-title-wrapper q-pa-md">
         <div class="text-title-wrapper">
             <h6 class="text-h6 text-primary">
-                {{ userNameTitle ? userNameTitle + ' ' + $t('common.scheduled') + $t('common.expense', 2) : '' }}
+                {{ userNameTitle ? userNameTitle + ' ' + $t('common.scheduled') + ' ' + $t('common.expense', 2) : '' }}
             </h6>
+        </div>
+        <div class="row items-center q-gutter-sm text-secondary">
+            <q-toggle v-model="showDeleted" @update:model-value="handleShowDeleted" :label="$t('common.show_deleted')" color="secondary" />
         </div>
     </div>
     <LoadingSpinner v-if="loading" :size="'lg'" />
     <div v-else-if="scheduledExpenses.length">
+        <q-banner rounded class="bg-dark text-info q-mb-md">
+            {{ $t('messages.info.scheduled_rule') }}
+        </q-banner>
         <div v-for="expense in scheduledExpenses" :key="expense.id" class="q-py-xs">
             <q-expansion-item class="item-wrapper" switch-toggle-side expand-separator>
                 <template v-slot:header>
@@ -37,7 +43,7 @@
                         </div>
                     </q-item-section>
 
-                    <q-item-section class="flex flex-center" side>
+                    <q-item-section class="flex flex-center" side style="min-width: 58px;">
                         <q-toggle
                             v-if="expense.is_every_month"
                             v-model="everyMonthStates[expense.id]"
@@ -46,14 +52,15 @@
                             color="info"
                             unchecked-icon="clear"
                         />
-                        <EditButton v-if="expense.times && !editMode[expense.id]" @handleEdit="editMode[expense.id] = true"/>
-                        <SaveIconButton v-if="expense.times && editMode[expense.id]" @handleSave="updateExpense(expense.id)"/>
+                        <EditButton v-if="expense.times && !editMode[expense.id] && !expense.deleted_at" @handleEdit="editMode[expense.id] = true"/>
+                        <SaveIconButton v-if="expense.times && editMode[expense.id] && !expense.deleted_at" @handleSave="updateExpense(expense.id)"/>
+                        <DeleteButton v-if="expense.times && !expense.deleted_at" @handleDelete="confirmDelete(expense)" />
                     </q-item-section>
                 </template>
                 <q-card>
                     <q-card-section>
                         <div v-if="expense.is_every_month">
-                            <span class="text-caption">{{ $t('common.monthly_expense_caption') }}</span>
+                            <span class="text-caption">{{ $t('messages.info.monthly_expense_caption') }}</span>
                         </div>
                         <div v-if="expense.times">
                             <q-item v-for="i in expense.times" dense>
@@ -93,10 +100,12 @@ import useClient from '@/api/useClient';
 import { onMounted, ref, watch } from 'vue';
 import EditButton from '@/components/buttons/EditButton.vue';
 import SaveIconButton from '../buttons/SaveIconButton.vue';
+import DeleteButton from '@/components/buttons/DeleteButton.vue';
 import { getAvailableDates, monthsSinceCustomStart } from '@/composables/getAvailableDates';
 import { useMainStore } from '@/store/main';
 import { useDateFormat } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 const api = useClient();
 const props = defineProps({
@@ -104,6 +113,7 @@ const props = defineProps({
     userNameTitle: String
 });
 const $q = useQuasar();
+const { t } = useI18n();
 
 const mainStore = useMainStore();
 const loading = ref(true);
@@ -113,6 +123,7 @@ const scheduledExpenses = ref([]);
 const everyMonthStates = ref({});
 const editMode = ref({});
 const availableDates = ref();
+const showDeleted = ref(false);
 
 const updateExpense = async (id, args) => {
     const expense = scheduledExpenses.value.find(item => item.id == id);
@@ -143,10 +154,44 @@ const updateExpense = async (id, args) => {
     }
 };
 
+const deleteScheduledExpense = async (expense) => {
+    const { error } = await api('/api/expense/scheduled/' + expense.id + '/delete').delete().json();
+    if (error.value) {
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+        return;
+    }
+
+    $q.notify({
+        type: 'positive',
+        message: t('messages.success.scheduled_canceled'),
+        color: 'positive'
+    });
+    await prepareData();
+};
+
+const confirmDelete = (expense) => {
+    $q.dialog({
+        title: 'Confirm delete',
+        message: t('messages.confirm.scheduled_delete'),
+        cancel: true,
+        persistent: true,
+        ok: { label: t('common.delete'), color: 'negative' },
+        cancel: { label: t('common.cancel') }
+    }).onOk(() => deleteScheduledExpense(expense));
+};
+
+const handleShowDeleted = async (value) => {
+    await prepareData();
+};
+
 const prepareData = async () => {
     loading.value = true;
     availableDates.value = getAvailableDates();
-    const { data, error } = await api('/api/expense/scheduled?user_id=' + props.userId).get().json();
+    const { data, error } = await api('/api/expense/scheduled?user_id=' + props.userId + '&show_deleted=' + (showDeleted.value ? 1 : 0)).get().json();
     if (error.value) {
         $q.notify({
             type: 'error',

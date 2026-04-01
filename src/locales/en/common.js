@@ -30,23 +30,20 @@ export const common = {
     fix: 'Fix',
     total: 'Total',
     expenses_category: 'Expenses Category | Expenses Categories',
-
+    show_deleted: 'Show deleted',
     set_currencies: 'Set Currencies',
     state_category: 'State Category | State Categories',
     month_limit: 'Month limit',
     without_house: 'wo house',
-    monthly_expense_caption: "This expense happens every month. If you want to disable it, press toggle. You can create another regular expense, but there is no opportunity to edit the existing one.",
     last_period: 'Last period',
     last_state: 'Last state',
     monthly: 'monthly',
     no_data: 'No data available',
-    
     category_title: 'Category title',
     description_short: 'Desc',
     date: 'Date',
     delete: 'Delete',
     money_users: 'Money Users',
-    base_currency_hint: 'Select base currency for displaying totals',
     total_income: 'Total Income',
     total_expenses: 'Total Expenses',
     period: 'Period',
@@ -56,6 +53,5 @@ export const common = {
     no_repeats: 'no repeats',
     every_month: 'every month',
     repeat_x_times: 'repeat X times',
-    calculated_according_to_currencies: 'Calculated according to the defined currencies.',
     remain: 'Remain'
 };

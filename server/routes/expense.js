@@ -57,7 +57,7 @@ expenseRouter.get('/user/:user_id', function (req, res, next) {
 expenseRouter.post('/update', async function (req, res, next) {
     try {
         const expense = req.body.id ? 
-            Expense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
+            await Expense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.body.id) :
             Expense.build({
                 group_id: req.user.current_group_id,
             });
@@ -71,12 +71,26 @@ expenseRouter.post('/update', async function (req, res, next) {
         const savedExpense = await expense.save();
 
         if (req.body.repeatable === 'every-month') {
-            savedExpense.createRepeatableExpense({
-                is_every_month: true,
+            RepeatableExpense.destroy({
+                where: {
+                    expense_id: expense.id
+                }
             });
-        } else if (req.body.repeatable === 'x-times' && req.body.repeat_times > 0) {
-            savedExpense.createRepeatableExpense({
-                times: req.body.repeat_times,
+            RepeatableExpense.create({
+                group_id: req.user.current_group_id,
+                expense_id: expense.id,
+                is_every_month: true
+            });
+        } else if (req.body.repeatable === 'x-times') {
+            RepeatableExpense.destroy({
+                where: {
+                    expense_id: expense.id
+                }
+            });
+            RepeatableExpense.create({
+                group_id: req.user.current_group_id,
+                expense_id: expense.id,
+                times: req.body.repeat_times
             });
         }
 
@@ -86,8 +100,16 @@ expenseRouter.post('/update', async function (req, res, next) {
     }
 });
 
-expenseRouter.delete('/:expense_id/delete', function (req, res, next) {
+expenseRouter.delete('/:expense_id/delete', async function (req, res, next) {
     const { expense_id } = req.params;
+
+    await RepeatableExpense.destroy({
+        where: {
+            expense_id: expense_id
+        },
+        force: true
+    })
+    .catch(err => next(err));
 
     Expense.scope({method: ['userGroup', req.user.current_group_id]})
     .destroy({ where: { id: expense_id } })
@@ -116,15 +138,10 @@ expenseRouter.get('/scheduled', async function (req, res, next) {
     }
 
     // Soft delete logic
-    let paranoid = false;
+    const paranoid = req.query.show_deleted === '0';
 
-    if (req.query.only_deleted) {
-        where.deletedAt = { [Op.ne]: null };
-    } else if (req.query.without_deleted) {
-        where.deletedAt = null;
-    }
-
-    const repeatables = await RepeatableExpense.findAndCountAll({
+    const repeatables = await RepeatableExpense.scope({method: ['userGroup', req.user.current_group_id]})
+    .findAndCountAll({
         where,
         include: [
             {
@@ -152,7 +169,7 @@ expenseRouter.get('/scheduled', async function (req, res, next) {
         order: [['id', 'DESC']],
         limit,
         offset,
-        paranoid
+        paranoid: paranoid
     })
     .catch(err => next(err));
 
@@ -164,8 +181,21 @@ expenseRouter.get('/scheduled', async function (req, res, next) {
     });
 });
 
+expenseRouter.delete('/scheduled/:id/delete', async function (req, res, next) {
+    await RepeatableExpense.scope({method: ['userGroup', req.user.current_group_id]})
+    .destroy({
+        where: {
+            id: req.params.id
+        }
+    })
+    .catch(err => next(err));
+
+    return res.json(null);
+});
+
 expenseRouter.post('/scheduled/update', async function (req, res, next) {
-    const repeatableExpense = await RepeatableExpense.findByPk(req.body.id, {
+    const repeatableExpense = await RepeatableExpense.scope({method: ['userGroup', req.user.current_group_id]})
+    .findByPk(req.body.id, {
         paranoid: true
     });
 

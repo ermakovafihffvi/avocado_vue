@@ -16,3 +16,19 @@ export const getDateRange = (dateRange) => {
 
     return { start, end };
 };
+
+export function getCustomMonthDiff(fromDate, toDate = new Date()) {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    const startDay = XDATE;
+
+    let months =
+        (to.getFullYear() - from.getFullYear()) * 12 +
+        (to.getMonth() - from.getMonth());
+
+    if (from.getDate() >= startDay) {
+        months--;
+    }
+
+  return Math.max(0, months);
+}
