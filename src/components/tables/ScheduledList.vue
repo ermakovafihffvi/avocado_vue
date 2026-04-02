@@ -54,7 +54,7 @@
                         />
                         <EditButton v-if="expense.times && !editMode[expense.id] && !expense.deleted_at" @handleEdit="editMode[expense.id] = true"/>
                         <SaveIconButton v-if="expense.times && editMode[expense.id] && !expense.deleted_at" @handleSave="updateExpense(expense.id)"/>
-                        <DeleteButton v-if="expense.times && !expense.deleted_at" @handleDelete="confirmDelete(expense)" />
+                        <DeleteButton v-if="expense.times && !expense.deleted_at" @handleDelete="confirmDelete(expense)" @click.stop/>
                     </q-item-section>
                 </template>
                 <q-card>
@@ -239,11 +239,6 @@ watch(
 .body--light {
     .item-wrapper {
         background-color: #fff;
-    }
-}
-.body--dark {
-    .item-wrapper {
-        background-color: var(--q-secondary-dark);
     }
 }
 

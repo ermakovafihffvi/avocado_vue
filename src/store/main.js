@@ -117,12 +117,28 @@ export const useMainStore = defineStore('main', () => {
         }
     };
 
+    const loadUsersList = async () => {
+        if (!state.users) {
+            const { data, error } = await api('api/users-list').get().json();
+            if (error.value) {
+                Notify.create({
+                    type: 'error',
+                    message: error.value,
+                    color: 'negative'
+                });
+                return;
+            }
+            state.users = Array.from(data.value);
+        }
+    };
+
     return {
         state,
         getCurrentUser,
         loadExpCategories,
         loadCurrencies,
         loadStateCategories,
-        loadCurrentStates
+        loadCurrentStates,
+        loadUsersList
     };
 });

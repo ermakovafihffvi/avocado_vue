@@ -26,6 +26,10 @@
 
         <q-tab-panel name="expenses">
             <Expenses :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
+            <q-btn v-if="!loadDetails" @click="loadDetails = true" color="secondary" class="q-mt-md">
+                {{ $t('common.load_expenses_details') }}
+            </q-btn>
+            <DetailedExpenses v-else :dateRange="dateRange" class="q-mt-md"/>
         </q-tab-panel>
 
         <q-tab-panel name="incomes">
@@ -44,11 +48,13 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import { onMounted, ref } from 'vue';
 import { getDateRange } from '@/composables/getAvailableDates';
 import { computed } from 'vue';
+import DetailedExpenses from '@/components/dashboards/DetailedExpenses.vue';
 
 const mainStore = useMainStore();
 
 const dateRange = ref([]);
 const loading = ref(true);
+const loadDetails = ref(false);
 
 const selectedCurrency = ref();
 const currencies = computed(() => mainStore.state.currencies);

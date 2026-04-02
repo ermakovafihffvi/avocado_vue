@@ -255,7 +255,11 @@ const loadExpenses = async () => {
     loadingExpenses.value = true;
     expenses.value = {};
     if (typeof mainStore.state.usersExpenses[props.userId] === 'undefined' || mainStore.state.usersExpenses[props.userId] == 'null') {
-        const { data, error } = await api('api/expense/user/' + props.userId + '/?special=0').get().json();
+        const reqData = {
+            users: [props.userId],
+            special: 0
+        };
+        const { data, error } = await api('api/expense/load').post(reqData).json();
         if (error.value) {
             $q.notify({
                 type: 'error',

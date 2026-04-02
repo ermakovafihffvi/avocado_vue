@@ -30,21 +30,46 @@ expenseRouter.get('/total', function (req, res, next) {
     .catch(err => next(err));
 });
 
-expenseRouter.get('/user/:user_id', function (req, res, next) {
-    const isSpecial = req.query.special == 1;
+expenseRouter.post('/load', function (req, res, next) {
+    const isSpecial = req.body.special == 1;
 
-    Expense.scope('basePeriod', {method: ['userGroup', req.user.current_group_id]}).findAll({
-        where: { 
-            user_id: req.params.user_id,
+    const categoryFilter = {
+        where: {
+            special: isSpecial,
+            isActive: true 
         },
+    }
+    if (req.body.categories) {
+        categoryFilter['whereIn'] = {
+            id: Array.from(req.body.categories, i => Number(i))
+        };
+    }
+
+    // Use basePeriod scope when no explicit dateRange is supplied.
+    // If dateRange is present, apply explicit created_at filter instead.
+    let expensesQuery = Expense.scope({ method: ['userGroup', req.user.current_group_id] });
+
+    let where = {
+        user_id: {
+            [Op.in]: Array.isArray(req.body.users) ? req.body.users.map(i => Number(i)) : []
+        },
+    };
+
+    if (req.body.dateRange && req.body.dateRange.from && req.body.dateRange.end) {
+        where.created_at = {
+            [Op.between]: [new Date(req.body.dateRange.from), new Date(req.body.dateRange.end)]
+        };
+    } else {
+        expensesQuery = expensesQuery.scope('basePeriod');
+    }
+
+    expensesQuery.findAll({
+        where,
         include: [
             {
                 model: CategoryExpense,
                 as: 'category',
-                where: { 
-                    special: isSpecial,
-                    isActive: true 
-                },
+                categoryFilter
             }
         ]
     })

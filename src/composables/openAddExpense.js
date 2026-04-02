@@ -40,7 +40,7 @@ export default function useOpenAddExpenses (q) {
                     color: 'positive'
                 });
                 if (expense.id) {
-                    mainStore.state.usersExpenses[userId] = mainStore.state.usersExpenses[userId].reduce((acc, item) => {
+                    mainStore.state.usersExpenses[userId] = mainStore.state.usersExpenses[userId]?.reduce((acc, item) => {
                         if (item.id == data.value.id) {
                             acc.push(data.value);
                         } else {
@@ -49,7 +49,7 @@ export default function useOpenAddExpenses (q) {
                         return acc;
                     }, []);
                 } else {
-                    mainStore.state.usersExpenses[userId].push(data.value);
+                    mainStore.state.usersExpenses[userId]?.push(data.value);
                 }
             }
         });

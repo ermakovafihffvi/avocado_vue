@@ -6,5 +6,8 @@ export const errorHandler = (err, req, res, next) => {
         message = err.message;
         //TO DO - handle errors of each error item
     }
+    if (process.env.NODE_ENV === 'development') {
+        console.log(err);
+    }
     res.status(status).send({message: message});
 };

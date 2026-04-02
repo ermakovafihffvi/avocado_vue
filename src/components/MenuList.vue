@@ -109,25 +109,12 @@ const $q = useQuasar();
 
 const expanded_users = ref(true);
 const link = ref('home');
-const users = ref([]);
+const users = computed(() => mainStore.state.users ?? []);
 const routeName = computed(() => route.name);
 
 const menuItemClickHandle = (routeName, params = null) => {
     link.value = params ? routeName + JSON.stringify(params) : routeName;
     router.push({name: routeName, params: params});
-};
-
-const loadUserList = async () => {
-    const { data, error } = await api('api/users-list').get().json();
-    if (error.value) {
-        $q.notify({
-            type: 'error',
-            message: error.value,
-            color: 'negative'
-        });
-        return;
-    }
-    mainStore.state.users = users.value = Array.from(data.value);
 };
 
 const setLinkValue = () => {
@@ -154,7 +141,7 @@ const logoutHandle = async () => {
 };
 
 onMounted(() => {
-    loadUserList();
+    mainStore.loadUsersList();
     setLinkValue();
 });
 

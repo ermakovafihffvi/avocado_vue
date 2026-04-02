@@ -22,6 +22,8 @@ import SavingFix from '@/components/SavingFix.vue';
 import StateCategories from '@/components/StateCategories.vue';
 import AddStateCategory from '@/components/buttons/AddStateCategory.vue';
 import StateCategoriesHeader from '@/components/headers/StateCategories.vue';
+import ExpensesByCategories from '@/components/ExpensesByCategories.vue';
+import CategoryName from '@/components/headers/CategoryName.vue';
 
 const routes = [
     { 
@@ -58,6 +60,15 @@ const routes = [
             layout: MainLayout,
             rightBtn: ShowMainDashboard,
             leftBtn: AddExpCategory
+        }
+    },
+    {
+        path: '/expenses/category/:category_id',
+        name: 'expenses_by_category',
+        component: ExpensesByCategories,
+        meta: {
+            title: CategoryName,
+            layout: MainLayout
         }
     },
     /*{

@@ -53,5 +53,6 @@ export const common = {
     no_repeats: 'no repeats',
     every_month: 'every month',
     repeat_x_times: 'repeat X times',
-    remain: 'Remain'
+    remain: 'Remain',
+    load_expenses_details: 'Load expenses details'
 };
