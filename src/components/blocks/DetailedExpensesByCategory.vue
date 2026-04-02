@@ -7,7 +7,12 @@
                 </q-item-section>
             </template>
             <q-card>
-                <detailed-expenses-by-user-by-category :user="user" :category="category" :deletion-allowed="deletionAllowed"/>
+                <detailed-expenses-by-user-by-category 
+                    :user="user" 
+                    :category="category" 
+                    :deletion-allowed="deletionAllowed"
+                    :row-click-allowed="rowClickAllowed"
+                />
             </q-card>
         </q-expansion-item>
     </div>
@@ -32,6 +37,11 @@ const props = defineProps({
         default: false
     },
     deletionAllowed: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
+    rowClickAllowed: {
         type: Boolean,
         required: false,
         default: true

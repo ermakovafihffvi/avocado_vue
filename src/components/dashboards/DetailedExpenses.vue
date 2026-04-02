@@ -14,7 +14,13 @@
             <p class="text-center text-primary text-weight-bold text-h6 q-mt-md">{{ category.title }}</p>
             <q-scroll-area class="fit">
                 <div class="column no-wrap flex-center">
-                    <DetailedExpensesByCategory :users="users" :category="category" :expanded="true" :deletion-allowed="false"/>
+                    <DetailedExpensesByCategory 
+                        :users="users" 
+                        :category="category" 
+                        :expanded="true" 
+                        :deletion-allowed="false"
+                        :row-click-allowed="false"
+                    />
                 </div>
             </q-scroll-area>
         </q-carousel-slide>

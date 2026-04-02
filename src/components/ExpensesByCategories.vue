@@ -1,6 +1,6 @@
 <template>
     <LoadingSpinner v-if="loading" class="q-mt-lg"/>
-    <div class="q-mt-xl q-py-md q-gutter-y-md q-mr-auto q-ml-auto" v-else style="max-width: 600px;">
+    <div class="q-mt-xl q-py-md q-gutter-y-md q-mr-auto q-ml-auto q-px-md" v-else style="max-width: 600px;">
         <DetailedExpensesByCategory :users="users" :category="category"/>
     </div>
 </template>

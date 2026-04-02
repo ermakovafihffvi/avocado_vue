@@ -17,7 +17,10 @@
                 </q-td>
             </template>
             <template v-slot:item="subProps">
-                <MobileTableRowCard :subProps="subProps" />
+                <MobileTableRowCard :subProps="subProps"                                         
+                    @handleRowClick="handleRowClick" 
+                    @handleDelete="handleDelete"
+                />
             </template>
         </q-table>
     </div>
@@ -31,10 +34,13 @@ import { useI18n } from 'vue-i18n';
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import MobileTableRowCard from '@/components/blocks/MobileTableRowCard.vue';
+import useOpenAddExpenses from '@/composables/openAddExpense';
+import { useQuasar } from 'quasar';
 
 const { t } = useI18n();
 const api = useClient();
 const mainStore = useMainStore();
+const $q = useQuasar();
 
 const props = defineProps({
     category: {
@@ -46,6 +52,11 @@ const props = defineProps({
         required: true
     },
     deletionAllowed: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
+    rowClickAllowed: {
         type: Boolean,
         required: false,
         default: true
@@ -93,6 +104,7 @@ const rows = computed(() => {
 });
 
 const handleDelete = async (id) => {
+    if (!props.deletionAllowed) return; 
     const { error } = await api(`/api/expense/${id}/delete`).delete().json();
     if (error.value) {
 
@@ -105,6 +117,21 @@ const handleDelete = async (id) => {
         }, []);
     }
 };
+
+//handle add expenses btn
+const openAddExpenses = useOpenAddExpenses($q);
+const handleRowClick = (e, row) => {
+    if (!props.rowClickAllowed) return;
+    openAddExpenses.openModal({
+        userId: props.userId,
+        date: row.date,
+        id: row.id,
+        sum: row.sum,
+        description: row.desc,
+        categoryId: props.category.id
+    });
+};
+// end handle add expenses btn
 
 onMounted(() => {
     if (props.deletionAllowed) {
