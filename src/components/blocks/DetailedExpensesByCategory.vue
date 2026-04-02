@@ -1,5 +1,5 @@
 <template>
-    <div v-for="user in users" :key="user.id" class="q-py-xs">
+    <div v-for="user in users" :key="user.id" class="q-py-xs expansion-wrapper">
         <q-expansion-item switch-toggle-side expand-separator class="item-wrapper" v-model="isExpanded[user.id]">
             <template v-slot:header>
                 <q-item-section>
@@ -61,4 +61,7 @@ onBeforeMount(() => {
 @media (min-width: 641px) 
     .item-wrapper
         width: 600px; 
+@media (max-width: 640px)
+    .expansion-wrapper
+        width: 100%;
 </style>

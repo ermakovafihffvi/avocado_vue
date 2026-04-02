@@ -16,6 +16,9 @@
                     <DeleteButton @handle-delete="handleDelete(props.row.id)"/>
                 </q-td>
             </template>
+            <template v-slot:item="subProps">
+                <MobileTableRowCard :subProps="subProps" />
+            </template>
         </q-table>
     </div>
 </template>
@@ -27,6 +30,7 @@ import { useDateFormat } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
+import MobileTableRowCard from '@/components/blocks/MobileTableRowCard.vue';
 
 const { t } = useI18n();
 const api = useClient();
