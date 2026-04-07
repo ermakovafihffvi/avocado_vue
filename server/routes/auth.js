@@ -74,14 +74,14 @@ authRouter.post('/signup', async function(req, res, next) {
                 name: req.body.name,
                 password: hash,
                 email: '',
-                admin: [{
-                    name: req.body.name
-                }]
+                admin_group: [{ name: req.body.name }]
             }, {
-                include: [{ model: Group, as: 'admin' }]
+                include: [{ model: Group, as: 'admin_group' }]
             }
         );
-        user.current_group_id = user.admin[0].id;
+        const group = user.admin_group[0];
+        await user.addGroup(group); // create membership
+        user.current_group_id = group.id;
         await user.save();
         //console.log(user);
 

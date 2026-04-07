@@ -28,11 +28,9 @@ userRouter.get('/users-list', async (req, res, next) => {
     }
 },
 function (req, res, next) {
-    User.scope([
-        'defaultScope',
-        { method: ['userGroup', req.user.current_group_id] }
-    ]).findAll({
-        include: 'admin_group',
+    User.scope('defaultScope', { method: ['userGroup', req.user.current_group_id] })
+    .findAll({
+        include: ['admin_group'],
         paranoid: req.query.deleted != 'true'
     })
     .then((users) => {
