@@ -2,17 +2,19 @@
     <component :is="$route.meta.layout || 'div'">
         <RouterView/>
     </component>
+    <PiniaColadaDevtools  />
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router';
-import router from '@/router';
+import { PiniaColadaDevtools } from '@pinia/colada-devtools';
+import { RouterView, useRouter } from 'vue-router';
 import useClient from '@/api/useClient';
 import { useMainStore } from '@/store/main';
 import { onMounted } from 'vue';
 
 const mainStore = useMainStore();
 const api = useClient();
+const router = useRouter();
 
 const loadData = async () => {
     const { data, error } = await api('api/current-user').get().json();
@@ -23,7 +25,7 @@ const loadData = async () => {
     } else {
         mainStore.state.auth = true;
         mainStore.state.currentUser = data.value;
-        router.push('/');
+        //router.push('/');
     }
 };
 

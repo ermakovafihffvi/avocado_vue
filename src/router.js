@@ -1,4 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router';
+import { useMainStore } from '@/store/main';
 
 import MainPage from '@/components/MainPage.vue';
 import Login from '@/components/Login.vue';
@@ -24,6 +25,8 @@ import AddStateCategory from '@/components/buttons/AddStateCategory.vue';
 import StateCategoriesHeader from '@/components/headers/StateCategories.vue';
 import ExpensesByCategories from '@/components/ExpensesByCategories.vue';
 import CategoryName from '@/components/headers/CategoryName.vue';
+import MyPage from '@/components/MyPage.vue';
+import ManageUsers from '@/components/ManageUsers.vue';
 
 const routes = [
     { 
@@ -121,6 +124,26 @@ const routes = [
         meta: {
             layout: MainLayout,
             rightBtn: ShowMainDashboard
+        }
+    },
+    {
+        path: '/me',
+        name: 'me',
+        component: MyPage,
+        meta: {
+            layout: MainLayout,
+        }
+    },
+    {
+        path: '/manage-users',
+        name: 'manage-users',
+        beforeEnter: (to, from) => {      
+            const mainStore = useMainStore();
+            return mainStore.state.currentUser?.isAdmin;
+        },
+        component: ManageUsers,
+        meta: {
+            layout: MainLayout
         }
     }
 ];

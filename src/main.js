@@ -3,6 +3,7 @@ import './assets/main.scss'
 import { createApp } from 'vue'
 import { Quasar, Dialog, Notify } from 'quasar'
 import { createPinia } from 'pinia'
+import { PiniaColada } from '@pinia/colada'
 import { createI18n } from 'vue-i18n'
 
 // Import icon libraries
@@ -41,6 +42,7 @@ const app = createApp(App)
 
 app.use(i18n)
 app.use(pinia)
+app.use(PiniaColada)
 app.use(router)
 app.use(Quasar, {
   plugins: {

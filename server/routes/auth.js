@@ -27,16 +27,12 @@ function verify(username, password, cb) {
 }));
 
 passport.serializeUser(function(user, cb) {
-    //console.log('serializing');
-    //console.log(user);
     process.nextTick(function() {
         cb(null, user);
     });
 });
 
 passport.deserializeUser(function(user, cb) {
-    //console.log('deserializing');
-    //console.log(user);
     process.nextTick(function() {
         return cb(null, user);
     });
@@ -49,11 +45,14 @@ authRouter.post('/login', function (req, res, next) {
         if (err || !user) {
             return res.status(406).json({error: info?.message});
         }
-        req.login(user, function(err) {  // Establish session
+        req.login(user, async function(err) {  // Establish session
             if (err) {
                 return res.status(406).json({error: 'Authorization failed'}); 
             }
-            res.send({'current-user': user});
+            const {password, remember_token, ...currentUser} = user;
+            const currentGroup = await Group.findByPk(user.current_group_id);
+            currentUser.isAdmin = currentGroup.admin_id === user.id;
+            res.send({'current-user': currentUser});
         });
     })(req, res, next);
 });

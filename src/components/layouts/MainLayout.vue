@@ -3,6 +3,13 @@
         <q-header class="header-wrapper" height-hint="98">
             <q-toolbar class="bg-primary text-white">
                 <q-toolbar-title>{{ $t('common.app_name') }}</q-toolbar-title>
+                <q-chip v-show="mainStore.state.currentUser" 
+                    icon="assignment_ind"
+                    clickable
+                    @click="router.push({name: 'me'})"
+                >
+                    {{ mainStore.state.currentUser?.name }}
+                </q-chip>
             </q-toolbar>
 
             <div v-if="$route.meta.title" class="title-wrapper">

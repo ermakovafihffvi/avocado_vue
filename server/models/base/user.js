@@ -33,7 +33,10 @@ User.init(
                 model: 'user_group',
                 key: 'id'
             }
-        }
+        },
+        isAdmin: {
+            type: DataTypes.VIRTUAL,
+        },
     },
     {
         // Other model options go here
@@ -42,7 +45,12 @@ User.init(
         tableName: 'user',
         timestamps: true,
         createdAt: 'created_at',
-        updatedAt: 'updated_at'
+        updatedAt: 'updated_at',
+        paranoid: true,
+        deletedAt: 'deleted_at',
+        defaultScope: {
+            attributes: { exclude: ['password', 'remember_token'] },
+        },
     },
 );
 

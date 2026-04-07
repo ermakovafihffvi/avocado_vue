@@ -4,6 +4,7 @@ export const messages = {
         monthly_expense_caption: "This expense happens every month. If you want to disable it, press toggle. You can create another regular expense, but there is no opportunity to edit the existing one.",
         calculated_according_to_currencies: 'Calculated according to the defined currencies.',
         base_currency_hint: 'Select base currency for displaying totals',
+        user_deletion: 'User deletion will be performed only in case there are no recordes related to him.'
     },
     confirm: {
         delete_expense_category: 'Are you sure you want to delete expenses category? All expenses of this category will be deleted. Maybe you would like to set it unactive instead?',
@@ -23,6 +24,9 @@ export const messages = {
         saving_category_updated: 'Saving category has been successfully updated',
         saving_category_deleted: 'Saving category has been successfully deleted',
         state_updated: 'State has been successfully updated',
-        scheduled_canceled: 'Scheduled expense canceled. Only future occurrences were removed.'
+        scheduled_canceled: 'Scheduled expense canceled. Only future occurrences were removed.',
+        pswd_updated: 'Password was updated',
+        user_activated: 'User activated',
+        user_deactivated: 'User deactivated'
     }
 };

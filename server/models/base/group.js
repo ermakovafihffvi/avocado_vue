@@ -33,6 +33,9 @@ Group.init(
         modelName: 'group', // We need to choose the model name
         tableName: 'user_group',
         timestamps: false,
+        defaultScope: {
+            attributes: { exclude: ['password'] },
+        },
     },
 );
 

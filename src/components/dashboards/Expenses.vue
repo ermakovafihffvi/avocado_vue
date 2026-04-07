@@ -100,8 +100,9 @@ const buildGraph = () => {
               total: {
                 enabled: true,
                 style: {
-                    fontSize: '13px',
-                    fontWeight: 900
+                    fontSize: '16px',
+                    fontWeight: 900,
+                    color: $q.dark.isActive ? '#fff' : undefined
                 }
               }
             }

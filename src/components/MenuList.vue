@@ -85,6 +85,18 @@
                 <q-item-section>{{ user.name }}</q-item-section>
             </q-item>
         </q-expansion-item>
+        <q-item v-if="currentUser?.isAdmin"
+            clickable
+            v-ripple
+            :active="link === 'manage-users'"
+            @click="menuItemClickHandle('manage-users')"
+            active-class="active-menu-link"
+        >
+            <q-item-section avatar>
+                <q-icon name="manage_accounts"/>
+            </q-item-section>
+            <q-item-section>{{ $t('common.manage_users') }}</q-item-section>
+        </q-item>
 
         <q-separator spaced />
 
@@ -111,6 +123,7 @@ const expanded_users = ref(true);
 const link = ref('home');
 const users = computed(() => mainStore.state.users ?? []);
 const routeName = computed(() => route.name);
+const currentUser = computed(() => mainStore.state.currentUser);
 
 const menuItemClickHandle = (routeName, params = null) => {
     link.value = params ? routeName + JSON.stringify(params) : routeName;

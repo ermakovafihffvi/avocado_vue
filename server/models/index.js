@@ -11,7 +11,7 @@ import UserToGroup from "#server/models/base/user_to_group.js";
 
 /** Group relationships */
 User.hasMany(Group, {
-    as: 'admin',
+    as: 'admin_group',
     foreignKey: {
         name: 'admin_id'
     }

@@ -12,6 +12,7 @@ import { setScheduledExpenses } from '#server/cron-tasks/setScheduledExpenses.js
 import { errorHandler } from '#server/middleware/errorHandler.js';
 import initRoutes from '#server/routes/index.js';
 import constants from "#shared/contants.js";
+import bcrypt from 'bcryptjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -169,6 +170,20 @@ async function startServer() {
             setScheduledExpenses();
         });
     }
+
+    /*
+    const passwd = '123456';
+    const hash = await bcrypt.hash(passwd, 12);
+
+    const new_hash = await bcrypt.hash(passwd, 12);
+    const hash_s = await bcrypt.hash(new_hash, 12);
+    const match1 = await bcrypt.compare(hash, hash_s);
+    console.log(match1);
+
+    const hash_s1 = await bcrypt.hash(hash, 12);
+    const match2 = await bcrypt.compare(hash, hash_s1);
+    console.log(match2);
+    */
 }
 
 startServer();

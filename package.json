@@ -12,11 +12,13 @@
     "server": "node server/index.js"
   },
   "dependencies": {
+    "@pinia/colada": "^1.1.0",
     "@quasar/extras": "^1.16.17",
     "@vuepic/vue-datepicker": "^11.0.2",
     "@vueuse/core": "^13.1.0",
     "apexcharts": "^4.7.0",
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "compression": "^1.8.1",
     "connect-sqlite3": "^0.9.16",
     "cors": "^2.8.6",
@@ -39,6 +41,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@pinia/colada-devtools": "^0.4.5",
     "@quasar/vite-plugin": "^1.9.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "concurrently": "^9.2.1",

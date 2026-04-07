@@ -77,7 +77,6 @@ const handleInput = async (value, currency, field) => {
                 message: error.value,
                 color: 'negative'
             });
-            return;
         } else {
             $q.notify({
                 type: 'positive',
