@@ -27,6 +27,7 @@ export const messages = {
         scheduled_canceled: 'Scheduled expense canceled. Only future occurrences were removed.',
         pswd_updated: 'Password was updated',
         user_activated: 'User activated',
-        user_deactivated: 'User deactivated'
+        user_deactivated: 'User deactivated',
+        user_deleted: 'User deleted',
     }
 };

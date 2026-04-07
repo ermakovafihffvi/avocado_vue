@@ -33,7 +33,7 @@
                     />
                 </q-card-section>
                 <q-card-section class="row" style="gap: 10px;">
-                    <delete-button @handle-delete="deleteUser(slot.uuid)"/>
+                    <delete-button @handle-delete="deleteUser(user.id)"/>
                     <div class="text-subtitle3 col">
                         {{ $t('messages.info.user_deletion') }}
                     </div>
@@ -161,6 +161,8 @@ const handleUsersSave = async () => {
         });
     } else {
         slots.value = [];
+        mainStore.state.users = null;
+        mainStore.loadUsersList();
         await refetch();
     }
     loading.value = false;
@@ -210,6 +212,26 @@ const handleUserActivation = async (userId, value) => {
             message: value ? t('messages.success.user_activated') : t('messages.success.user_deactivated'),
             color: 'positive'
         });
+    }
+};
+
+const deleteUser = async (id) => {
+    const { error, data } = await api('api/user/' + id + '/delete').delete().json();
+    if (error.value) {
+        $q.notify({
+            type: 'error',
+            message: error.value,
+            color: 'negative'
+        });
+    } else {
+        $q.notify({
+            type: 'positive',
+            message: t('messages.success.user_deleted'),
+            color: 'positive'
+        });
+        slots.value = [];
+        mainStore.state.users = mainStore.state.users.filter(u => u.id != id);
+        await refetch();
     }
 };
 

@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import models from "#server/models/index.js";
 import { isAdminCheck } from '#server/middleware/isAdminCheck.js';
 
-const { User } = models;
+const { User, Expense, Income } = models;
 
 const userRouter = express.Router();
 
@@ -90,6 +90,27 @@ userRouter.post('/update-user', isAdminCheck, async function (req, res, next) {
             });
         }
 
+        res.json(null);
+    } catch (err) {
+        next(err);
+    }
+});
+
+userRouter.delete('/user/:id/delete', async function (req, res, next) {
+    try {
+        const userId = Number(req.params.id);
+        if (!userId) next(new Error('Id should be integer'));
+        const expense = await Expense.scope({ method: ['userGroup', req.user.current_group_id] })
+            .findOne({ where: { user_id: userId} });
+        const income = await Income.scope({ method: ['userGroup', req.user.current_group_id] })
+            .findOne({ where: { user_id: userId } });
+        if (expense || income) {
+            next(new Error('User has income or expense'));
+        }
+        await User.scope({ method: ['userGroup', req.user.current_group_id] }).destroy({
+            where: {id: userId},
+            force: true
+        });
         res.json(null);
     } catch (err) {
         next(err);

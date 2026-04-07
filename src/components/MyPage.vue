@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import bcrypt from "bcryptjs";
+//import bcrypt from "bcryptjs";
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
@@ -103,7 +103,6 @@ const handleMeUpdate = async () => {
         password: newPassword.value
     };
     const { error } = await api('api/me/update').post(reqData).json();
-    console.log(error.value);
     if (error) {
         $q.notify({
             type: 'error',
@@ -120,11 +119,11 @@ const handleMeUpdate = async () => {
 };
 
 onMounted(async () => {
-    let salt = await bcrypt.genSalt(12);
+    /*let salt = await bcrypt.genSalt(12);
     let a = await bcrypt.hash('123456', salt);
     console.log(a);
     let b = await bcrypt.hash('123456', salt);
-    console.log(b);
+    console.log(b);*/
 })
 
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="category-card">
-    <div class="flex justify-center q-mb-md q-mt-sm">
+    <div class="flex justify-center q-mb-md q-mt-sm q-mx-md">
         <VueDatePicker 
             v-model="dateRange"
             :month-picker="true"
@@ -8,7 +8,7 @@
             :range="{}"
         />
     </div>
-    <div class="flex justify-center q-mb-md">
+    <div class="flex justify-center q-mb-md q-mx-md">
         <q-select outlined bottom-slots 
             v-model="selectedCurrency" 
             :options="currencies" 

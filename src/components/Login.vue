@@ -1,7 +1,7 @@
 <template>
     <div class="column">
         <h3 class="text-center q-mb-md">{{ $t('common.login') }}</h3>
-        <q-form class="column">
+        <q-form class="column q-mx-md">
             <q-input outlined v-model="login" :label="$t('common.login')" class="q-mb-md"/>
             <q-input outlined v-model="password" :type="isPwd ? 'password' : 'text'" :label="$t('common.password')" class="q-mb-md">
                 <template v-slot:append>
