@@ -1,11 +1,12 @@
 <template>
     <loading-spinner v-if="isLoading || loading || !currentUser"/>
-    <q-list bordered padding v-else class="q-mx-md">
+    <q-list bordered padding v-else class="q-mx-md users-list">
         <q-item-label header>
             {{ $t('common.activate_users') }}
         </q-item-label>
 
-        <q-expansion-item v-for="user in users.data?.filter(i => i.id != currentUser.id)" :key="user.id"
+        <q-expansion-item v-if="usersData?.length"
+            v-for="user in usersData" :key="user.id"
             class="cursor-pointer" 
             v-ripple 
             switch-toggle-side
@@ -43,6 +44,9 @@
                 </q-card-actions>
             </q-card>
         </q-expansion-item>
+        <q-item v-else>
+            <no-data />
+        </q-item>
 
         <q-separator spaced />
 
@@ -91,9 +95,10 @@ import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useQuery } from '@pinia/colada';
-import LoadingSpinner from './base/LoadingSpinner.vue';
-import DeleteButton from './buttons/DeleteButton.vue';
+import LoadingSpinner from '@/components/base/LoadingSpinner.vue';
+import DeleteButton from '@/components/buttons/DeleteButton.vue';
 import validationRules from '@shared/validation/rules.js';
+import NoData from '@/components/base/NoData.vue';
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -106,6 +111,7 @@ const activeMap = ref({});
 const loading = ref();
 const currentUser = computed(() => mainStore.state.currentUser);
 const newPassword = ref({});
+const usersData = computed(() => users.value.data?.filter(i => i.id != currentUser.value.id));
 
 const inputRefs = ref({});
 const setRef = (el, key) => {
@@ -236,8 +242,16 @@ const deleteUser = async (id) => {
 };
 
 watch(users, () => {
-    users.value.data.forEach(element => {
+    users.value.data?.forEach(element => {
         activeMap.value[element.id] = !Boolean(element.deleted_at);
     });
 });
 </script>
+
+<style lang="sass" scoped>
+@media (min-width: 641px) 
+    .users-list
+        width: 600px; 
+        margin-left: auto !important;
+        margin-right: auto !important;
+</style>

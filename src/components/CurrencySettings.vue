@@ -1,6 +1,6 @@
 <template>
-    <div class="currencies-wrapper q-px-md">
-        <div class="currencies-content row q-gutter-sm">
+    <div class="currencies-wrapper q-mx-auto q-px-md">
+        <div class="currencies-content q-mt-md row q-gutter-sm" v-if="currencies?.length">
             <q-card bordered v-for="currency in currencies" :key="currency.id" class="rate-card">
                 <q-card-section class="rate-card-section">
                     <q-input outlined 
@@ -33,6 +33,9 @@
                 </q-card-section>
             </q-card>
         </div>
+        <div class="q-mt-xl" v-else>
+            <no-data :usePic="true"/>
+        </div>
     </div>
 </template>
 <script setup>
@@ -43,6 +46,7 @@ import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import validationRules from '@shared/validation/rules.js';
+import NoData from '@/components/base/NoData.vue';
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -101,13 +105,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.currencies-wrapper {
-    margin-left: auto;
-    margin-right: auto;
-}
-.currencies-content {
-    margin-top: 15px;
-}
 .rate-card {
     width: 300px;
     background-color: $secondary;

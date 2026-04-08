@@ -1,7 +1,12 @@
 <template>
     <LoadingSpinner v-if="loading" class="q-mt-lg"/>
     <div v-else>
-        <q-card bordered flat v-for="category in categories" class="category-card" :key="category.id" :data-attr-key="category.id">
+        <q-card bordered flat v-if="categories?.length"
+            v-for="category in categories" 
+            class="category-card q-mx-auto" 
+            :key="category.id" 
+            :data-attr-key="category.id"
+        >
             <q-card-section>
                 <div class="row q-gutter-lg justify-between">
                     <q-input v-model="category.title" :label="$t('common.title')" style="flex: 1;"
@@ -48,6 +53,10 @@
                 </div>
             </q-card-section>
         </q-card>
+
+        <div class="q-mt-xl" v-else>
+            <no-data :usePic="true"/>
+        </div>
     </div>
 </template>
 
@@ -61,6 +70,7 @@ import DeleteButton from '@/components/buttons/DeleteButton.vue';
 import { useQuasar } from 'quasar';
 import validationRules from '@shared/validation/rules.js';
 import { useDebounceFn } from '@vueuse/core';
+import NoData from '@/components/base/NoData.vue';
 
 const api = useClient();
 const mainStore = useMainStore();
@@ -195,8 +205,6 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .category-card {
     margin-bottom: 20px;
-    margin-right: auto;
-    margin-left: auto;
     padding: 3rem;
 }
 </style>

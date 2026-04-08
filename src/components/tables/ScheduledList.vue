@@ -5,7 +5,7 @@
                 {{ userNameTitle ? userNameTitle + ' ' + $t('common.scheduled') + ' ' + $t('common.expense', 2) : '' }}
             </h6>
         </div>
-        <div class="row items-center q-gutter-sm text-secondary">
+        <div class="row items-center q-gutter-sm text-secondary" v-if="!loading && scheduledExpenses?.length">
             <q-toggle v-model="showDeleted" @update:model-value="handleShowDeleted" :label="$t('common.show_deleted')" color="secondary" />
         </div>
     </div>
@@ -90,7 +90,7 @@
         </div>
     </div>
     <div v-else>
-        <p class="text-center">{{ $t('common.no_data') }}</p>
+        <no-data :usePic="true"/>
     </div>
 </template>
 
@@ -106,6 +106,7 @@ import { useMainStore } from '@/store/main';
 import { useDateFormat } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
+import NoData from '@/components/base/NoData.vue';
 
 const api = useClient();
 const props = defineProps({

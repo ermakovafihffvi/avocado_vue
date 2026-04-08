@@ -16,13 +16,13 @@ dashboardRouter.post('/last_incomes', async function (req, res, next) {
 
     const pseudoMonthLiteral = literal(`
         CASE
-            WHEN CAST(DATE_FORMAT(created_at, '%d') AS UNSIGNED) <= ${XDATE}
-            THEN DATE_FORMAT(created_at, '%Y-%m')
-            ELSE DATE_FORMAT(DATE_ADD(created_at, INTERVAL 15 DAY), '%Y-%m')
+            WHEN CAST(DATE_FORMAT(income.created_at, '%d') AS UNSIGNED) <= ${XDATE}
+            THEN DATE_FORMAT(income.created_at, '%Y-%m')
+            ELSE DATE_FORMAT(DATE_ADD(income.created_at, INTERVAL 15 DAY), '%Y-%m')
         END
     `);
 
-    const totals = await Income.findAll({
+    const totals = await Income.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         where: {
             created_at: {
                 [Op.between]: [start, end]
@@ -53,7 +53,7 @@ dashboardRouter.post('/last_expenses', async function (req, res, next) {
     const dateRange = req.body.date;
     const { start, end } = getDateRange(dateRange);
 
-    const categories = await CategoryExpense.findAll({
+    const categories = await CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         where: {
             isActive: true,
             special: false
@@ -67,13 +67,13 @@ dashboardRouter.post('/last_expenses', async function (req, res, next) {
 
     const pseudoMonthLiteral = literal(`
         CASE
-            WHEN CAST(DATE_FORMAT(created_at, '%d') AS UNSIGNED) <= ${XDATE}
-            THEN DATE_FORMAT(created_at, '%Y-%m')
-            ELSE DATE_FORMAT(DATE_ADD(created_at, INTERVAL 15 DAY), '%Y-%m')
+            WHEN CAST(DATE_FORMAT(expenses.created_at, '%d') AS UNSIGNED) <= ${XDATE}
+            THEN DATE_FORMAT(expenses.created_at, '%Y-%m')
+            ELSE DATE_FORMAT(DATE_ADD(expenses.created_at, INTERVAL 15 DAY), '%Y-%m')
         END
     `);
 
-    const categoriesWithAvg = await Expense.findAll({
+    const categoriesWithAvg = await Expense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         where: {
             created_at: {
                 [Op.between]: [start, end]
@@ -111,7 +111,7 @@ dashboardRouter.post('/last_states', async function (req, res, next) {
     const startMonth = start.toISOString().slice(0, 7);
     const endMonth = end.toISOString().slice(0, 7);
 
-    const result = await CurrentState.findAll({
+    const result = await CurrentState.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         where: {
             pseudo_month: {
                 [Op.between]: [startMonth, endMonth]

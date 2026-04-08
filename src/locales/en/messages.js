@@ -2,9 +2,13 @@ export const messages = {
     info: {
         scheduled_rule: 'Scheduled expenses are automaticatly added in the morning on 23th of each month if actual.',
         monthly_expense_caption: "This expense happens every month. If you want to disable it, press toggle. You can create another regular expense, but there is no opportunity to edit the existing one.",
-        calculated_according_to_currencies: 'Calculated according to the defined currencies.',
+        calculated_according_to_currencies: 'Calculated according to the defined ',
         base_currency_hint: 'Select base currency for displaying totals',
-        user_deletion: 'User deletion will be performed only in case there are no recordes related to him.'
+        user_deletion: 'User deletion will be performed only in case there are no recordes related to him.',
+        add_currencies_first_1: 'Add some ',
+        add_currencies_first_2: ' first.',
+        add_exp_categories_first_1: 'Add some expenses and ',
+        add_exp_categories_first_2: ' first.',
     },
     confirm: {
         delete_expense_category: 'Are you sure you want to delete expenses category? All expenses of this category will be deleted. Maybe you would like to set it unactive instead?',

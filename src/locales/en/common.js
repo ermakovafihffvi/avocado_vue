@@ -38,7 +38,7 @@ export const common = {
     my: 'My',
     my_login_name: 'My login name',
     new_pswd: 'New password',
-    no_data: 'No data available',
+    no_data: 'No data',
     no_repeats: 'no repeats',
     not_all_categories_filled: 'Not all categories filled',
     ok: 'OK',
