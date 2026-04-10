@@ -26,6 +26,7 @@ services:
       MYSQL_USER: '${MYSQL_USER}'
       MYSQL_PASSWORD: '${MYSQL_PASSWORD:-todoapp_password}'
       ALLOWED_ORIGINS: '${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}'
+      SESSION_SECRET: '${SESSION_SECRET}'
     volumes:
       - ./src:/app/src:ro
       - ./server:/app/server:ro
@@ -81,6 +82,7 @@ services:
       MYSQL_USER: '${MYSQL_USER}'
       MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       ALLOWED_ORIGINS: '${ALLOWED_ORIGINS}'
+      SESSION_SECRET: '${SESSION_SECRET}'
     #depends_on: db
       #db:
         #condition: service_healthy
