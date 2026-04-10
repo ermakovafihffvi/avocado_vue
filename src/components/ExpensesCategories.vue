@@ -42,6 +42,7 @@
                         :label="$t('common.is_active')"
                         @update:model-value="handleInput(category.id, 'isActive')"
                     />
+                    <!--
                     <q-toggle
                         v-model="category.special"
                         checked-icon="check"
@@ -49,7 +50,7 @@
                         :label="$t('common.is_special')"
                         unchecked-icon="clear"
                         @update:model-value="handleInput(category.id, 'special')"
-                    />
+                    />-->
                 </div>
             </q-card-section>
         </q-card>

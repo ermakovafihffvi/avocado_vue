@@ -87,6 +87,7 @@ authRouter.post('/signup', async function(req, res, next) {
 
         req.login(user, function(err) {
             if (err) { return next(err); }
+            user.isAdmin = true;
             res.send({'current-user': user});
         });
     } catch (err) {

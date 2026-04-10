@@ -10,7 +10,7 @@ import { Notify } from 'quasar';
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 export const useMainStore = defineStore('main', () => {
-    const state = reactive({ 
+    const baseState = { 
         auth: false,
         users: null,
         currencies: null,
@@ -27,7 +27,9 @@ export const useMainStore = defineStore('main', () => {
         states: null,
         lastState: null,
         lastPeriod: useDateFormat(new Date(getAvailableDates().nextStr), 'YYYY-MM', { locale: 'en-US' })
-    });
+    };
+
+    const state = reactive(Object.create(baseState));
 
     const api = useClient();
 
@@ -132,6 +134,12 @@ export const useMainStore = defineStore('main', () => {
         }
     };
 
+    const clearStore = () => {
+        Object.keys(baseState).forEach((key) => {
+            state[key] = baseState[key];
+        });
+    };
+
     return {
         state,
         getCurrentUser,
@@ -139,6 +147,7 @@ export const useMainStore = defineStore('main', () => {
         loadCurrencies,
         loadStateCategories,
         loadCurrentStates,
-        loadUsersList
+        loadUsersList,
+        clearStore
     };
 });

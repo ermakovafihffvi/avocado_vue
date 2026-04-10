@@ -1,0 +1,156 @@
+<template>
+    <div id="chart-state"></div>
+</template>
+
+<script setup>
+import useClient from '@/api/useClient';
+import { useDateFormat } from '@vueuse/core';
+import { onMounted, ref, watch } from 'vue';
+import ApexCharts from 'apexcharts';
+import { useMainStore } from '@/store/main';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
+const props = defineProps(['dateRange', 'selectedCurrency']);
+const mainStore = useMainStore();
+const api = useClient();
+
+const chart = ref(null);
+
+const buildGraph = () => {
+    const months = [];
+    let monthIndex = props.dateRange[0]['month'];
+    let yearIndex = props.dateRange[0]['year'];
+    while (yearIndex < props.dateRange[1]['year'] || (yearIndex === props.dateRange[1]['year'] && monthIndex <= props.dateRange[1]['month'])) {
+        const date = new Date(yearIndex, monthIndex, 1);
+        const formatted = useDateFormat(date, 'YYYY-MMM', { locale: 'en-US' });
+        months.push(formatted.value);
+
+        monthIndex++;
+        if (monthIndex > 11) {
+            monthIndex = 0;
+            yearIndex++;
+        }
+    }
+
+    const series = [];
+    const totalSerie = [];
+    mainStore.state.users.forEach(user => {
+        let userData = [];
+        let monthIndex = props.dateRange[0]['month'];
+        let yearIndex = props.dateRange[0]['year'];
+        let index = 0;
+        while (yearIndex < props.dateRange[1]['year'] || (yearIndex === props.dateRange[1]['year'] && monthIndex <= props.dateRange[1]['month'])) {
+            const _userData = mainStore.state.states?.filter(item => {
+                return item.user_id == user.id && item.pseudo_month == yearIndex + "-" + String(monthIndex + 1).padStart(2, '0')
+            }).values();
+
+            const value = _userData.reduce((acc, item) => {
+                const itemCurrencyId = mainStore.state.stateCategories?.find(i => i.id == item.category_id)?.currency_id;
+                const rate = mainStore.state.currencies.find(c => c.id == itemCurrencyId).rate ?? 1;
+                acc = Number(acc) + (Number(item.sum) / rate * props.selectedCurrency.rate);
+                return Number(acc).toFixed(2);
+            }, 0);
+
+
+            totalSerie[index] = totalSerie[index] ? Number(Number(totalSerie[index]) + Number(value)).toFixed(2) : Number(value).toFixed(2); 
+            userData.push(Number(value).toFixed(2));
+
+            monthIndex++;
+            if (monthIndex > 11) {
+                monthIndex = 0;
+                yearIndex++;
+            }
+            index++;
+        }
+        series.push({
+            name: user.name,
+            data: userData
+        });
+    });
+    series.push({
+        name: 'Total',
+        data: totalSerie
+    });
+
+    const options = {
+        series: series,
+        chart: {
+            type: 'line',
+            height: 350,
+            zoom: {
+                enabled: false
+            },
+            background: 'transparent'
+        },
+        /*plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            borderRadius: 5,
+            borderRadiusApplication: 'end'
+          },
+        },*/
+        dataLabels: {
+          enabled: false
+        },
+        /*stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },*/
+        stroke: {
+            curve: 'straight'
+        },
+        xaxis: {
+          categories: months,
+        },
+        yaxis: {
+          title: {
+            text: 'Incomes, ' + props.selectedCurrency.str_id
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+    };
+    
+    if ($q.dark.isActive) {
+        options.theme = {
+            mode: 'dark',
+            palette: 'palette1'
+        };
+    }
+
+    if (chart.value) {
+        chart.value.destroy();
+    }
+    chart.value = new ApexCharts(document.querySelector('#chart-state'), options);
+    chart.value.render();
+};
+
+const prepareData = () => {
+    buildGraph();
+};
+
+onMounted(() => {
+    prepareData();
+});
+
+watch(
+    () => props.dateRange, 
+    () => {
+        prepareData();
+    },
+    { deep: true }
+);
+
+watch(
+    () => props.selectedCurrency, 
+    () => {
+        prepareData();
+    },
+    { deep: true }
+);
+
+</script>

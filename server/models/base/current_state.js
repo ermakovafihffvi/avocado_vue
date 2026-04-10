@@ -3,7 +3,7 @@ import { sequelize } from '#server/bd.js';
 import addUserGroupScope from "#server/models/scopes/user_group.js";
 import validationRules from '#shared/validation/rules.js';
 
-const { positiveNumberTest } = validationRules();
+const { numberTest } = validationRules();
 
 class CurrentState extends Model {}
 
@@ -20,7 +20,7 @@ CurrentState.init(
             defaultValue: 0,
             validate: {
                 handleValidation(value) {
-                    if (!positiveNumberTest(value)) {
+                    if (!numberTest(value)) {
                         throw new Error('Sum validation error');
                     }
                 }

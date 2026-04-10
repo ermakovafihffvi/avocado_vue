@@ -148,8 +148,7 @@ const logoutHandle = async () => {
         });
         return;
     }
-    mainStore.state.auth = false;
-    mainStore.state.currentUser = null;
+    mainStore.clearStore();
     router.push('/login');
 };
 

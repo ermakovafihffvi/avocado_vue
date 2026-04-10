@@ -129,4 +129,23 @@ userRouter.post('/me/update', async function (req, res, next) {
     }
 });
 
+userRouter.get('/user-exists/:name', async function (req, res, next) {
+    try {
+        const name = String(req.params.name).trim();
+
+        const user = await User.findOne({
+            where: {
+                name: name
+            }
+        });
+        if (user) {
+            res.status(406).send({error: 'Name is already taken by another user :('});
+        } else {
+            res.json(null);
+        }
+    } catch (err) {
+        next(err);
+    }
+});
+
 export default userRouter;

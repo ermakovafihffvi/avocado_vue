@@ -19,7 +19,7 @@ expenseCategoryRouter.put('/:category_id/update', async function (req, res, next
     const category = await CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findByPk(req.params.category_id);
 
     await category.update({
-        [req.body.field]: req.body.value.trim()
+        [req.body.field]: typeof req.body.value === 'string' ? req.body.value.trim() : Number(req.body.value)
     })
     .catch(err => next(err));
 

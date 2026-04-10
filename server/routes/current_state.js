@@ -51,16 +51,21 @@ currentStateRouter.post('/category/add', function (req, res, next) {
 });
 
 currentStateRouter.post('/update', async function (req, res, next) {
-    const [state, created] = await CurrentState.upsert({
-        user_id: req.body.user_id,
-        category_id: req.body.category_id,
-        pseudo_month: req.body.pseudo_month,
-        sum: req.body.sum,
-        group_id: req.user.current_group_id
-    })
-    .catch(err => next(err));
-
-    return res.json(state);
+    try {
+        const [state, created] = await CurrentState.findOrCreate({
+            where: {
+                user_id: req.body.user_id,
+                category_id: req.body.category_id,
+                pseudo_month: req.body.pseudo_month,
+                group_id: req.user.current_group_id
+            }
+        });
+        state.sum = req.body.sum;
+        state.save();
+        return res.json(state);
+    } catch(err) {
+        next(err)
+    }
 });
 
 export default currentStateRouter;

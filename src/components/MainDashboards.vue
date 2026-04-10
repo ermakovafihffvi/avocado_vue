@@ -32,7 +32,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="expenses" v-if="mainStore.state.expensesCategories?.length">
-                <Expenses :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
+                <ExpensesChart :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
                 <q-btn v-if="!loadDetails" @click="loadDetails = true" color="secondary" class="q-mt-md">
                     {{ $t('common.load_expenses_details') }}
                 </q-btn>
@@ -50,7 +50,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="incomes">
-                <Incomes :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
+                <IncomesChart :dateRange="dateRange" :selectedCurrency="selectedCurrency"/>
             </q-tab-panel>
         </q-tab-panels>
     </div>
@@ -70,8 +70,8 @@
 <script setup>
 import { useMainStore } from '@/store/main';
 import States from '@/components/dashboards/States.vue';
-import Expenses from '@/components/dashboards/Expenses.vue';
-import Incomes from '@/components/dashboards/Incomes.vue';
+import ExpensesChart from '@/components/dashboards/ExpensesChart.vue';
+import IncomesChart from '@/components/dashboards/IncomesChart.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { onMounted, ref } from 'vue';
 import { getDateRange } from '@/composables/getAvailableDates';
@@ -100,7 +100,7 @@ const preloadData = async () => {
 onMounted(async () => {
     dateRange.value = getDateRange(5);
     await preloadData();
-    selectedCurrency.value = mainStore.state.currencies.find(el => el.str_id == 'ILS');
+    selectedCurrency.value = mainStore.state.currencies?.find(el => el.str_id == 'ILS') ?? mainStore.state.currencies?.[0];
     loading.value = false;
 });
 </script>

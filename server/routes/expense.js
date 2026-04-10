@@ -7,8 +7,15 @@ const { Expense, CategoryExpense, RepeatableExpense, Currency } = models;
 const expenseRouter = express.Router();
 
 expenseRouter.get('/categories', function (req, res, next) {
+    const where = {
+        special: false
+    };
+    if (!req.query.all || req.query.all !== 'true') {
+        where.isActive = true;
+    }
     CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
-        paranoid: true
+        paranoid: true,
+        where: where
     })
     .then((categories) => {
         res.json(categories);
@@ -22,7 +29,14 @@ expenseRouter.get('/total', function (req, res, next) {
             'category_id',
             [fn('SUM', col('sum')), 'total']
         ],
-        group: ['category_id']
+        group: ['category_id'],
+        include: {
+            model: CategoryExpense,
+            as: 'category',
+            where: {
+                isActive: true
+            }
+        }
     })
     .then((total) => {
         res.json(total);

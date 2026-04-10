@@ -83,7 +83,7 @@ if (process.env.NODE_ENV === 'production') {
 */
 
 app.use(session({
-    secret: 'keyboard cat',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore
@@ -95,6 +95,7 @@ app.use((req, res, next) => {
         && !req.path.startsWith('/api/login') 
         && !req.path.startsWith('/api/signup') 
         && !req.path.startsWith('/api/logout')
+        && !req.path.startsWith('/api/user-exists')
     ) {
         res.status(401).json({ message: 'Unauthorized' });
     } else {

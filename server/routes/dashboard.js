@@ -55,7 +55,7 @@ dashboardRouter.post('/last_expenses', async function (req, res, next) {
 
     const categories = await CategoryExpense.scope({method: ['userGroup', req.user.current_group_id]}).findAll({
         where: {
-            isActive: true,
+            //isActive: true,
             special: false
         },
         attributes: ['id', 'title', 'str_id', 'currency_id'],

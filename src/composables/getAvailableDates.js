@@ -59,7 +59,7 @@ export const getPeriodsList = (dateRange) => {
     let yearIndex = dateRange[0]['year'];
     while (yearIndex < dateRange[1]['year'] || (yearIndex === dateRange[1]['year'] && monthIndex <= dateRange[1]['month'])) {
         const date = new Date(yearIndex, monthIndex, 1);
-        const formatted = useDateFormat(date, 'YYYY-MMM', { locale: 'en-US' });
+        const formatted = useDateFormat(date, 'YYYY-MMM', { locales: 'en-US' });
         months.push({
             [yearIndex + '-' + String(monthIndex + 1).padStart(2, '0')]: formatted.value
         });

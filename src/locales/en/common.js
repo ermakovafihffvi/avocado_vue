@@ -34,6 +34,7 @@ export const common = {
     manage_users: 'Manage Users',
     money_users: 'Money Users',
     month_limit: 'Month limit',
+    month: 'Month',
     monthly: 'monthly',
     my: 'My',
     my_login_name: 'My login name',
